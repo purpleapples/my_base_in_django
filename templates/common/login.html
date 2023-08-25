@@ -1,0 +1,105 @@
+{% extends "common/base.html" %}
+{% load static %}
+{% block title %}로그인{% endblock %}
+{% block header %}
+    {% include 'common/header/form_header_base.html'%}
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/login.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/login.css' %}">
+{% endblock %}
+{% block contents %}
+    <main class="context-horizontal-center">
+        <form method="POST" id="login_form" class="list-default">
+            {% csrf_token %}
+            {% for field in form %}
+                <section>
+                    <label class="label-default" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    <input type="{{ field.field.widget.input_type }}" class="form-element-default" id="{{ field.id_for_label }}"
+                    placeholder="{{ field.label }}" name="{{ field.name }}" />
+                </section>
+                {% if field.errors %}
+                    <span style="color: red">{{ field.errors }}</span>
+                {% endif %}
+            {% endfor %}
+            <section class="buttonToolbar flex-between">
+                <section class=flex-between>
+                    <span class="button add" onclick="showModal('.modal');">아이디/비밀번호 찾기</span>
+                </section>
+                <section>
+                    <button class="button add" style="margin-right: 10px;" onclick="loginSystem();">로그인</button>
+                    <button type="reset" class="button clear" style="">취소</button>
+                </section>
+            </section>
+        </form>
+    </main>
+
+
+<!-- 아이디/비밀번호 찾기 -->
+<section id="modal" class="modal default">
+    <section class="modal-content middle">
+        <section class="page-header" style="text-align: center">
+            <h2>아이디/비밀번호 찾기</h2>
+        </section>
+            <section class="col-sm-12">
+                <section class="row tab container">
+                    {% csrf_token %}
+                    <input type="hidden" name="type">
+                    <section class="text-right">
+                        <ul class="tab header">
+                            <li class="button act">아이디 찾기</li>
+                            <li class="button">비밀번호 찾기</li>
+                        </ul>
+                    </section>
+                    <section class="tab body">
+                        <section>
+                            <table class="table table-bordered" style="width:42%">
+                                <thead>
+                                <tr>
+                                    <th>이메일</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><input type="text" name="email" class="form-element-default"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </section>
+
+                        <section class="hidden">
+                            <table class="table table-bordered" style="width:42%">
+                                <thead>
+                                    <tr>
+                                        <th>아이디</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" name="id" class="form-element-default"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-bordered" style="width:42%">
+                                <thead>
+                                    <tr>
+                                        <th>이메일</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><input type="text" name="email2" class="form-element-default"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </section>
+                    </section>
+            </section>
+            <section class="buttonToolbar text-right">
+                <span class="button add" onclick="findInfoSubmit();">확인</span>
+                <span onclick="closeModal(this);" class="button cancel">취소</span>
+            </section>
+        </section>
+    </section>
+</section>
+{% endblock %}

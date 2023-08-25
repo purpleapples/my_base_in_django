@@ -1,0 +1,40 @@
+
+STAFF = 0
+SENIOR_STAFF = 1
+ASSISTANT_MANAGER = 2
+MANAGER = 3
+DEPUTY_GENERAL_MANAGER = 4
+GENERAL_MANAGER = 5
+HIRED_SERVICES = 6
+PRESIDENT = 7
+
+ACCOUNT_POSITION_CHOICES = (
+	(STAFF, '사원'),
+	(SENIOR_STAFF, '주임'),
+	(ASSISTANT_MANAGER, '대리'),
+	(MANAGER, '과장'),
+	(DEPUTY_GENERAL_MANAGER, '차장'),
+	(GENERAL_MANAGER, '부장'),
+	(HIRED_SERVICES, '일용직'),
+	(PRESIDENT, '사장'),
+)
+
+# 게시글 종류
+NOTICE = 0
+OFFER = 1
+ERROR = 2
+QUESTION = 3
+ANSWER = 4
+DATA = 5
+MESSAGE = 6
+REPLY = 7
+BOARD_TYPE = (
+	(NOTICE, '공지'),
+	(OFFER, '제안'),
+	(ERROR, '에러'),
+	(QUESTION, '질의'),
+	(ANSWER, '답신'),
+	(DATA, '자료'),
+	(MESSAGE, '메시지'),
+	(REPLY, '댓글'),
+)

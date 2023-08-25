@@ -1,0 +1,33 @@
+form > .form-group:first-of-type .field-label::before,
+form > .form-group:nth-of-type(2) .field-label::before,
+form > .form-group:nth-of-type(3) .field-label::before,
+form > .form-group:nth-of-type(4) .field-label::before,
+form > .form-group:nth-of-type(5) .field-label::before {
+    content:'*';
+    display:inline-block;
+    vertical-align: middle;
+    color:red;
+    margin-right:3px;
+}
+
+.flex {
+    display: flex;
+    align-items: center;
+}
+.chk_pw {
+    background:#3e7cc9;
+    color:white;
+    font-size:14px;
+    border-radius: 3px;
+    padding:4px 12px;
+    margin-left:15px;
+    font-weight: normal;
+    cursor: pointer;
+}
+.chk_pw:hover {
+    opacity: 0.8;
+}
+.chk_txt {
+    margin-left:20px;
+    color:#4ac983;
+}

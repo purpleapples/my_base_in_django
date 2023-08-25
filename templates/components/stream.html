@@ -1,0 +1,15 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'component/js/component/stream.js' %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static 'component/stream.css' %}" >
+<div class="hidden stream-container">
+    <canvas class="stream--sensor"></canvas>
+    <video class="stream-view" autoplay playsinline width="744px"></video>
+    <p class="text-center"><button class="button stream-take-picker">사진 촬영</button></p>
+    <div class="hidden stream-photo-container text-center">
+        <p><h4>촬영 사진 목록</h4> <span class="button function expand-list-button" >목록 감추기</span></p>
+        <ul class="stream-photo-list">
+        </ul>
+    </div>
+    <div class="hidden stream-photo-file-list">
+    </div>
+</div>

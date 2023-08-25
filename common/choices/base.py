@@ -1,0 +1,7 @@
+
+INCREASE = 0
+DECREASE = 1
+INCREASE_OR_DECREASE = (
+	(INCREASE, '증가'),
+	(DECREASE, '감소'),
+)

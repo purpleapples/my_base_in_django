@@ -1,0 +1,74 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/team_member/js/list.js' %}"></script>
+{% endblock %}
+{% block title %}
+    소속 관리
+{% endblock %}
+{% block contents %}
+
+    <article class="context-horizontal-center">
+    <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar flex-between" dir="rtl">
+            <section>
+                <button id="table-delete" class="button delete">정보 삭제</button>
+            </section>
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+        </section>
+
+        <table class="table table-bordered" id="table">
+            <colgroup>
+
+            </colgroup>
+            <thead>
+                <th>팀명</th>
+                <th>계정</th>
+                <th>비고</th>
+                <th>관리</th>
+            </thead>
+            <tbody class="input-row">
+                <tr>
+                    {% csrf_token %}
+                    <td>
+                        <select class="form-element-default" name="team_id">
+                            {% for team in team_list %}
+                            <option value="{{ team.id }}">{{ team.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-element-default" name="account_id">
+                            {% for account in account_list %}
+                                <option value="{{ account.id }}"> {{ account.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input class="form-element-default" type="text" name="comment" placeholder="비고"></td>
+                    <td class="text-center"><input class="button add" type="submit" value="등록" onclick="defaultPost(event, 'tr', '{% url 'team_member_api' %}')"></td>
+                </tr>
+            </tbody>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td class="text-center"><input type="hidden" name="id" value="{{ object.id }}">
+                            <a href="{% url 'team_member_list' pk=object.team.id %}">{{ object.team.name }}</a></td>
+                        <td class="text-center">{{ object.account.name}}</td>
+                        <td>{{ object.comment}}</td>
+                        <td class="text-center"><button class="button update" onclick="changeToEditMode(this, '{% url 'team_member_api' %}')">수정</button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    </article>
+{% endblock %}

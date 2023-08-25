@@ -1,0 +1,6 @@
+.list-default, table{
+    width:900px;
+}
+table td:first-child, table th:first-child {
+    width:100px;
+}

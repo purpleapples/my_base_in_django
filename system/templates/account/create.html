@@ -1,0 +1,73 @@
+{% extends "common/base.html" %}
+{% load static %}
+{% block title %}사용자 추가{% endblock %}
+{% block header %}
+    {% include 'common/header/form_header_base.html' %}
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/account/css/create.css' %}">
+    <script type="text/javascript" src="{% static 'apps/system/account/js/create.js' %}"></script>
+{% endblock %}
+
+{% block contents %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+            <p class="reqMsg">* 표시된 정보는 필수 사항 입니다.</p>
+            <form method="POST" id="form" >
+
+                {% csrf_token %}
+                <table class="table table-bordered ">
+                    <colgroup>
+                        <col width="30%">
+                        <col width="70%">
+                    </colgroup>
+                    <tbody>
+                    <tr>
+                        <th class="required-field">사용자 계정</th>
+                        <td><input type="text" name="username" class="form-element-default"></td>
+                    </tr>
+                    <tr>
+                        <th class="required-field">이름</th>
+                        <td><input type="text" name="name" class="form-element-default"></td>
+                    </tr>
+                    <tr>
+                        <th class="required-field"><label>비밀번호</label></th>
+                        <td><input type="password" name="password" class="form-element-default"></td>
+                    </tr>
+                    <tr>
+                        <th class="required-field"><label>비밀번호 확인</label></th>
+                        <td><input type="password" name="password_confirm" class="form-element-default"></td>
+                    </tr>
+                    <tr>
+                        <th class="required-field"><label>전자우편</label></th>
+                        <td><input type="email" name="email" class="form-element-default"></td>
+                    </tr>
+                    <tr>
+                        <th><label>계정분류</label></th>
+                        <td>
+                            <select class="form-element-default" name="duty_code_id">
+                                <option></option>
+                                {% for account_type_code in account_type_code_list %}
+                                    <option value="{{ account_type_code.id }}">{{ account_type_code.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="required-field"><label>전화번호</label></th>
+                        <td><input type="text" name="phone_number" class="form-element-default"></td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr class="buttonToolbar">
+                        <td colspan="2" class="text-right">
+                            <span class="button save">등록</span>
+                        </td>
+                    </tr>
+                    </tfoot>
+                </table>
+
+            </form>
+        </section>
+    </article>
+
+
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/code_table/js/yearly_code_usage_list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/base/code_table/css/list.css' %}">
+{% endblock %}
+{% block title %}
+    {{ year }} 년 {{ title }} 코드 사용 여부 목록
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <input type="hidden" name="year" id="year" value="{{ year }}">
+
+    <article class="context-horizontal-center">
+        <form method="get" onsubmit="removeEmptyValue(event)">
+            <table class="table table-bordered search-table">
+                <thead>
+                    <tr>
+                        <th colspan="3" class="text-center header">조회조건</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th>연도</th>
+                    <td><input type="number" min="2019" id="year" name="search_year" max='{% now 'Y' %}' value="{{ year }}" class="form-element-default"></td>
+                    <td class="text-center"><input type="submit" class="button search" value="조회"></td>
+                </tr>
+                </tbody>
+            </table>
+        </form>
+    </article>
+
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar flex-between">
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+            <section>
+                <button class="button save" id="save">저장</button>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <colgroup>
+
+            </colgroup>
+            <thead>
+                <th>분류</th>
+                <th>코드</th>
+                <th>명칭</th>
+                <th>설명</th>
+                <th>사용여부</th>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id" value="{{ object.id }}">
+                            {% if object.yearly_code_usage_id  %}
+                            <input type="hidden" name="yearly_code_usage_id" value="{{ object.yearly_code_usage_id }}">
+                            {% endif %}
+                            <input type="hidden" name="parent_id" value="{{ object.parent.id }}">
+                            {{ object.type|default_if_none:'' }}
+                            </td>
+                        <td>{{ object.code|default_if_none:'' }}</td>
+                        <td><a href="{% url 'code_table_child_list' parent_id=object.id %}">{{ object.name|default_if_none:'' }}</a></td>
+                        <td>{{ object.comment|default_if_none:'' }}</td>
+                        <td class="text-center">
+                            <input type="checkbox" class="form-element-default" name="usage"
+                                   {% if object.yearly_code_usage_id %}checked{% endif %}>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+{% endblock %}

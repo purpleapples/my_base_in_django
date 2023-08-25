@@ -1,0 +1,31 @@
+.icon-background-gray-circle{
+    background-color:gray;
+    color:white;
+    border-radius:50%;
+    cursor:pointer;
+}
+.icon-detail{
+    content:url('/static/img/icon/icon-detail.png');
+}
+.icon-save{
+    display:block;
+    content:url('/static/img/icon/icon-save.png');
+}
+
+.icon-menu{
+    display:block;
+    content:url('/static/img/icon/icon-menu.png');
+}
+.icon-download{
+    display:block;
+    content:url('/static/img/icon/icon-download.png');
+}
+.icon-delete{
+    display:block;
+    content:url('/static/img/icon/icon-delete.png');
+    content-visibility: visible;
+}
+
+.content-arrow-down::after{
+    content:' \25bc';
+}

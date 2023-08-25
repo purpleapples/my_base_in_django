@@ -1,0 +1,22 @@
+
+.tab-container .body {
+    width:700px;
+}
+.table {
+    width:100%;
+}
+
+textarea{
+    height:150px;
+}
+#tree{
+    height:91.5%;
+}
+tfoot td{
+    text-align:right;
+}
+#menu-table th{
+    text-align:left !important;
+    padding-left:50px;
+    width:150px;
+}

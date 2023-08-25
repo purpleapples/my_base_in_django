@@ -1,0 +1,14 @@
+
+.search-table{
+    width:300px;
+    margin-bottom:100px;
+}
+.search-table .header{
+    font-size:17px !important;
+}
+#table{
+    width: 1900px;
+}
+#table2{
+    width: 50vw;
+}

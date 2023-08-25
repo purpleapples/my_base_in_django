@@ -1,0 +1,95 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    화면 권한 관리
+{% endblock %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/menu/menu_permission/js/screen_list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu_permission/css/screen_list.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/tree.js' %}"></script>
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        <section class="buttonToolbar flex-between">
+            <section>
+                <p>조회 수량 총 대상 갯수  <span style='color:red;'>{{object_list|length}} </span> 개 입니다.</p>
+            </section>
+            <section>
+                <button id="table-delete" class="button delete">정보 삭제</button>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <th>화면</th>
+                    <th>부서</th>
+                    <th>직책</th>
+                    <th>사용자</th>
+                    <th>기능</th>
+                </tr>
+            </thead>
+            <tbody class="input-row">
+                <tr>
+                    <td>
+                        <select class="form-element-default" name="menu_id">
+                            {% for menu_screen in menu_screen_list %}
+                                <option value="{{ menu_screen.id }}"> {{ menu_screen.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-element-default" name="team_id">
+                            <option value=""></option>
+                            {% for team in team_list %}
+                                <option value="{{ team.id }}"> {{ team.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-element-default" name="duty_code_id">
+                            <option value=""></option>
+                            {% for duty_code in duty_code_list %}
+                                <option value="{{ duty_code.id }}"> {{ duty_code.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-element-default" name="account_id">
+                            <option value=""></option>
+                            {% for account in account_list %}
+                                <option value="{{ account.id }}"> {{ account.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <span class="button add"
+                              onclick="defaultPost(event, 'tr','{% url 'menu_permission_api' %}' )">등록</span>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>
+                        <input type="hidden" name="id" value="{{ object.id }}">
+                        <input type="hidden" name="menu_id" value="{{ object.menu.id }}">
+                        <input type="hidden" name="team_id" value="{{ object.team.id }}">
+                        <input type="hidden" name="duty_code_id" value="{{ object.duty_code.id }}">
+                        <input type="hidden" name="account_id" value="{{ object.account.id }}">
+                        {{ object.menu.title }}
+                    </td>
+                    <td>{{ object.team.name }}</td>
+                    <td>{{ object.duty_code.name }}</td>
+                    <td>{{ object.account.name }}</td>
+                    <td class="text-center"><button class="button update" onclick="changeToEditMode(this,'/base/menu-permission/api')">수정</button></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+    {% include 'common/modal/delete_rows_modal.html' %}
+{% endblock %}

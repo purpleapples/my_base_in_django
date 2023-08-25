@@ -1,0 +1,73 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/code_group/js/yearly_list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/base/code_group/css/list.css' %}">
+{% endblock %}
+{% block title %}
+    {{ title }}
+{% endblock %}
+{% block contents %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar flex-between">
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+            <section>
+                <button id="table-delete" class="button delete">정보 삭제</button>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <colgroup></colgroup>
+            <thead>
+                <th>년도</th>
+                <th>과목</th>
+                <th>설명</th>
+                <th>기능</th>
+            </thead>
+            <tbody class="input-row">
+                <tr>
+                    {% csrf_token %}
+                    <td>
+                        <input type="hidden" name="group_code_id" value="{{ group_code_id }}">
+                        <input type="hidden" name="category" value="{{ category }}">
+                        <select name="year" id="year" class="form-element-default">
+                            {% for year in year_list %}
+                            <option value="{{ year }}">{{ year }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-element-default" name="belonged_code_id" id="belonged_code_id">
+                        </select>
+                    </td>
+                    <td><textarea class="form-element-default" name="comment"></textarea></td>
+                    <td class="text-center"><input class="button add" type="submit" value="등록" onclick="defaultPost(event, 'tr' ,'/base/code-group/api')"></td>
+                </tr>
+            </tbody>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td class="text-right">
+                            <input type="hidden" name="group_code_id" value="{{ object.group_code.id }}">
+                            <input type="hidden" name="category" value="{{ category }}">
+                            <input type="hidden" name="id" value="{{ object.id }}">
+                            {{ object.year }}</td>
+                        <td>{{ object.belonged_code.name}}</td>
+                        <td>{{ object.comment|default_if_none:'' }}</td>
+                        <td class="text-center"><button class="button update" onclick="changeToEditMode(this,'/base/code-group/api')">수정</button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+{% endblock %}

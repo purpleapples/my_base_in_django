@@ -1,0 +1,118 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'common/css/nav.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'common/css/tree.css' %}">
+<script type="text/javascript" src="{% static 'common/js/nav.js' %}"></script>
+<nav class="nav rotatable-horizontal">
+    <section class="nav-header">
+        <a class="link"><span class="title-brand">default base</span></a>
+        <button class="pc-hidden"><span class=" icon-menu"></span></button>
+    </section>
+    {% if request.user.is_authenticated %}
+    <section>
+        <article class="nav flexible menu-list">
+            <ul class="menu-list-container">
+            {% for grand_parent in request.session.menu_list %}
+            <li>
+                <section class="menu-list-section">
+                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>{{ grand_parent.title }}</button>
+                {% if 'children' in grand_parent.keys %}
+                    <ul class="menu-list dropdown section">
+                        {% for parent in grand_parent.children %}
+                        <li>
+                            <section class="menu-list-section">
+                                <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>{{ parent.title }}</button>
+                                {% if 'children' in parent.keys %}
+                                <ul class="menu-list dropdown section">
+                                {% for screen in parent.children %}
+                                    <li class="dropdown-element"><a href="{{ screen.url }}"><span class="glyphicon glyphicon-plus"></span>{{ screen.title }}</a></li>
+                                {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </section>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+            </li>
+            {% endif %}
+            {% endfor %}
+            {% if request.user.is_superuser %}
+                <li>
+                    <section class="menu-list-section">
+                        <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>시스템관리</button>
+                        <ul class="menu-list dropdown section">
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>사용자 관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li class="dropdown-element"><a href="{% url 'add_account' %}"><span class="glyphicon glyphicon-plus"></span>사용자 등록</a></li>
+                                        <li class="dropdown-element"><a href="{% url 'get_account_list' %}"><span class="glyphicon glyphicon-list"></span>사용자 목록</a></li>
+                                    </ul>
+                                </section>
+                            </li>
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>변경 기록 관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li class="dropdown-element"><a href="{% url 'get_outdated_record_list' table='none' %}"><span class="glyphicon glyphicon-plus"></span>변경 및 삭제 기록 목록</a></li>
+                                    </ul>
+                                </section>
+                            </li>
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>게시글 관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li class="dropdown-element"><a href="{% url 'bulletin_board_create' %}"><span class="glyphicon glyphicon-plus"></span>게시글 등록</a></li>
+                                        <li class="dropdown-element"><a href="{% url 'bulletin_board_list' %}"><span class="glyphicon glyphicon-list"></span>게시글 목록</a></li>
+                                    </ul>
+                                </section>
+                            </li>
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>코드 관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li class="dropdown-element"><a href="{% url 'code_table_list' %}"><span class="glyphicon glyphicon-list"></span>코드 목록</a></li>
+                                        <li class="dropdown-element"><a href="{% url 'code_group_list' %}"><span class="glyphicon glyphicon-list"></span>코드 그룹 목록</a></li>
+                                    </ul>
+                                </section>
+                            </li>
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>데이터 관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li class="dropdown-element"><a href="{% url 'analysis_table_data' %}"><span class="glyphicon glyphicon-list"></span>데이터 확인</a></li>
+                                    </ul>
+                                </section>
+                            </li>
+                            <li>
+                                <section class="menu-list-section">
+                                    <button class="menu dropdown-toggler content-arrow-down" aria-haspopup="true" aria-expanded='false'>메뉴관리</button>
+                                    <ul class="menu-list dropdown section">
+                                        <li>
+                                            <section>
+                                                <ul class="menu-list">
+                                                    <li class="dropdown-element"><a href="{% url 'menu_list' %}"><span class="glyphicon glyphicon-plus"></span>메뉴 관리</a></li>
+                                                    <li class="dropdown-element"><a href="{% url 'screen_list' %}"><span class="glyphicon glyphicon-plus"></span>화면 관리</a></li>
+                                                </ul>
+                                            </section>
+                                        </li>
+                                    </ul>
+                                </section>
+                            </li>
+
+                        </ul>
+                    </section>
+                </li>
+                {% endif %}
+            </ul>
+            <article class="func">
+                <div class="flex-between">
+                    <a class="func_btn" href="{% url 'update_account' pk=request.user.id %}"><span class="glyphicon glyphicon-wrench"></span> <span class="func_title">정보수정</span></a>
+                    <a class="func_btn logout_btn" href="#" onclick="logoutSystem();"><span class="glyphicon glyphicon-off"></span> <span class="func_title">로그아웃</span></a>
+                </div>
+            </article>
+        </article>
+        {% endif %}
+    </section>
+
+</nav>

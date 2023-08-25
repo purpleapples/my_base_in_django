@@ -1,0 +1,152 @@
+.required-field:before{
+    content:'* ';
+    color:red;
+}
+
+.label-default{
+    display: inline-block;
+    max-width: 100%;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.form-element-default{
+    display: block;
+    width: 100%;
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+}
+.form-element-default:read-only, .form-element-default:-moz-read-only{
+    background:#eeeeee;
+    cursor:none;
+}
+.filebox input[type="file"] {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+}
+
+.filebox label {
+    display: inline-block;
+    padding: 0 20px;
+    color: #464646;
+    vertical-align: middle;
+    background-color: #ffffff;
+    cursor: pointer;
+    border: 1px solid #a2a2a2;
+    border-radius: 4px;
+    margin-bottom: 0;
+    height: 35px;
+    line-height: 35px;
+}
+
+/* named upload */
+.filebox .upload-name {
+    display: inline-block;
+    width: 250px;
+    height: 35px;
+    font-size: 15px;
+    padding: 0 10px;
+    vertical-align: middle;
+    background-color: #f5f5f5;
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    margin-left: 30px;
+    margin-right: 7px;
+}
+.filebox {
+    margin-top: 20px;
+}
+/* Form Add , Delete */
+.formBtn {
+    border:1px solid #ddd;
+    width:80px;
+    height:34px;
+    line-height: 34px;
+    text-align: center;
+    cursor:pointer;
+    border-radius: 3px;
+}
+.formBtn.add {
+    color:#8a8aff;
+    border:1px solid #8a8aff;
+}
+.formBtn.del {
+    color:#ff6565;
+    border:1px solid #ff6565;
+}
+
+/* 등록&수정 폼 하단 버튼 */
+.regBtnWrap {
+    overflow: hidden;
+    margin-top:20px;
+    padding-top:20px;
+    border-top:1px solid #ececec;
+    text-align: right;
+}
+.regBtnWrap .btn {
+    box-shadow: none;
+    border: none;
+    padding: 10px 40px;
+    display:inline-block;
+}
+.regBtnWrap .btn:hover {
+    opacity: 0.8;
+}
+.regBtnWrap .btn-primary {
+    background: #816aff;
+}
+.regBtnWrap .btn-success {
+    background: #33af81;
+}
+.regBtnWrap .btn-danger {
+    background: #777777;
+    margin-left:10px;
+}
+
+/* 등록 & 수정 페이지 폼 */
+.form-container {
+    border: 1px solid #cecece;
+    border-radius: 3px;
+    box-shadow: 0 0 5px #e6e6e6;
+}
+.form-container + .form-container {
+    margin-top:25px;
+}
+.form-container .form-header {
+    padding: 10px 15px;
+    text-align: left;
+    font-size: 17px;
+    border-bottom: 1px solid #ddd;
+    display: flex;
+    align-items: center;
+    background:#f2f6ff;
+    color:#4a92ff;
+    margin:0;
+}
+.form-container .form-header.req {
+    background:#fff2f2;
+    color:#ff4a4a;
+}
+.form-container .form-header .title {
+    margin-left:7px;
+}
+.form-container .form-body {
+    padding:20px;
+}
+textarea {
+    width:100%;
+    resize:none;
+}

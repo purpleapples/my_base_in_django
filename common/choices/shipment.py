@@ -1,0 +1,19 @@
+# 출하 : 출하 지시, 출하 진행, 출하 완료
+# 운송 : 출하 완료 목록을 받아서 운송 목록 으로, 운송 결과 입력
+
+
+WAIT = 0
+ONGOING = 1
+COMPLETE = 2
+CANCEL = 3
+TRANSPORTATION = 4
+ARRIVAL = 5
+SHIPMENT_STATUS = (
+	(WAIT, 'WAIT'),
+	(ONGOING, 'ONGOING'),
+	(COMPLETE, 'COMPLETE'),
+	(CANCEL, 'CANCEL'),
+	(TRANSPORTATION, 'TRANSPORTATION'),
+	(ARRIVAL, 'ARRIVAL')
+
+)

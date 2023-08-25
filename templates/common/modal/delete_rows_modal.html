@@ -1,0 +1,22 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+<script type="text/javascript" src="{% static 'common/js/modal.js' %}"></script>
+<div id="delete-rows-modal" class="modal cover-background">
+
+    <div class="modal-content default">
+        <div class="img-box text-center">
+            <img class="modal-character-image" src="{% static '/img/pin.png' %}" alt="핀">
+        </div>
+        <div class="text-center">
+            <span class="confirm-message">정말 삭제하시겠습니까?</span>
+            <br/>
+            <span class="sub-message warn">한 번 삭제된 데이터는 복원이 불가능합니다.</span>
+        </div>
+        <div class="buttonToolbar text-center">
+            <input type="hidden" name="pkList">
+            <input type="hidden" name="url" value=".">
+            <span class="button delete" onclick="deleteRowDefault(this);">예</span>
+            <span class="button cancel" onclick="closeDeleteModal(this);">아니오</span>
+        </div>
+    </div>
+</div>

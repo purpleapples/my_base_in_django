@@ -1,0 +1,72 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/system/bulletin_board/js/detail.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/bulletin_board/css/detail.css' %}">
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <input type="hidden" id="id" name="id" value="{{ object.id }}">
+    <article class="context-horizontal-center">
+{#            회색의 배경을 입히고 lable 부분 강조를 없애고 내용만 띄운다. #}
+            <section class="list-default">
+                <section class="buttonToolbar flex-between">
+                    <a class="link" href="{% url 'bulletin_board_list' %}">목록으로</a>
+                    {% if request.user.name == object.access_log.account.name %}
+                    <a class="button link" href="{% url 'bulletin_board_update' pk=object.pk %}">수정하기</a>
+                    <button class="button delete" id="delete">삭제하기</button>
+                    {% endif %}
+                </section>
+                <table class="table">
+                    <col width="20%">
+                    <col width="80%">
+                    <tbody >
+                    <tr>
+                        <th>작성자</th>
+                        <td>{{ object.access_log.account.name }}</td>
+                    </tr>
+                    <tr>
+                        <th>종류</th>
+                        <td>{{ object.get_type_display }}</td>
+                    </tr>
+                    {% if object.type == 4 %}
+                        <tr>
+                            <th>질의 제목</th>
+                            <td>{{ object.question_relation.last.question.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>질의 내용</th>
+                            <td>{{ object.question_relation.last.question.content|linebreaks }}</td>
+                        </tr>
+                    {% endif %}
+
+                    <tr>
+                        <th>{% if object.type == 4 %}답변{% endif %}제목</th>
+                        <td>{{ object.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>{% if object.type == 4 %}답변{% endif %}내용</th>
+                        <td  id="content">{{ object.content|linebreaks }}</td>
+                    </tr>
+                    <tr>
+                        <th>첨부파일목록</th>
+                        <td>
+                            <div class="list-default">
+                                {% for attachment in attachment_file_list %}
+                                    <a download href="/media/{{ attachment.file }}">{{ attachment.file_name }}</a>
+                                    </br>
+                                {% endfor %}
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+    </article>
+
+    {% include 'common/modal/delete_modal.html' %}
+{% endblock %}

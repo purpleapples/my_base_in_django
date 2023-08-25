@@ -1,0 +1,45 @@
+{% if order_field_list %}
+    {% load static %}
+    <script src="{% static 'js/component/search_order.js' %}"></script>
+<article  class="panel" style="width:300px;float:right;">
+    <section class="panel-heading">
+        <p class="title text-description">정렬 기준 </p>
+        <p class="text-right">
+            <span style="color:red;">빨강:오름차순 </span> / <span style="color:blue;">파랑:내림차순</span>
+        </p>
+    </section>
+    <section class="panel-body">
+        <section class="flex-between">
+            <select name="order_field_list" class="form-element-default" data-transfer="false" style="width:200px">
+                {% if order_field_list %}
+                        <option>--------</option>
+                    {% for field in order_field_list %}
+                        {% if field.verbose_name not in order_by.values %}
+                        <option value="{{ field.name }}"{% if True %}class=""{% endif %}>{{ field.verbose_name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </select>
+            <span class="button function" id="addOrderFieldButton" style="margin-right:10px;">추가</span>
+        </section>
+    </section>
+    <section class="selected-fields">
+        {% for field in order_by.values %}
+            <section class="field-section">
+                <span style="color:{% if '-' in field.0 %}blue{% else %}red{% endif %}" onclick="changeAscending(this)">{{ forloop.counter }}.{{ field }}</span>
+                <span style="cursor:pointer;" onclick="removeField(this.parentElement)"> X</span>
+            </section>
+        {% endfor %}
+    </section>
+    <input type="hidden" name="order_by" value="{{ order_by.keys|join:',' }}">
+</article>
+<article class="hidden selected-option-container">
+{% if order_field_list %}
+    {% for field in order_field_list %}
+        {% if field.verbose_name in order_by.values %}
+        <option value="{{ field.name }}"{% if True %}class=""{% endif %}>{{ field.verbose_name }}</option>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</article>
+{% endif %}

@@ -1,0 +1,40 @@
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+<article class="modal cover-background" id="edit-modal">
+    <section class="modal-content small list-default" >
+        <h4 class="text-center modal-title" id="edit-modal-title"></h4>
+        <section id="history-section">
+            <p class="buttonToolbar text-left">수정 이력</p>
+            <table id="edit-history" class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>수정자</th>
+                        <th>수정일자</th>
+                        <th>이전값</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </section>
+        <section id="edit-section">
+            <input type="hidden" name="table_name">
+            <input type="hidden" name="id">
+            <input type="hidden" name="url">
+            <input type="hidden" name="defaultParams">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>속성</th>
+                        <th>입력값</th>
+                    </tr>
+                </thead>
+                <tbody id="input-body"></tbody>
+            </table>
+        </section>
+        <section class="buttonToolbar text-right">
+            <button class="button save" onclick="saveWithOutdatedRecord(this)">수정</button>
+            <button class="button close"  onclick="closeModal(this)">닫기</button>
+        </section>
+    </section>
+</article>

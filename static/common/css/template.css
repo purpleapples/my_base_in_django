@@ -1,0 +1,344 @@
+/*********************************************** template default for design ******************************************/
+
+/*********************************************** template batch *******************************************************/
+.list-default > *:not(:last-child){
+    margin-bottom:1.2em;
+}
+.list-default > *{
+    margin-left:0.5rem;
+    margin-right:0.5rem;
+}
+
+form{
+    margin-block-end:0;
+}
+
+.among{
+/*  두 개의 주요 element 와 그 사이의 꾸밈자 배치 용도 */
+    display:flex;
+    gap:10px;
+    border:0 !important;
+}
+.among span{
+    line-height:2.5;
+}
+.grid.nine-one{
+    grid-template-columns:90% 10%; grid-gap:15px;
+}
+.grid.file-box{
+    padding-bottom:15px;grid-template-columns:0% 60% 30%;
+}
+.grid.file-box label{
+    cursor:pointer;
+}
+.clear{
+    color:black;
+}
+.count{
+    background:#81D3F883;
+    padding:13px;
+    border-radius: 4px;
+    margin-right:10px;
+}
+.checkAll{
+    background:#169BD5;
+}
+.border-default{
+    border:1px solid rgb(204, 204, 204);
+    border-radius: 4px;
+}
+.background-default{
+    background:#ddd;
+    margin-top: 10px;
+}
+.selected {
+    border:2px solid #252 !important;
+}
+/******************************************************** button *******************************************************/
+.act {
+    background: rgba(206, 206, 206, 0.68);
+}
+.button:disabled, button:disabled{
+    background:#cecece;
+    color:#eeeeee;
+}
+button:hover, .button:hover{
+    cursor:pointer;
+}
+.button:not(disabled):hover, button:not(disabled):hover {
+  color:#cecece;
+  box-shadow: 0 5px #666;
+  cursor:pointer;
+}
+.button:active, button:active {
+  background-color: #3e8e41; /* use for mutation observer to detect button click event */
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+.buttonToolbar {
+    margin-bottom:15px;
+}
+.buttonToolbar.bottom{
+    border-top:1px solid #ccc;
+    padding-top: 10px;
+}
+.buttonToolbar *{
+    margin-right:3px;
+}
+.buttonToolbar:last-child{
+    margin-right:0;
+}
+.button {
+    display:inline-block;
+    box-sizing: border-box;
+    color:white;
+    border-radius: 4px;
+    border:none;
+    text-decoration: none;
+    text-align:center;
+    vertical-align: center;
+    cursor:pointer;
+    background-color:rgb(255, 255, 255);
+    background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+}
+.save{
+    background-image: linear-gradient(to top, #6ac76a 0, #d4f1d4 100%);
+}
+.close{
+    background-image: linear-gradient(to top, #280619 0, #9a9a9a 70%);
+}
+.reset {
+    background-image: linear-gradient(to top, #b3c9b3 0, #d4f1d4 100%);
+}
+.yes{
+    background:green;
+}
+.no{
+    background: #e5e5a9;
+}
+.download{
+    cursor:pointer;
+}
+.button.download{
+    background: #53c0b9;
+}
+.buttonToolbar .button, .buttonToolbar a{
+    padding:10px 30px;
+    font-size:15px;
+}
+.buttonToolbar button:disabled, .buttonToolbar a:disabled {
+    background:#ddd;
+}
+/****************************************************** background color for usage ************************************/
+.add{
+    background:#169BD5;
+}
+.delete{
+    background: #D9001B;
+}
+.button.link{
+    background:rgb(0, 170, 170);
+}
+.popup{
+    background: #8080FF;
+}
+.function{
+    background: #63A013FE;
+}
+.back{
+    background: #555555;
+}
+.information{
+    background:#fbb22b;
+}
+.search{
+    color:black;
+}
+.cancel{
+    background: #555555;
+}
+.work-standard{
+    background: #8577d7;
+}
+/************************************************ color for usage *****************************************************/
+.word-information{
+    color:#342bfb;
+    font-weight:bold;
+}
+/******************************************************* scroll *******************************************************/
+.scroll-container{
+    overflow:auto;
+}
+.scroll-element {
+    white-space:nowrap;
+    max-width:none;
+}
+/******************************************************* tap container ************************************************/
+.switch-tab-list{
+    height: 30px;
+    color: #ccc;
+    font-weight: bold;
+    gap: 10px;
+    padding-left: 10px;
+}
+
+.switch-tab-list li{
+    border:3px solid #ccc;
+    border-top-left-radius:4px;
+    border-top-right-radius:4px;
+    line-height: 1.6;
+    padding-left:5px;
+    padding-right:5px;
+    cursor:pointer;
+    border-bottom:none;
+}
+
+.switch-tab-list li:hover{
+    color: #8c7f6c;
+    border-top-color:#8c7f6c;
+    opacity: 0.9 !important;
+}
+.switch-tab-list li.act{
+    background:white;
+    color:#8c7f6c;
+    border-left:1px solid #8c7f6c;
+    border-right:1px solid #8c7f6c;
+    border-top-color:#8c7f6c;
+}
+.switch-tab-list li:not(.act){
+    background:white;
+    color:#8c7f6c;
+    opacity:0.5;
+}
+.tab-container .body{
+    border:1px solid #8c7f6c;
+    border-radius: 2px;
+}
+.switch.left{
+    background:linear-gradient(to right, #828282, #313131);
+}
+.switch.right{
+    background:linear-gradient(to left, #6bb9fb, #1e80e6);
+}
+
+/* overflow*/
+.overflow-y{
+    overflow-y: auto;
+}
+.overflow-y.md{
+    max-height: 680px;
+}
+/***************************************************** pagination  ****************************************************/
+.current-target {
+    background: rgba(246, 241, 23, 0.84) !important;
+}
+.page-link{
+    cursor:pointer;
+}
+.pagination {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top:20px;
+  border-radius: 0.25rem;
+}
+
+.page-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+}
+
+.page-link:hover {
+  color: #0056b3;
+  text-decoration: none;
+  background-color: #e9ecef;
+  border-color: #dee2e6;
+}
+
+.page-link:focus {
+  z-index: 2;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.page-link:not(:disabled):not(.disabled) {
+  cursor: pointer;
+}
+
+.page-item:first-child .page-link {
+  margin-left: 0;
+  border-top-left-radius: 0.25rem;
+  border-bottom-left-radius: 0.25rem;
+}
+
+.page-item:last-child .page-link {
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
+}
+
+.page-item.active .page-link {
+  z-index: 1;
+  color: #fff;
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  cursor: auto;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+/************************************************* content insertion **************************************************/
+.notify-new:after {
+    content:'(신규)';
+    color:red
+}
+ .plus-block:after{
+     content:'신규 추가';
+     cursor:pointer;
+     color:white;
+     background:blue;
+     border-radius: 4px;
+     padding:10px;
+ }
+/************************************************* tool tip ***********************************************************/
+  /* Tooltip container */
+  .tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  /* Tooltip text */
+  .tooltip .tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: #f39800;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    position: absolute;
+    z-index: 1;
+    bottom: 100%;
+      left:100%;
+    /*transform: translateX(-50%);*/
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  /* Show the tooltip on hover */
+  .tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+  }

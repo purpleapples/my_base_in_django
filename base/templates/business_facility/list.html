@@ -1,0 +1,77 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/business_facility/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/base/business_facility/css/list.css' %}">
+{% endblock %}
+{% block title %}
+    사업 시설 관리
+{% endblock %}
+{% block contents %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar flex-between" dir="rtl">
+            <section>
+                <button id="table-delete" class="button delete">정보 삭제</button>
+            </section>
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <colgroup>
+
+            </colgroup>
+            <thead>
+                <th>사업</th>
+                <th>시설명</th>
+                <th>관리면적</th>
+                <th>영구폐쇄일자</th>
+                <th>비고</th>
+                <th>기능</th>
+            </thead>
+            <tbody class="input-row">
+                <tr>
+                    {% csrf_token %}
+                    <td><select name="business_id" class="form-element-default" required>
+                        {% for business in business_list %}
+                            <option value="{{ business.id }}">{{ business.name }}</option>
+                        {% endfor %}
+                    </select></td>
+                    <td><input type="text" class="form-element-default" name="name"></td>
+                    <td><input type="number"
+                               max="100000" min="0"
+                               class="form-element-default input number" name="area"></td>
+                    <td><input type="date" name="close_date" class="form-element-default"></td>
+                    <td><textarea class="form-element-default" name="comment"></textarea></td>
+                    <td class="text-center"><input class="button add" type="submit" value="등록" onclick="defaultPost(event, 'tr' ,'/base/business-facility/api')"></td>
+                </tr>
+            </tbody>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id" value="{{ object.id }}">
+                            <input type="hidden" name="business_id" value="{{ object.business_id }}">
+                            {{ object.business.name }}
+                        </td>
+                        <td>{{ object.name|default_if_none:'' }}</td>
+                        <td>{{ object.area|intcomma }}</td>
+                        <td>{{ object.close_date|default_if_none:'' }}</td>
+                        <td>{{ object.comment|default_if_none:'' }}</td>
+                        <td class="text-center"><button class="button update" onclick="changeToEditMode(this,'/base/business-facility/api')">수정</button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+{% endblock %}

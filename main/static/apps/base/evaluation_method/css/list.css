@@ -1,0 +1,28 @@
+.list-default, table{
+    width:1600px;
+}
+table td:first-child, table th:first-child {
+    width:60px;
+}
+table td:nth-child(2), table th:nth-child(2){
+    width:100px;
+}
+table td:nth-child(3), table th:nth-child(3){
+    width:100px;
+}
+table td:nth-child(5), table th:nth-child(5){
+    width:100px;
+}
+table td:nth-child(6), table th:nth-child(6){
+    width:100px;
+}
+/*table td:nth-child(8), table th:nth-child(8){*/
+/*    width:50%;*/
+/*}*/
+
+table tbody tr{
+    height: 100px !important;
+}
+table tbody.input-row textarea{
+    height:100px !important;
+}

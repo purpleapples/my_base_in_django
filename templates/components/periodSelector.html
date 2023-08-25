@@ -1,0 +1,9 @@
+{% load static %}
+<script type="text/javascript" href="{% static 'js/common/form_control.js' %}"></script>
+<select name="period_selector" class="form-element-default" data-target="" onchange="changePeriod(this)">
+    <option value="">기본</option>
+    <option value="0">금일</option>
+    <option value="1">금주</option>
+    <option value="2">금월</option>
+    <option value="3">금년</option>
+</select>

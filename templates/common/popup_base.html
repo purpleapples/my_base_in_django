@@ -1,0 +1,81 @@
+{% load static %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+
+  <script type="text/javascript" src="{% static 'common/js/jquery-latest.js' %}"></script>
+  <script src="{% static 'common/js/jquery-ui.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'common/css/jquery-ui.min.css' %}">
+  <script src="{% static 'common/js/jquery.ui.touch-punch.min.js' %}"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/bootstrap-theme.min.css' %}">
+  <script type="text/javascript" src="{% static 'common/js/bootstrap.min.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'common/js/moment-with-locales.js' %}"></script>
+  <script src="{% static 'common/js/moment.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/bootstrap-datetimepicker.min.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'common/js/jquery.tablesorter.combined.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/jquery.tablesorter.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/jquery.tablesorter.widgets.min.js' %}"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/theme.default.css' %}">
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/tableexport.css' %}">
+
+  <script type="text/javascript" src="{% static 'common/js/xlsx.core.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/Blob.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/FileSaver.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/tableexport.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/Chart.js' %}" ></script>
+  <script type="text/javascript" src="{% static 'common/js/chartjs-plugin-datalabels.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/jszip.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/jszip-utils.min.js' %}"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
+  <script type="text/javascript" src="{% static 'common/js/choices.min.js' %}"></script>
+
+  <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}">
+  <script type="text/javascript" src="{% static 'js/base.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/pdfobject.min.js' %}"></script>
+
+  <script type="text/javascript" src="{% static 'common/js/exceljs.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'common/js/table2excel.core.js' %}"></script>
+  
+  {% block header %}
+  {% endblock %}
+</head>
+    
+<body>
+    <input type="hidden" name="is_user" value="{{ request.session.username }}">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col col-lg-12 text-center">
+                <h1>{% block title %}(no title){% endblock %}</h1>
+            </div>
+        </div>
+        {% block contents %}   
+        {% endblock %}
+    </div>
+
+    <!-- 데이터 처리중 안내 -->
+    <div class="load_bg">
+        <div class="load_box">
+            <div class="load_img">
+                <img src="{% static 'img/load-spin.gif' %}" alt="처리중">
+            </div>
+            <div class="cont">
+                <p>데이터 처리중입니다.</p>
+                <p>잠시만 기다려 주시기 바랍니다.</p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+{{ form.media }}

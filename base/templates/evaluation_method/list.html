@@ -1,0 +1,84 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/evaluation_method/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/base/evaluation_method/css/list.css' %}">
+{% endblock %}
+{% block title %}
+    지표 평가 방법 관리
+{% endblock %}
+{% block contents %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar flex-between" dir="rtl">
+            <section>
+                <button id="table-delete" class="button delete">정보 삭제</button>
+            </section>
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <colgroup>
+
+            </colgroup>
+            <thead>
+                <th class="required-field">귀속년도</th>
+                <th class="required-field">대상</th>
+                <th class="required-field">지표성격</th>
+                <th class="required-field">평가방법명</th>
+                <th class="required-field">최고 목표 가중치</th>
+                <th class="required-field">최저 목표 가중치</th>
+                <th class="required-field">상세</th>
+                <th>작성자</th>
+                <th>생성일시</th>
+                <th>갱신일시</th>
+                <th>기능</th>
+            </thead>
+            <tbody class="input-row">
+                <tr>
+                    {% csrf_token %}
+                    <td><input type="number" class="form-element-default input year" id="year" name="year"></td>
+                    <td><input type="text" class="form-element-default" name="target"></td>
+                    <td><input type="text" class="form-element-default" name="evaluation_type"></td>
+                    <td><input type="text" class="form-element-default" name="method_name"></td>
+                    <td><input type="number" class="form-element-default input number" name="highest_goal_percent"></td>
+                    <td><input type="number" class="form-element-default input number" name="lowest_goal_percent"></td>
+                    <td><textarea name="detail" class="form-element-default"></textarea>
+                    </td>
+                    <td><input type="hidden" name="author_id" value="{{ request.user.id }}">
+                        <input type="text" class="form-element-default" name="author_name" value="{{ request.user.name }}" readonly></td>
+                    <td></td>
+                    <td></td>
+                    <td class="text-center"><input class="button add" type="submit" value="등록" onclick="defaultPost(event, 'tr' ,'/base/evaluation-method/api/')"></td>
+                </tr>
+            </tbody>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td class="text-right"><input type="hidden" name="id" value="{{ object.id }}">
+                            {{ object.year }}</td>
+                        <td>{{ object.target }}</td>
+                        <td>{{ object.evaluation_type }}</td>
+                        <td>{{ object.method_name }}</td>
+                        <td class="text-right">{{ object.highest_goal_percent }}</td>
+                        <td class="text-right">{{ object.lowest_goal_percent }}</td>
+                        <td>{{ object.detail|linebreaksbr }}</td>
+                        <td>{{ object.access_log.account.name }}</td>
+                        <td>{{ object.create_dt|date:'Y-m-d' }}</td>
+                        <td>{{ object.update_dt|date:'Y-m-d' }}</td>
+                        <td class="text-center"><button class="button update" onclick="changeToEditMode(this,'/base/evaluation-method/api/')">수정</button></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+{% endblock %}

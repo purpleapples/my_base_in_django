@@ -1,0 +1,59 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    게시글 목록
+{% endblock %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script src="{% static 'apps/system/bulletin_board/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/bulletin_board/css/list.css' %}">
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+
+    <article class="context-horizontal-center">
+        <section class="list-default">
+            <section class="buttonToolbar flex-between">
+                <p>현재 페이지의 목록 갯수는 <span style='color:red;'>　{{object_list|length}}</span>　개 / 총 대상 갯수  <span style='color:red;'>{{total_cnt}} </span> 개 입니다.</p>
+                <div>
+                    <a class="button link" href="{% url 'bulletin_board_create' %}"> 등록 </a>
+                </div>
+            </section>
+            <table class="table table-bordered" id="table">
+                <colgroup>
+                    <col>
+                    <col>
+                    <col>
+                    <col>
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>종류</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>작성일시</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for object in object_list %}
+                    <tr>
+                        <td><input type="hidden" name="id" value="{{ object.id }}">{{ object.get_type_display }}</td>
+                        <td>
+                            {% if object.type == 4  and object.question_relation.exists %}
+                            <a href="{% url 'bulletin_board_detail' pk=object.question_relation.last.question.id %}">[게시글]{{ object.question_relation.last.question.title }}</a><br/>->[답변]{% endif %}
+                            <a href="{% url 'bulletin_board_detail' pk=object.id %}">{{ object.title }}</a>
+                        </td>
+                        <td>{{ object.access_log.account.name }}</td>
+                        <td>{{ object.create_dt }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+            {% if is_paginated %}
+                {% include 'components/page_components.html' %}
+            {% endif %}
+        </article>
+    </div>
+{% include 'common/modal/delete_rows_modal.html' %}
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    게시글 생성
+{% endblock %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/system/bulletin_board/js/create.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/bulletin_board/css/create.css' %}">
+{% endblock %}
+{% block contents %}
+    <article class="context-horizontal-center">
+{#            회색의 배경을 입히고 lable 부분 강조를 없애고 내용만 띄운다. #}
+        <form id="form">
+            {% csrf_token %}
+            <table class="table">
+                <tbody>
+                <tr>
+                    <th>작성자</th>
+                    <td colspan="3"><select name="author_id" class="form-element-default text-center">
+                        <option value="{{ request.user.id }}">{{ request.user.username }}</option>
+                    </select></td>
+                </tr>
+                <tr>
+                    <th>종류</th>
+                    <td colspan="3"><select name="type" id="type" class="form-element-default text-center">
+                        {% for type in board_type %}
+                            {% if type.0 != 7 %}
+                            <option value="{{ type.0 }}">{{ type.1 }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select></td>
+                </tr>
+                <tr id="message" class="hidden">
+                    <th>대상설정</th>
+                    <td colspan="3">
+                        <select name="receiver_id" class="form-element-default">
+                            {% for account in account_list %}
+                            <option value="{{ account.id }}"> {{ account.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr id="answer"  class="hidden">
+                    <th>회신게시물</th>
+                    <td>
+                        <input type="hidden" name="question_id" id="question_id" readonly>
+                        <input type="text" name="question_title" id="question_title" class="form-element-default" readonly>
+                    </td>
+                    <td colspan="2" class="text-center" > <span id="popup_bulletin_board_list" class="button link">게시물 조회</span></td>
+                </tr>
+                <tr>
+                    <th>제목</th>
+                    <td colspan="3"><input type="text" name="title" class="form-element-default"></td>
+                </tr>
+                <tr>
+                    <th>내용</th>
+                    <td colspan="3"><textarea class="form-element-default" name="content"></textarea> </td>
+                </tr>
+                <tr>
+                    <th>첨부파일</th>
+                    <td colspan="3">
+                        {% include 'file_box/file_box.html' %}
+                    </td>
+                </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align:right">
+                            <span class="button save">등록</span>
+                            <input type="reset" class="button reset" value="초기화">
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </form>
+    </article>
+{% endblock %}

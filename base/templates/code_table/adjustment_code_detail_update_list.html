@@ -1,0 +1,69 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/base/code_table/js/adjustment_code_detail_update_list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/base/code_table/css/list.css' %}">
+{% endblock %}
+{% block title %}
+    {{ title }} 조정 코드 상세 내역 목록
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        {% if screen_user_comment %}
+        <div class="tooltip buttonToolbar">
+            <span class="button information" onclick="showTooltip()">화면 설명</span>
+            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+        </div>
+        {% endif %}
+        <section class="buttonToolbar">
+            <section>
+                <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <colgroup>
+
+            </colgroup>
+            <thead>
+{#            등록 기능만 가능하게 수정#}
+                <th>코드</th>
+                <th>범위</th>
+{#                <th>기간</th>#}
+                <th>저장</th>
+            </thead>
+            <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id" value="{{ object.adjustment_detail_set.last.id }}">
+                            <input type="hidden" name="adjustment_code_id" value="{{ object.id }}">
+                            {{ object.name }}</td>
+                        <td>
+                            <select class="form-element-default" name="item_code_id">
+                                {% for code in item_code_list %}
+                                <option value="{{ code.id }}"
+                                 {% if code.id == object.adjustment_detail_set.last.item_code_id %}selected{% endif %}> {{ code.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+{#                        <td>#}
+{#                            <select class="form-element-default" name="period_code_id">#}
+{#                                {% for code in period_code_list %}#}
+{#                                <option value="{{ code.id }}"#}
+{#                                 {% if code.id == object.adjustment_detail_set.last.period_code_id %}selected{% endif %}> {{ code.name }}</option>#}
+{#                                {% endfor %}#}
+{#                            </select>#}
+{#                        </td>#}
+                        <td class="text-center">
+                            <span class="button"><span class="icon-save" onclick="saveAdjustmentCodeDetail(this)"></span></span>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% load static %}
+<script type="text/javascript" src="{% static 'common/js/base_crud_script.js' %}"></script>
+<div id="comment_modal" class="modal">
+    <div class="modal-content">
+        <div class="form-group text-center">
+            <h2>결재 코멘트</h2>
+            <textarea class="form-element-default" id="modal_comment" placeholder="남길내용"></textarea>
+            <input type="hidden" name="pass">
+        </div>
+        <div class="text-center">
+            <p class="message">진행하시겠습니까?</p>
+        </div>
+        <div class="text-center" style="margin-bottom:15px;">
+            <span class="button add yes" style="padding-left:25px;padding-right:25px;" onclick="closeModal(this, true, callbackForCommentModal);">예</span>
+            <span class="button cancel no" onclick="closeModal(this, false);">아니오</span>
+        </div>
+    </div>
+</div>

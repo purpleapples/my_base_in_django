@@ -1,0 +1,173 @@
+window.onload = function(){
+    _eventOnTabTemplate('.tab-container');
+    const menuSaveButton = document.getElementById('menu-save-button');
+    const screenSaveButton = document.getElementById('screen-save-button');
+    menuSaveButton.onclick = (event)=> saveMenu(event);
+    screenSaveButton.onclick = (event)=> saveScreen(event);
+
+    createTree(
+        JSON.parse(document.querySelector('[name=object_list]').value),
+        document.getElementById('tree-container'),
+        {
+            direction:'vertical',
+        }, {
+            textAttribute:'title',
+            field_list:['is_screen'],
+            callbacks:{
+                click:clickCallback,
+                create:createCallback,
+                delete:deleteFunc
+            },
+        },
+        true
+    );
+
+    document.querySelector('[name=title]').addEventListener('focusout', function(event){
+        const form = event.target.closest('form');
+        if (form.nodeIndex.value != ''){
+            document.querySelector(`[data-node-index='${form.nodeIndex.value}'] span`).textContent = event.target.value;
+        }
+    });
+}
+
+const clickCallback = (event) => {
+    /**
+     * description : 수정 데이터 저장 및 관련데이터(menu, menu-permission, screen, screen_function) 조회 및 form 수정사항 treeDataset에 저장
+     * - 조건에 대해서는 각 함수에서 알아서 실행한다. 해당 영역에서는 함수만 호출한다.
+     * */
+    const selected = event.target;
+
+    if  ( ! selected.classList.contains('selected')){
+        return;
+    }
+
+    const node = selected.closest('li');
+    const [key, nodeIndex] = getTreeDataKeys(node);
+    const nodeDataset = getTreeData(key)[nodeIndex];
+
+    const menuUrl = '/menu/api';
+    const permissionUrl = '/menu/menu-permission/api';
+    const screenUrl = '/menu/screen/api';
+    const screenFunctionUrl = '/menu/screen-function/api';
+    const screenSelector = '[data-name=screen1],[data-name=screen2],[data-name=screen3]';
+
+    if (Object.keys(nodeDataset).indexOf('id') == -1){
+        document.querySelectorAll(screenSelector).forEach(tap => tap.classList.add('hidden'));
+        document.querySelector('[data-name=permission]').classList.add('hidden');
+        if (Object.keys(nodeDataset).indexOf('menu') == -1){
+            nodeDataset['menu'] = JSON.parse(JSON.stringify(nodeDataset));
+            if (Object.keys(node.dataset).indexOf('parentIndex') != -1){
+                nodeDataset['menu']['parent_title']= getTreeData(key)[node.dataset.parentIndex]['menu']['title'];
+            }
+        }
+    }else{
+        document.querySelector('[data-name=permission]').classList.remove('hidden');
+        document.querySelectorAll('[name=menu_id]').forEach(input=> input.value = nodeDataset['id']);
+    }
+    setTreeForm(menuUrl, nodeDataset, 'menu', key,
+        {id:nodeDataset['id'], reference_values:['parent__title']}, document.getElementById('menuForm'));
+
+    // row에 relation_id를 어떻게 저장하는것이 옳은가?
+
+    setTreeRows(permissionUrl, nodeDataset, 'menu-permission', key,
+        {
+        menu_id:nodeDataset['id'],
+        reference_values: ['team__name','account__name','account_type_code__name']
+        }, document.getElementById('menu-permission-tbody'),
+        [
+            'team_name',
+            'account_type_code_name',
+            'account_name'],
+        ['id','menu_id','duty_code_id'],
+        true,
+        '/menu/menu-permission/api')
+    if (Object.keys(nodeDataset).indexOf('is_screen') == -1 || nodeDataset['is_screen'] != "true"){
+        document.querySelectorAll(screenSelector).forEach(tap=>tap.classList.add('hidden'));
+    }else{
+        // screen
+        document.querySelectorAll(screenSelector).forEach(tap=>tap.classList.remove('hidden'));
+        setTreeForm(screenUrl, nodeDataset, 'screen', key,
+        {menu_id:nodeDataset['id'], reference_values:['menu__title']}, document.getElementById('screenForm'))
+        // screen-function
+        //
+        setTimeout(function(){
+        setTreeRows(screenFunctionUrl, nodeDataset, 'screen-function', key, {menu_id:nodeDataset['screen']['id']},
+            document.getElementById('screen-function-tbody'),
+            [
+                'title',
+                'type_code_name',
+                'description'
+            ],
+            ['id','screen_id'],
+            true,
+            '/menu/screen-function/api');
+        }, 1000);
+    }
+
+    const deleteTarget =document.querySelectorAll('span.selected');
+    document.querySelector('.delete').disabled = deleteTarget.length == 0;
+}
+
+const deleteFunc = (event)=>{
+
+    let deleteTarget =document.querySelector('span.selected');
+
+    if(deleteTarget == undefined){
+        alert('선택된 내역이 없습니다.');
+    }
+
+    deleteTarget = deleteTarget.closest('li');
+
+    if(Object.keys(deleteTarget.dataset).indexOf('id') == -1){
+        deleteTarget.remove();
+        return;
+    }
+    const modal = document.getElementById('delete-rows-modal');
+    const pkList = new Array();
+    pkList.push(deleteTarget.dataset.id);
+    modal.querySelector('[name=pkList]').value = JSON.stringify(pkList);
+    modal.querySelector('[name=url]').value = '/menu/api/';
+    showModal('#delete-rows-modal');
+}
+
+const createCallback = (li) => {
+        const [key, index] = getTreeDataKeys(li);
+        const treeData = getTreeData(key)[index];
+        treeData['title'] = '새 메뉴';
+        setNodeDataset(treeData, key, index);
+    }
+
+const saveMenu = (event) => {
+        const form = event.target.closest('form');
+        if( form.nodeIndex.value == ''){
+            return;
+        }
+        const formData = new FormData(form);
+        for (const el of form.elements){
+            if (el.type=='checkbox'){
+                formData.set(el.name, el.checked ? 'True' : 'False');
+            }
+        }
+        formData.set('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        if(form.parentIndex.value != ''){
+            formData.set('parent_id', document.querySelector(`[data-node-index='${form.parentIndex.value}']`).dataset['id']);
+        }
+        fetchEvent('/menu/api/', undefined, "POST", formData, (data)=>{
+            alert(data.message);
+            location.reload();
+        });
+    }
+
+const saveScreen = (event) =>{
+    const form = event.target.closest('form');
+    const formData = new FormData(form);
+
+    formData.set('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+    formData.set('menu_id',  document.querySelector(`[data-node-index='${form.nodeIndex.value}']`).dataset.id);
+    const method = 'POST';
+    fetchEvent('/menu/screen/api', undefined, method, formData, (data)=>{
+        alert(data.message);
+        location.reload();
+    });
+}
+

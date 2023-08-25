@@ -1,0 +1,28 @@
+
+.search-table{
+    width:800px;
+    margin-bottom:100px;
+}
+.search-table .header{
+    font-size:17px !important;
+}
+.business-name{
+    background:orange;
+    font-size: 18px;
+    padding: 5px 0;
+    text-indent: 10px;
+    color:whitesmoke;
+}
+
+#table{
+    width:1900px;
+}
+#table th:nth-child(n -2){
+    width:150px;
+}
+#table th:nth-child(n+2):nth-child(4){
+    width:200px;
+}
+#table th:nth-child(n-2), #table td:nth-child(n-2){
+    background: white;
+}

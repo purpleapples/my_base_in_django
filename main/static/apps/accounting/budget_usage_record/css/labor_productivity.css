@@ -1,0 +1,7 @@
+
+#employee-statistic-table tbody td:nth-child(n+2){
+    text-align:right;
+}
+#adjustment-table tbody td:nth-child(n+2){
+    text-align:right;
+}

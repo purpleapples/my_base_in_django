@@ -1,0 +1,64 @@
+{% extends "common/base.html" %}
+{% block title %} {{ title }} 업로드 목록{% endblock %}
+{% load static %}
+{% block header %}
+    <script type="text/javascript" src="{% static 'apps/system/excel/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/excel/css/list.css' %}">
+    {% include 'common/header/complex_header_base.html' %}
+{% endblock %}
+{% block contents %}
+    <section class="context-horizontal-center">
+        <section class="list-default">
+            {% if screen_user_comment %}
+            <div class="tooltip buttonToolbar">
+                <span class="button information" onclick="showTooltip()">화면 설명</span>
+                <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
+            </div>
+            {% endif %}
+            <section class="flex-between" style="gap:40px;">
+                <input type="hidden" name="isMultiple" value="{{ is_multiple }}">
+                <form id="form" action="{{ redirect_url }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="kind" value="{{ view.kwargs.kind }}">
+                    {% include 'input_file_container/input_file_container.html' %}
+                </form>
+                <section class="flex-between">
+                <label for="year">년도</label>
+                <input class="form-element-default" name="year" id="year" type="number" min="{% now 'Y' %}" value="{% now 'Y' %}">
+                </section>
+
+                <section>
+                    <button class="button save" id="button-submit" style="padding:10px;" disabled>등록</button>
+                    <a download href="{% static 'format' %}/{{ file_name }}.xlsx" >업로드 양식 {{ forloop.counter }}</a>
+                </section>
+
+            </section>
+
+            <table class="table table-bordered">
+                <colgroup>
+                    <col style="width: 30%;">
+                    <col style="width: 50%;">
+                    <col style="width: 20%;">
+                </colgroup>
+                <thead>
+                    <tr role="row" class="tablesorter-headerRow">
+                        <th>업로드 시간</th>
+                        <th>파일이름</th>
+                        <th>내려받기</th>
+                    </tr>
+                </thead>
+                <tbody aria-live="polite" aria-relevant="all">
+                    {% for object in object_list %}
+                    <tr>
+                        <td>{{object.upload_dt|date:'Y-m-d H:i:s'}}</td>
+                        <td>{{object.name}}</td>
+                        <td class="text-center"><a href="/media/{{ object.excel_file }}" download class="button icon-download"></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </section>
+<!-- 데이터 처리중 안내 -->
+{% include 'common/modal/load_bg.html' %}
+{% endblock %}

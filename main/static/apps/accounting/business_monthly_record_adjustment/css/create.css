@@ -1,0 +1,10 @@
+table{
+    width:800px;
+}
+textarea{
+    height:250px !important;
+}
+#message{
+    border:none;
+    border-right:1px solid rgba(0, 0, 0, 0.33);
+}

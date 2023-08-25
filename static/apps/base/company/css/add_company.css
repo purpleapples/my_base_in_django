@@ -1,0 +1,102 @@
+.errorlist {
+    margin:4px 0 0 0;
+}
+
+.form-group-box {
+    width:100%;
+    overflow: hidden;
+    display:flex;
+    flex-direction:row;
+    gap:10px;
+    flex-basis:auto;
+}
+
+.border-default{
+    border:1px solid rgb(204, 204, 204);
+    border-radius: 4px;
+}
+.info-title{
+    margin-left:10px;
+    color:blue;
+}
+
+.form-group-box + .form-group-box {
+    margin-top:20px;
+}
+.form-group-box .form-group {
+    width:42%;
+    margin:0;
+}
+/*
+.form-group-box .form-group:first-of-type {
+    width:90px;
+    text-align: center;
+}
+*/
+form > .form-group:nth-of-type(1) .field-label::before,
+form > .form-group:nth-of-type(2) .field-label::before,
+form > .form-group:nth-of-type(3) .field-label::before {
+    content:'*';
+    display:inline-block;
+    vertical-align: middle;
+    color:red;
+    margin-right:3px;
+}
+.req {
+    display:inline-block;
+    vertical-align: middle;
+    color:red;
+    margin-right:3px;
+}
+.is_checked {
+    width:100%;
+    height:34px;
+    margin:0;
+}
+.is_checked .kakaotalk {
+    display:none;
+}
+.is_checked label {
+    display: inline-block;
+    border: 1px solid #d2d2d2;
+    height: 100%;
+    margin: 0;
+    padding: 5px 0;
+    width: 100%;
+    cursor: pointer;
+    color: #afafaf;
+    text-align: center;
+    font-weight: normal;
+    border-radius: 30px;
+    background: #eaeaea;
+}
+.is_checked label::before {
+    content:'아니오';
+}
+.is_checked .kakaotalk:checked + label {
+    background:#0ae073;
+    color:white;
+    border:1px solid #0ae073;
+}
+.is_checked .kakaotalk:checked + label::before {
+    content:'예';
+}
+
+.form-group-flex {
+    display:flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+.form-group-flex .form-group {
+    width:32%;
+}
+
+.space-between {
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.upload_btn_box a {
+    margin-right:10px;
+    background:#13c539 !important;
+}

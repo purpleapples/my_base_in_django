@@ -1,0 +1,75 @@
+{% extends "common/base.html" %}
+{% block title %}사용자 목록{% endblock %}
+{% load static %}
+{% block header %}
+    {% include 'common/header/complex_header_base.html' %}
+    <script type="text/javascript" src="{% static 'apps/system/account/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/system/account/css/list.css' %}">
+{% endblock %}
+{% block contents %}
+{% csrf_token %}
+
+    <section class="context-horizontal-center">
+        <section class="list-default">
+            <article class="buttonToolbar flex-between">
+                <section class=flex-between>
+                    <span class="count">총 조회 수 {{ object_list.count }}</span>
+                    <span id="download-table" class="excel-download"></span>
+                </section>
+                <section>
+                    <a class="button link" href="{% url 'add_account' %}"> 사용자 계정 추가</a>
+                    <button class="button function checkAll">전체 선택</button>
+                    <button id='delete' class="button delete" disabled>사용자 정보 삭제</button>
+                </section>
+            </article>
+        <section class="overflow-y md">
+            <table class="table table-bordered" id="table">
+                <colgroup>
+                    <col style="width:9%;"> <!-- 사용자 계정 -->
+                    <col style="width:9%;"> <!-- 이름 -->
+                    <col style="width:9%;"> <!-- 이메일 -->
+                    <col style="width:9%;"> <!-- 연락처 -->
+                    <col style="width:13%;">  <!-- 계정 종류 -->
+                    <col >  <!-- 수정하기 -->
+                </colgroup>
+                <thead>
+                    <tr role="row">
+                        <th>사용자 계정 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>이름 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>계정분류 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>연락처 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>이메일 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>접속상태 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>수정하기</th>
+                    </tr>
+                </thead>
+                <tbody aria-live="polite" aria-relevant="all">
+                {% for object in object_list %}
+                    <tr>
+                        <td>
+                            {{ object.username }}
+                            <input type="hidden" name="id" value="{{object.id}}">
+                        </td>
+                        <td>{{ object.name }}</td>
+                        <td>{{ object.info.account_type_code.name }}</td>
+                        <td>{{ object.info.phone_number }}</td>
+                        <td>{{ object.email }}</td>
+                        <td class="text-center">
+                            {% if object.is_login_checked %}
+                                    접속
+                                {% if request.user.is_superuser or request.user.info.account_type_code.name == '관리자' %}
+                                <button class="button delete" onclick="forceLogout(this)">접속해제</button>
+                                {% endif %}
+                            {% else %}
+                            미접속
+                            {% endif %}</td>
+                        <td class="text-center"><a href="{% url 'update_account' pk=object.id %}" class="button detail">수정하기</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+        </section>
+    </section>
+{% include 'common/modal/delete_rows_modal.html' %}
+{% endblock %}
