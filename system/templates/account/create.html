@@ -1,6 +1,6 @@
 {% extends "common/base.html" %}
 {% load static %}
-{% block title %}사용자 추가{% endblock %}
+{% block title %} 사용자 추가 {% endblock %}
 {% block header %}
     {% include 'common/header/form_header_base.html' %}
     <link rel="stylesheet" type="text/css" href="{% static 'apps/system/account/css/create.css' %}">
@@ -12,9 +12,8 @@
         <section class="list-default">
             <p class="reqMsg">* 표시된 정보는 필수 사항 입니다.</p>
             <form method="POST" id="form" >
-
                 {% csrf_token %}
-                <table class="table table-bordered ">
+                <table class="table table-bordered" id="form-table">
                     <colgroup>
                         <col width="30%">
                         <col width="70%">
@@ -41,12 +40,12 @@
                         <td><input type="email" name="email" class="form-element-default"></td>
                     </tr>
                     <tr>
-                        <th><label>계정분류</label></th>
+                        <th><label>계정권한</label></th>
                         <td>
-                            <select class="form-element-default" name="duty_code_id">
+                            <select class="form-element-default" name="permission_group_id">
                                 <option></option>
-                                {% for account_type_code in account_type_code_list %}
-                                    <option value="{{ account_type_code.id }}">{{ account_type_code.name }}</option>
+                                {% for menu_permission_group in menu_permission_group_list %}
+                                    <option value="{{ menu_permission_group.id }}">{{ menu_permission_group.group_name }}</option>
                                 {% endfor %}
                             </select>
                         </td>

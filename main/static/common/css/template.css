@@ -1,5 +1,12 @@
 /*********************************************** template default for design ******************************************/
 
+/*********************************************** grid template design *************************************************/
+.grid-column-pair{
+    display:grid;
+    grid-template-columns: max-content max-content;
+    grid-gap:10%;
+}
+
 /*********************************************** template batch *******************************************************/
 .list-default > *:not(:last-child){
     margin-bottom:1.2em;
@@ -76,7 +83,7 @@ button:hover, .button:hover{
   transform: translateY(4px);
 }
 .buttonToolbar {
-    margin-bottom:15px;
+    margin-bottom:7px;
 }
 .buttonToolbar.bottom{
     border-top:1px solid #ccc;
@@ -87,6 +94,13 @@ button:hover, .button:hover{
 }
 .buttonToolbar:last-child{
     margin-right:0;
+}
+.buttonToolbar .button, .buttonToolbar a{
+    padding:10px 30px;
+    font-size:15px;
+}
+.buttonToolbar button:disabled, .buttonToolbar a:disabled {
+    background:#ddd;
 }
 .button {
     display:inline-block;
@@ -100,6 +114,9 @@ button:hover, .button:hover{
     cursor:pointer;
     background-color:rgb(255, 255, 255);
     background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
+}
+.button.middle-long{
+    padding:5px 20px;
 }
 .save{
     background-image: linear-gradient(to top, #6ac76a 0, #d4f1d4 100%);
@@ -122,13 +139,7 @@ button:hover, .button:hover{
 .button.download{
     background: #53c0b9;
 }
-.buttonToolbar .button, .buttonToolbar a{
-    padding:10px 30px;
-    font-size:15px;
-}
-.buttonToolbar button:disabled, .buttonToolbar a:disabled {
-    background:#ddd;
-}
+
 /****************************************************** background color for usage ************************************/
 .add{
     background:#169BD5;
@@ -160,6 +171,30 @@ button:hover, .button:hover{
 .work-standard{
     background: #8577d7;
 }
+/*********************************************** main and content *****************************************************/
+.screen-title{
+    margin-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    background:white;
+}
+.screen-background-shadow{
+    background: #f4f4f466;
+}
+.box-shadow-below-diagonal{
+    box-shadow: 14px 18px 5px 0rem rgb(202 218 236 / 25%);
+}
+/* for content title */
+.box-shadow-underscore{
+    box-shadow:inset 0px -5px 0 #9ad8fd;
+}
+.content-background{
+    background:white;
+}
+.content-title{
+    background: white;
+    font-weight:bold;
+    font-size:1.1em;
+}
 /************************************************ color for usage *****************************************************/
 .word-information{
     color:#342bfb;
@@ -174,12 +209,14 @@ button:hover, .button:hover{
     max-width:none;
 }
 /******************************************************* tap container ************************************************/
+.tab.container{}
+.tab.header{
+    display:flex;
+}
 .switch-tab-list{
     height: 30px;
     color: #ccc;
     font-weight: bold;
-    gap: 10px;
-    padding-left: 10px;
 }
 
 .switch-tab-list li{
@@ -187,8 +224,8 @@ button:hover, .button:hover{
     border-top-left-radius:4px;
     border-top-right-radius:4px;
     line-height: 1.6;
-    padding-left:5px;
-    padding-right:5px;
+    padding-left:30px;
+    padding-right:30px;
     cursor:pointer;
     border-bottom:none;
 }
@@ -303,24 +340,24 @@ button:hover, .button:hover{
     content:'(신규)';
     color:red
 }
- .plus-block:after{
-     content:'신규 추가';
-     cursor:pointer;
-     color:white;
-     background:blue;
-     border-radius: 4px;
-     padding:10px;
- }
+.plus-block:after{
+    content:'신규 추가';
+    cursor:pointer;
+    color:white;
+    background:blue;
+    border-radius: 4px;
+    padding:10px;
+}
 /************************************************* tool tip ***********************************************************/
-  /* Tooltip container */
-  .tooltip {
+/* Tooltip container */
+.tooltip {
     position: relative;
     display: inline-block;
     cursor: pointer;
-  }
+}
 
   /* Tooltip text */
-  .tooltip .tooltip-text {
+.tooltip .tooltip-text {
     visibility: hidden;
     width: 300px;
     background-color: #f39800;
@@ -329,16 +366,17 @@ button:hover, .button:hover{
     border-radius: 6px;
     padding: 5px;
     position: absolute;
-    z-index: 1;
+    z-index: 10;
     bottom: 100%;
-      left:100%;
-    /*transform: translateX(-50%);*/
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
+    height:max-content;
+    opacity: 0.7;
+    transition-property:visibility;
+    transition-duration:1s;
+}
 
-  /* Show the tooltip on hover */
-  .tooltip:hover .tooltip-text {
-    visibility: visible;
-    opacity: 1;
-  }
+  /* Show the tooltip on hover - do not use because of coordinate control */
+
+  /*.tooltip:hover .tooltip-text {*/
+  /*  visibility: visible;*/
+  /*  opacity: 1;*/
+  /*}*/

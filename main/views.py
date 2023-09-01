@@ -8,7 +8,6 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView
 from django.views.generic.edit import FormView
 
-
 from system.models import AccountAccessLog, IpAccessLog
 from .forms import LoginForm
 
@@ -36,7 +35,6 @@ class LoginView(FormView):
             if access_log_qs.last().fail_count > 5:
                 raise PermissionDenied('잘못된 계정 접근이 발견되었습니다.\n 해당 메시지를 처음 보신 시각 이후 30분 뒤 실시 바랍니다.')
         account = authenticate(username=form.data.get('username'), password=form.data.get('password'))
-
 
         if account is None:
             access_log_qs = IpAccessLog.objects.filter(access_ip=ip_address)
@@ -82,7 +80,7 @@ class LoginView(FormView):
 
         account.save()
         from menu.views.menu.api import get_menu_tree
-        menu_list =get_menu_tree(account, self.request.META['HTTP_USER_AGENT'])
+        menu_list =get_menu_tree(account, self.request.META['HTTP_USER_AGENT'], 'page-dropdown')
 
         if menu_list is None:
             return redirect('login')

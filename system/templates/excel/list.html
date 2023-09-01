@@ -4,17 +4,11 @@
 {% block header %}
     <script type="text/javascript" src="{% static 'apps/system/excel/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/system/excel/css/list.css' %}">
-    {% include 'common/header/complex_header_base.html' %}
+
 {% endblock %}
 {% block contents %}
     <section class="context-horizontal-center">
         <section class="list-default">
-            {% if screen_user_comment %}
-            <div class="tooltip buttonToolbar">
-                <span class="button information" onclick="showTooltip()">화면 설명</span>
-                <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
-            </div>
-            {% endif %}
             <section class="flex-between" style="gap:40px;">
                 <input type="hidden" name="isMultiple" value="{{ is_multiple }}">
                 <form id="form" action="{{ redirect_url }}">

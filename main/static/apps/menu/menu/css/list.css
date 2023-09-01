@@ -18,5 +18,8 @@ tfoot td{
 #menu-table th{
     text-align:left !important;
     padding-left:50px;
-    width:150px;
+    width:100px;
+}
+#menu-table tr{
+    height:30px !important;
 }

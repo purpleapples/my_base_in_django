@@ -1,4 +1,13 @@
-
+/**
+ * - default setting in document.ready
+ * : button bubbling prevent, datetimepicker setting, modal height setting, mobile setting
+ *
+ * - base function list
+ *
+ * set_screen_comment() : get screen.user_comment
+ *
+ *
+ * */
 let REMAIN_LOGIN_TIMER = moment("2021-11-04 03:00:00");
 let getSessionTimer;
 
@@ -12,7 +21,7 @@ if(!sessionStorage.getItem('timer')) {
 // if all screen need screen comment
 const set_screen_comment = ()=>{
     fetchEvent('/menu/screen/api/comment', undefined, 'GET', {}, (data)=>{
-        console.log(data.data)
+
         if (data.data !== null){
             // 만들어서 setting 하자
             const screenComment = document.getElementById('screen-comment');
@@ -72,11 +81,13 @@ $(document).ready(function() {
         showClose: true
     });
     // 테이블 스크롤 상단 고정 함수화 하고 table 로 이관 필요
-
 });
 
-
-function _eventOnTabTemplate(tab_selector='.tab-container'){
+const _eventOnTabTemplate = (tab_selector='.tab-container') =>{
+    /**
+     * @param {string} tab_selector : selector string for querySelector function
+     *
+     * */
     let tab_container = document.querySelector(tab_selector);
     if (tab_container !== null){
         let header = tab_container.querySelector('.header');
@@ -112,7 +123,7 @@ const _eventOnClickTabHeader = (li, tab_container, index) => {
     });
 }
 
-function loginSystem() {
+const loginSystem = () => {
     sessionStorage.removeItem('timer');
 
     if(!sessionStorage.getItem("timer")) {
@@ -120,7 +131,7 @@ function loginSystem() {
     }
 }
 
-function logoutSystem() {
+const logoutSystem = () => {
     sessionStorage.removeItem('timer');
     location.href="/logout";
 }
@@ -132,375 +143,6 @@ $(window).resize(function() {
     });
 });
 
-
-function PatternInspection(obj){
-    var pattern_eng = /[a-zA-Z]/g;	// 영어
-    var pattern_kor = /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g; //한글
-    var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/g; // 특수문자
-
-    obj = obj.replace(pattern_kor,'');
-    obj = obj.replace(pattern_eng,'');
-    obj = obj.replace(pattern_spc,'');
-    obj = obj.replace(/-/g,'');
-    
-    return obj
-
-}
-
-
-
-function pieChartCreate(ctx,pieLabels,pieData,unit){ //파이차트 만들기 ctx : 차트 만들 영역 pieLabels : 라벨들 pieData: data들 unit: 앞에 들어갈 기호 나누기
-    var myPieChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: pieLabels,
-            datasets: [{
-                data: pieData,
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(75, 206, 86, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(75, 206, 86, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth:1,
-            }],
-        },
-        options: {
-            legend: {
-                position: 'bottom',
-            },
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        display:false,
-                        beginAtZero:true,
-                    }
-                }]
-            },
-            plugins: {
-                datalabels: {
-                    color: '#111',
-                    align: 'top',
-                    anchor:'top',
-                    font: {
-                        lineHeight: 1.6
-                    },
-                    formatter: function(value, ctx) {
-                        if(unit=="time"){
-                            return  value + "분";
-                        }
-                        if(unit=="count"){
-                            return  value + "건";
-                        }
-                        if(unit =="money"){
-                            if(value==0){
-                                return '';
-                            }else{
-                                return '₩'+value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                            }
-                        }
-                        
-                    }
-                }
-            }
-        }
-    });
-    myPieChart.update();
-}
-
-function lineChartCreate(ctx,label,date,count,unit){
-    var myLineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: date,
-            datasets: [{
-                label: label,
-                data: count,
-                backgroundColor: 'rgb(255, 99, 132)',
-                fill:false, // line의 아래쪽을 색칠할 것인가? 
-                borderColor: 'rgb(255, 99, 132)',
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        min:0,
-                        beginAtZero:true,
-                        callback: function(value, index, values) {
-                            if(unit =="money"){
-                                return '₩'+value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                            }else{
-                                return value;
-                            }
-                        }
-                    }
-                }]
-            },
-            plugins: {
-                datalabels: {
-                    color: '#111',
-                    align: 'right',
-                    anchor:'top',
-                     font: {
-                        lineHeight: 1.6
-                    },
-                    formatter: function(value, ctx) {
-                        if(unit =="count"){
-                            if(value!=0){
-                                return  value + "건";
-                            }else{
-                                return '';
-                            } 
-                        }
-                        if(unit =="money"){
-                            if(value==0){
-                                return '';
-                            }else{
-                                return '₩'+value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                            }
-                        }
-                        if(unit == "time"){
-                            if(value!=0){
-                                return  value + "분";
-                            }else{
-                                return '';
-                            }
-                        }
-                        if(unit =="login"){
-                            if(value!=0){
-                                return  value + "회";
-                            }else{
-                                return '';
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    });
-    myLineChart.update();
-}
-
-
-/* 3자리 단위마다 콤마 생성 */
-function addCommas(x) {
-    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-/* 콤마 제거 */
-function removeComma(str) {
-    n = parseInt(str.toString().replace(/,/g,""));
-    return n;
-}
-
-/* 테이블 셀 자동 병합 */
-function fn_autoHtmlTrRowspanClass(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
-
-    var selectorStr = "." + selector;
-    fn_autoHtmlTrRowspan(selectorStr, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep);
-}
-
-function fn_autoHtmlTrRowspanId(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
-
-    var selectorStr = "#" + selector;
-    fn_autoHtmlTrRowspan(selectorStr, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep);
-}
-
-
-function fn_autoHtmlTrRowspan(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
-
-    var trObj;							// TBODY TR object
-    var trIdx;							// TR index
-    var tdObj;							// TBODY TD object
-    var tdIdx;							// TD index
-    var tdTxt;							// TD text
-    var nextRwTdObj;				// next row TD Object
-    var nextRwTdTxt;				// next row TD text
-    var rwspNum;						// RowSpan number
-    var tempTdObj;					// set RowSpan target TD object				
-
-    var chkBoolean = true;	// check use Flag
-    var compChildTdObj;	    // compare TR children TD Object Array
-    var compCurrTdObjTxt;		// compare TR children Current Row TD text(Array Index)
-    var compNextTdObjTxt;		// compare TR children Next Row TD text(Array Index)
-    var flagCnt = 0;				// Not RowSpan count
-
-    var idxArr;
-    var idxBoolean = true;			// default(true) : idxArr only rowspan, false : idxArr not rowspan
-
-    var idxNonChkArr;						// choice compare TR children TD Array
-
-    // parameter check
-    if (tdIdxSep != undefined) {
-        idxArr = tdIdxSep.split(",", -1);
-    }
-
-    // parameter check
-    if (idxInExYn != undefined) {
-        idxBoolean = eval(idxInExYn);
-    }
-
-    // parameter check
-    if (trChkYn != undefined) {
-        chkBoolean = eval(trChkYn);
-    }
-
-    // parameter check
-    if (tdIdxChkSep != undefined) {
-        idxNonChkArr = tdIdxChkSep.split(",", -1);
-    }
-
-    $(selector).find("tr").each(function (i) {
-
-        trObj = $(this);
-        trIdx = $(trObj).index();
-
-        $(trObj).find("td").each(function (j) {
-
-            tdObj = $(this);
-            tdIdx = $(tdObj).index();
-            tdTxt = $.trim($(tdObj).text());
-            nextRwTdObj = $(trObj).next().find("td:eq(" + tdIdx + ")");
-            nextRwTdTxt = $.trim($(nextRwTdObj).text());
-
-            if ($(tdObj).css("visibility") == "hidden") {
-
-                // current prevAll only visibility TD Array
-                tempTdObj = $(trObj).prevAll("tr").find("td:eq(" + tdIdx + ")").filter(":visible");
-                tempTdObj = $(tempTdObj)[$(tempTdObj).size() - 1];	// array last is closest				
-                rwspNum = $(tempTdObj).prop("rowspan") + 1;
-
-                /* rowspan and display:none */
-                $(tempTdObj).prop("rowspan", rwspNum);
-                $(tdObj).hide();
-            }
-
-            flagCnt = 0;	// initialization           
-
-            if (chkBoolean && tdIdx != 0) {
-                compChildTdObj = new Array();
-
-                var tempIdx;
-                var ifStr = "";
-                var idxStr = "";
-
-                // tr in td All or td choice
-                if (idxNonChkArr != undefined) {
-                    // make tr in td array for check
-                    $.each(idxNonChkArr, function (x) {     // choice td     	
-                        tempIdx = Number(idxNonChkArr[x]);
-                        compChildTdObj[x] = $(trObj).find("td:eq(" + tempIdx + ")");
-                        //console.log($(compChildTdObj[x]).prop("outerHTML"));          
-                    });
-
-                    ifStr = "tempIdx < tdIdx";
-                    idxStr = "tempIdx";
-                } else {
-                    // make tr in td array for check
-                    compChildTdObj = $(trObj).children("td");  // all td         
-
-                    ifStr = "m < tdIdx";
-                    idxStr = "m";
-                }
-
-                // this TR children TD check(low index TD RowSpan possible) : 앞쪽 td의 rowspan을 초과 못함
-                $.each(compChildTdObj, function (m) {
-
-                    tempIdx = $(compChildTdObj[m]).index();
-
-                    if (eval(ifStr)) {
-
-                        compCurrTdObjTxt = $(trObj).find("td:eq(" + eval(idxStr) + ")").text();
-                        compNextTdObjTxt = $(trObj).next().find("td:eq(" + eval(idxStr) + ")").text();
-
-                        // not RowSpan
-                        if (compCurrTdObjTxt != compNextTdObjTxt) {
-                            flagCnt++;
-                        }
-                    }
-                });	// TD check each end  
-            }
-
-            if (tdTxt == nextRwTdTxt && flagCnt == 0) {
-                $(nextRwTdObj).css("visibility", "hidden");	// not equal display:none
-            }
-
-            if (idxArr != undefined) {
-                if (idxBoolean) {
-                    // idxArr only rowspan
-                    if (idxArr.indexOf(tdIdx.toString()) == -1) {
-                        $(nextRwTdObj).css("visibility", "");	// remove style visibility, not RowSpan
-                    }
-                } else {
-                    // idxArr not rowspan
-                    if (idxArr.indexOf(tdIdx.toString()) > -1) {
-                        $(nextRwTdObj).css("visibility", "");	// remove style visibility, not RowSpan
-                    }
-                }
-            }
-        });	// TD each end
-    });	// TR each end
-}
-
-// 셀렉터 검색 기능
-function ApplyChoices(select_box, obj) {
-    for(let i=0; i<select_box.length; i++) {
-        const element = document.querySelector(`.js-choice-${select_box[i]}`);
-        const choices = new Choices(element, {
-            searchResultLimit : 1000,
-            searchFields : ['label','value','customProperties'],
-            shouldSort : false,
-            callbackOnCreateTemplates: function(template) {
-                return {
-                    item: (classNames, data) => {
-                        return template(`
-                            <div class="${classNames.item} ${
-                            data.highlighted
-                                ? classNames.highlightedState
-                                : classNames.itemSelectable
-                            } ${
-                            data.placeholder ? classNames.placeholder : ''
-                            }" data-item data-id="${data.id}" data-value="${data.value}" ${
-                            data.active ? 'aria-selected="true"' : ''
-                            } ${data.disabled ? 'aria-disabled="true"' : ''} data-obj='${obj}'>
-                                ${data.label}
-                            </div>
-                        `);
-                    }
-                };
-            }
-        });
-
-        const $dropdown_list = $(`select[name='${select_box[i]}']`).parent().next();
-
-        $dropdown_list.find(".choices__input").keyup(function() {
-            const inputValue = $(this).val().toUpperCase();
-
-            $dropdown_list.find(".choices__item--choice").each(function() {
-                const searchValue = $(this).text().toUpperCase();
-                
-                if(searchValue.indexOf(inputValue) < 0) {
-                    $(this).remove();
-                }
-            });
-
-            if ($.trim($dropdown_list.find(".choices__list").html()) === '') { 
-                $dropdown_list.find(".choices__list").html("<div class='choices__item choices__item--choice has-no-results'>No results found</div>");
-            }
-        });
-    }
-}
 
 // POST -> json 형식으로 보낼 때 token 여부 체크
 function csrfSafeMethod(method) {
@@ -515,33 +157,6 @@ function moveScrollTop() {
     }, 500);
 }
 
-// 선택항목 출력 - 모달
-function rowPushOrPopModalShow() {
-    $(".rowPushOrPopModal").fadeIn(200);
-}
-
-function rowPushOrPopModalClose() {
-    $(".rowPushOrPopModal").fadeOut(200);
-}
-
-function removeSelectedRow(id) {
-    $("#table tbody tr").each(function() {
-        const tr_idx = $(this).data("id");
-        if(id == tr_idx) {
-            $(this).trigger("click");
-        }
-    });
-}
-
-function removeAllSelectedRow() {
-    $(".selected_row tbody tr").each(function() {
-        removeSelectedRow($(this).data("id"));
-    });
-}
-
-function pascalToSnake(str){
-    return str.replace(/(?:^|\.?)([A-Z])/g, function (x,y){return "_" + y.toLowerCase()}).replace(/^_/, "");
-}
 
 function openImgPopup(img){
     // 설비 AS 요청 기능 : 이미지 선택 시 원래 크기의 팝업 창 나오는 기능
@@ -554,64 +169,6 @@ function setImgClickEvent(){
     Array.from(document.querySelectorAll('img')).forEach((img)=>{img.onclick= (event)=> {
         openImgPopup(event.target);
     }});
-}
-
-
-function openPopupList(address, callback){
-    /*
-    * abbr: nav 바 삭제 후 table 선택 시 선택 값만 가지고 오게 하는 body 편집된 popup 열기
-    * author: 임성혁(samson siba)
-    * param: address:String(호출 urn)
-    * desc:
-    * 1. 팝업을 연다.
-    * 2. nav 없애고 전체 선택, excel 버튼 제외한 모든 a, button 기능을 막는다.
-    * 3. 전체 선택 통제 여부는 보류
-    * 4. 테이블 line 을 선택하면 confirm 작동
-    */
-    let params = `scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,
-    width=2000, height=800`;
-    let popup = window.open(address,"popup", params);
-    let tr_list = [];
-    // popup.document.querySelector('nav').remove();
-
-    popup.addEventListener('load', function(event){
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        const nav = event.target.querySelector('nav');
-
-        if (nav != undefined){
-            nav.remove();
-        }
-        for(let button of this.document.querySelectorAll('button, .button')){
-            // 전체 선택 버튼 기능 잠시 대기 - 2022.04.14
-            // if(button.textContent =='전체 선택'){
-            //     button.removeEventListener('click', button.callee);
-            //     button.onclick= (event) =>{
-            //         if(this.confirm('현재 테이블의 내역을 모두 선택합니까?')){
-            //             tr_list = popup.document.querySelectorAll('tbody tr:not(.filtered)');
-            //             callback(tr_list);
-            //             this.close();
-            //         }
-            //     }
-            //     continue;
-            // }
-            button.disabled=true;
-        }
-        for(let a of this.document.querySelectorAll('a')){
-            a.href='#';
-        }
-        for(let tr of this.document.querySelectorAll('tbody tr')){
-            tr.onclick = (event) => {
-                if(this.confirm('해당 데이터를 선택합니다.')){
-                    tr_list.push(event.currentTarget);
-                    callback(tr_list);
-                    this.close();
-                }
-            }
-        }
-    });
-    popup.dispatchEvent(new Event('load'));
 }
 
 function deleteNode(button_node, is_ancestor, target_selector, callback) {
@@ -698,7 +255,8 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
 
     fetch(url, options).then((response)=> {
         $('.load_bg').hide();
-        if (response.status < 300){
+        console.log(response, response.status, response.ok)
+        if (response.status < 300  && response.status > 201){
             if(response.status==203){
             }
             if(response.status==204){
@@ -730,7 +288,7 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
         else if (response.status==0 && response.type == 'opaque' ){
             return response
         }
-        else if(response.ok && [200,201].indexOf(response.status) !=-1){
+        else if(response.ok && [200,201,0].indexOf(response.status) !=-1){
             const jsonResponse = response.json()
             return jsonResponse;
         }else{
@@ -801,10 +359,6 @@ function extractBackUpData(selector=undefined){
     fetchEvent('/system/api/data/create/dump-file', undefined, 'POST', pk_list, (data)=>{alert(data.message);});
 }
 
-function openPopup(url, style='width=800,height=1000'){
-    let popup = window.open(url, 'popup', style);
-    return popup;
-}
 
 function quickSort (array) {
   if (array.length < 2) {
@@ -837,14 +391,23 @@ const downloadDefault = (event, params) => {
         });
 }
 
-const showTooltip = () => {
-  const tooltip = document.querySelector('.tooltip-text');
-  tooltip.style.visibility = 'visible';
-  tooltip.style.opacity = '1';
+const showTooltip = (coordinate = [-100,50]) => {
+    /**
+     * @abstract tooltip 표기 기능.
+     * @param number[] coordinate : tooltip move coordinate
+     * @description 버튼 클릭시 tooltip 을 보여준다. 위치는 버튼의 위치를 고려하여 작성자가 직접 계산 후 삽입한다.
+     *
+     * */
+    const tooltip = document.querySelector('.tooltip-text');
 
-  // Hide the tooltip after a delay
-  setTimeout(function() {
-    tooltip.style.visibility = 'hidden';
-    tooltip.style.opacity = '0';
-  }, 2000); // Adjust the delay (in milliseconds) as needed
+    const position = tooltip.getBoundingClientRect();
+    // Hide the tooltip after a delay
+    tooltip.style.left = coordinate[0];
+    tooltip.style.top = coordinate[1]
+    // console.log(tooltip.style.offset)
+    tooltip.style.visibility = tooltip.style.visibility == 'hidden' ? 'visible' : 'hidden';
 }
+
+// only for dataset
+const camelToSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+const snakeToCamelCase = (str) => str.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());

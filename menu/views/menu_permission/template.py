@@ -19,7 +19,6 @@ class MenuScreenPermissionListView(ConditionalListView):
 		context = super().get_context_data(**kwargs)
 		context['team_list'] = Team.objects.all()
 		context['menu_screen_list'] = Menu.objects.filter(is_screen=True)
-		context['duty_code_list'] = CodeTable.objects.filter(parent = CodeTable.objects.get(name='직책')).order_by('id')
 		context['account_list'] = Account.objects.filter(~Q(info__account_type_code__name='관리자'), is_superuser=False).order_by('id')
 
 		return context

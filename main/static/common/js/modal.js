@@ -5,6 +5,7 @@ function deleteRowDefault(button_node){
     const url = modal.querySelector('[name=url]').value;
 
     fetchEvent(url,undefined, 'delete', {'pk_list':pkList}, (data)=>{
+        console.log(data)
         alert(data.message);
         if (Object.keys(data).indexOf('redirect_url') != -1){
            location.href=data.redirect_url;
@@ -20,7 +21,8 @@ function deleteDefault(button_node){
     let id = modal.querySelector('[name=id]').value;
     const url = modal.querySelector('[name=url]').value;
 
-    fetchEvent(url,undefined, 'delete', {'id':id}, (data)=>{
+    fetchEvent(url,undefined, 'delete', {'pk_list':id}, (data)=>{
+        console.log(data)
         alert(data.message);
         if (Object.keys(data).indexOf('redirect_url') != -1){
            location.href=data.redirect_url;
@@ -33,6 +35,7 @@ function deleteDefault(button_node){
 function deleteModalShow(container, id, url='.'){
 
     const modal = container.querySelector('.delete-modal');
+    console.log(modal)
     modal.querySelector('[name=id]').value = id;
     modal.querySelector('[name=url]').value = url;
     $(modal).css('display','flex').children('.modal-content').animate({

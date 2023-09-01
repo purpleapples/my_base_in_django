@@ -14,7 +14,7 @@
             <form method="POST" id="form" >
                 <input type="hidden" name="id" value="{{ object.id }}">
                 {% csrf_token %}
-                <table class="table table-bordered ">
+                <table class="table table-bordered" id="form-table">
                     <colgroup>
                         <col width="30%">
                         <col width="70%">
@@ -45,14 +45,12 @@
                         <td><input type="email" name="email" class="form-element-default" value="{{ object.email }}"></td>
                     </tr>
                     <tr>
-                        <th><label>계정분류</label></th>
+                        <th><label>계정권한</label></th>
                         <td>
-                            <select class="form-element-default" name="duty_code_id">
+                            <select class="form-element-default" name="permission_group_id">
                                 <option></option>
-                                {% for account_type_code in account_type_code_list %}
-                                    <option value="{{ account_type_code.id }}"
-                                            {% if object.info.account_type_code.id == account_type_code.id %} selected {% endif %}>
-                                        {{ account_type_code.name }}</option>
+                                {% for menu_permission_group in menu_permission_group_list %}
+                                    <option value="{{ menu_permission_group.id }}">{{ menu_permission_group.group_name }}</option>
                                 {% endfor %}
                             </select>
                         </td>

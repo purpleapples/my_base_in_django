@@ -2,7 +2,7 @@
 {% block title %}사용자 목록{% endblock %}
 {% load static %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
+
     <script type="text/javascript" src="{% static 'apps/system/account/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/system/account/css/list.css' %}">
 {% endblock %}
@@ -36,7 +36,7 @@
                     <tr role="row">
                         <th>사용자 계정 <span class="glyphicon glyphicon-sort"></span></th>
                         <th>이름 <span class="glyphicon glyphicon-sort"></span></th>
-                        <th>계정분류 <span class="glyphicon glyphicon-sort"></span></th>
+                        <th>계정권한 <span class="glyphicon glyphicon-sort"></span></th>
                         <th>연락처 <span class="glyphicon glyphicon-sort"></span></th>
                         <th>이메일 <span class="glyphicon glyphicon-sort"></span></th>
                         <th>접속상태 <span class="glyphicon glyphicon-sort"></span></th>
@@ -51,13 +51,13 @@
                             <input type="hidden" name="id" value="{{object.id}}">
                         </td>
                         <td>{{ object.name }}</td>
-                        <td>{{ object.info.account_type_code.name }}</td>
+                        <td>{{ object.info.permission_group.group_name }}</td>
                         <td>{{ object.info.phone_number }}</td>
                         <td>{{ object.email }}</td>
                         <td class="text-center">
                             {% if object.is_login_checked %}
                                     접속
-                                {% if request.user.is_superuser or request.user.info.account_type_code.name == '관리자' %}
+                                {% if request.user.is_superuser or request.user.info.permission_group.group_name == '관리자' %}
                                 <button class="button delete" onclick="forceLogout(this)">접속해제</button>
                                 {% endif %}
                             {% else %}

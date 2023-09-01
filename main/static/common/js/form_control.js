@@ -1,4 +1,11 @@
+/**
+ * form control function list
+ * removeDuplicateOptions(select_selector_list) : 동일 select에서 선택 된 내역 이 존재할 경우 삭제 후 option 재배열
+ *
+ *
+ * */
 
+//*********************************** multiple same list select without duplicate ************************************//
 function removeDuplicateOptions(select_selector_list){
     for (let selector of select_selector_list){
         let select =document.querySelector(selector);
@@ -88,15 +95,7 @@ function sortByIndex(el1, el2){
         return 0;
     }
 }
-//--------------------------------------------------------------------------------------------------------------------
-
-function addFormSubmitEvent(form_id, func){
-    let form = document.getElementById(form_id);
-    form.addEventListener('submit', function(event){
-        event.preventDefault();
-        return func(this);
-    });
-}
+//--------------------------------------------------------------------------------------------------------------------//
 
 function setImageByValue(node, target_selector, img_url_parent, attribute_name){
     /*
@@ -231,7 +230,6 @@ function checkFormat(event, format_object, callback=undefined){
     let regEmail = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
 
     Array.from(Object.keys(format_object)).forEach((name)=>check_names.push(`[name=${name}]`));
-    console.log(form.querySelectorAll(check_names.join(',')))
     for(let input of form.querySelectorAll(check_names.join(','))){
         if(input.type='email') {
             if(! regEmail.test(input.value)){
@@ -271,22 +269,6 @@ function checkFormat(event, format_object, callback=undefined){
     }
 }
 
-
-function setInputEnabled(button_node){
-    /*
-    * abbr: form class에 등록된 속성에 대한 disabled 제어
-    * author: 임성혁
-    * param: button_node:HtmlButtonElement
-    * desc:
-    * django의 form_class에 등록된 속성의 경우 required 여부를 떠나서 disabled 되면 에러납니다.
-    * 그래서 여기서 form의 disabled 된 속성 전부 풀어줍니다. 이후 전송합니다.
-    * */
-    let form = button_node.closest('form');
-    for(let element of form.elements){
-        element.disabled=false;
-    }
-    form.submit();
-}
 
 function changeInputNameNumber(cloneNode, number){
     /*
@@ -362,12 +344,6 @@ function _eventOnChangeUploadFile(file_node){
     $(file_node).closest('.filebox').find('[name=DownloadButton]').remove()
 }
 
-function fileClear(button_node) {
-    let parent = button_node.parentNode;
-    parent.querySelector('[type=text]').value ="등록된 파일이 없습니다.";
-    button_node.disabled=true;
-}
-
 function _eventOnInsideFileBox(){
     for (let div of document.querySelectorAll('.file-box')){
         let file = div.querySelector('[type=file]');
@@ -383,63 +359,7 @@ function _eventOnInsideFileBox(){
     }
 }
 
-
-function setInputDisabled(button_node, readonly_list=[]){
-    /*
-    * abbr: form 입력 모드 통제
-    * author: 임성혁(samson siba)
-    * param: button_node:HtmlButtonElement, readonly_list:list<String>
-    * desc:
-    * 한 화면에서 입력, 상세, 수정을 다 본다고 가정한 경우 사용하는 기능입니다.
-    * 입력/취소 버튼을 누름에 따라 readonly_list 를 제외하고 입력을 활성/비활성화 합니다.
-    */
-    let disabled = false;
-    if(button_node.textContent == '취소'){
-        button_node.textContent = '입력';
-        disabled = true;
-        button_node.parentNode.querySelector('.save').classList.add('disabled')
-    }else{
-        button_node.textContent = '취소';
-        button_node.parentNode.querySelector('.save').classList.remove('disabled')
-    }
-
-    let form = button_node.closest('form');
-    for(let element of form.elements){
-        if (readonly_list.indexOf(element.name) != -1){continue;}
-        if (element.nodeName == "SELECT" || element.nodeName == "BUTTON") {
-            element.disabled = disabled;
-        }else{
-            element.readOnly = disabled;
-        }
-    }
-}
-
-function changeBetweenFileAndDownload(criterion_input){
-    /*
-    * abbr: file 다운로드 기능 활성/비활성화
-    * author: 임성혁(samson siba)
-    * param: criterion_input;child_of_form_element
-    * desc:
-    * 한 화면에서 입력, 상세, 수정이 다 된다고 가정 했을 경우 파일 내려받기 활성/비활성화 입니다.
-    * 입력 가능 불가능 여부에 따라 파일 내려받기 기능을 활성/비활성화 합니다.
-    * */
-
-    let form = criterion_input.closest('form');
-    let downloadLinkList = form.querySelectorAll('.download-link');
-    if(criterion_input.readOnly){
-        for(let div of downloadLinkList){
-            div.previousElementSibling.classList.add('hidden');
-            div.classList.remove('hidden');
-        }
-    }else{
-        for(let div of downloadLinkList){
-            div.previousElementSibling.classList.remove('hidden');
-            div.classList.add('hidden');
-        }
-    }
-}
-
-function readImage(input, img_selector = undefined) {
+function readImageFromInput(input, img_selector = undefined) {
     const name = input.name;
     const previewImage = img_selector == undefined ? $("#"+name+"-image") : $(img_selector);
     if(input.files && input.files[0]) {
@@ -478,6 +398,11 @@ function defaultPost(event, container_selector, url='.'){
     const formData = new FormData();
     for (let input of event.target.closest(container_selector).querySelectorAll('input, select, textarea')){
 
+        if(input.value =='' && input.required){
+            alert('"필수값" ' + document.querySelector(`label[for='${input.name}']`).textContent + '이(가) 비어있습니다.');
+            input.focus();
+            return;
+        }
         if ((input.name =='' || ['submit','reset'].indexOf(input.name) != -1)  || (input.type=='hidden' && input.value =='')){
             continue;
         }
@@ -489,68 +414,56 @@ function defaultPost(event, container_selector, url='.'){
             formData.set(input.name, input.checked ? 'True' : 'False');
             continue;
         }
+
         formData.set(input.name, input.value);
     }
     formData.set('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
     fetchEvent(url, undefined, 'POST', formData, (data)=>{
         alert(data.message);
         location.reload();
-    })
+    });
 }
 
 // pair 로 묶어서 진행
-function initConnectedSelect(domList){
-    for (let i=1; i< domList.length; i++){
-        let select = domList[i-1];
-        let child = domList[i];
-        select.dataset.child=child.name;
-        let list = Array.from(child.options).map(x=>{
-            return [x.dataset.parentvalue,x.value, x.textContent];
+function initHierarchicalSelect(elementPairList){
+    /**
+     * @desc 서로간의 연관성을 지닌 계층형 select간 event를 건다.
+     * 상위 select의 값 변경 시 하위 대상의 option 목록이 선택된 상위 select 의 option의 data attribute 를 기준으로 이루어지도록 한다.
+     * 제외된 값은 hidden 처리된 option 보관용 div에 저장 시킨다.
+     * 순서는 유지되어야 한다.
+     * dataset의 parent의 속성은 parent select 의 이름을 가진다.
+     * 데이터를 복원하기위해 dataset 의 list 에 원본 option list를 저장한다.
+     *  */
+
+    for (const array of elementPairList){
+
+        let parent = array[0];
+        let child = array[1];
+        parent.dataset.child = child.name;
+        const key = snakeToCamelCase(parent.name);
+        let list = Array.from(child.options).map((x, index)=>{
+            return [x.dataset[key], x.value, x.textContent, index];
         });
         child.dataset.list = JSON.stringify(list);
-        select.onchange = (event)=>{
+        parent.onchange = (event)=>{
             const child = document.querySelector(`[name="${event.target.dataset.child}"]`);
-            const optionAttributes = JSON.parse(child.dataset.list).filter(x=> x[0] == (event.target.value).toString());
+            const optionAttributes = JSON.parse(child.dataset.list).filter(x=> x[0] == (event.target.value).toString() || x[1] == '');
+
             child.innerHTML=optionAttributes.map(x=>{ return `<option data-parentValue="${x[0]}" value="${x[1]}">${x[2]}</option>`}).join('');
         }
     }
 }
 
-function setForm(data, form, appendFunc = undefined){
-    for(const el of form.elements){
-        if(['csrfmiddlewaretoken',''].indexOf(el.name) != -1 || ['submit','reset'].indexOf(el.type) != -1){
-            continue;
-        }
-        el.value='';
-        if (Object.keys(data).indexOf(el.name)!=-1 ){
-
-            if (el.type== 'checkbox'){
-                el.checked = data[el.name];
-            }else if(el.nodeName=='SELECT'){
-                for (const option of el.options){
-                    if(option.value == data[el.name]){
-                        option.selected=true;
-                        break;
-                    }
-                }
-            }else{
-                el.value = data[el.name];
-            }
-        }
-    }
-    if (appendFunc != undefined){
-        appendFunc(data, form);
-    }
-}
-
 function controlFormElement(container){
+    /**
+     * @param {HTMLElement} container
+     * @desc input 입력 시 constraint 추가
+     * */
     // class input year, input month, input period, input number
     container.querySelectorAll('.input.number').forEach(input=>setNumberInput(input));
     container.querySelectorAll('.input.year').forEach(input=>setYearInput(input));
-
     // control month
     container.querySelectorAll('.input.month').forEach(input=>setMonthInput(input));
-
     // control period
     container.querySelectorAll('.input.period').forEach(input=>setPeriodInput(input));
 }
@@ -668,6 +581,14 @@ function createMultipleTimeSelectContainer(container,
                                            }
 
 ){
+    /**
+     * @author samson siba
+     * @desc option에 주어진 type에 맞는 시간,기간 선택자를 select 선택에 맞춰서 container 안에서 제공
+     * @param {HTMLElement} container : a container for inputs
+     * @param {Array<str>} options: an Array of type of input
+     * @param {Object} resultTreat: attributes for result value setting ex. will be result added or not ...
+     * */
+
     container.style.height = '150px';
 
     const cssText = 'display:grid; grid-template-rows:20% 20% 20%;grid-gap:15px;';
@@ -864,6 +785,12 @@ function createMultipleTimeSelectContainer(container,
 }
 
 function createPeriodInput(type){
+    /**
+     * @author samson siba
+     * @param {string} type : input type for period
+     * @desc create tow input for writing period
+     *
+     * */
     const defaultCssClassList = ['form-element-default', 'input'];
     const periodContainer = document.createElement('article');
     const span = document.createElement('span');
@@ -897,6 +824,10 @@ function concatSelectedValues(el, input){
 const isDateInRange = (value, dateList, limitRange) => {
     /**
      * impossible to recycle
+     * @desc : check value is duplicated or in range among whole dateList elements
+     * @param {string|date} value : value checked
+     * @param {Array} dateList : Array of date selected
+     * @param {string} limitRange : date format
      *
      * in javascript there are 5 types of dateformat to treat
      * 1.yyyy-mm-dd : date
@@ -995,4 +926,53 @@ const isDateInRange = (value, dateList, limitRange) => {
         }
     }
     return true;
+}
+
+// 셀렉터 검색 기능
+function ApplyChoices(select_box, obj) {
+    for(let i=0; i<select_box.length; i++) {
+        const element = document.querySelector(`.js-choice-${select_box[i]}`);
+        const choices = new Choices(element, {
+            searchResultLimit : 1000,
+            searchFields : ['label','value','customProperties'],
+            shouldSort : false,
+            callbackOnCreateTemplates: function(template) {
+                return {
+                    item: (classNames, data) => {
+                        return template(`
+                            <div class="${classNames.item} ${
+                            data.highlighted
+                                ? classNames.highlightedState
+                                : classNames.itemSelectable
+                            } ${
+                            data.placeholder ? classNames.placeholder : ''
+                            }" data-item data-id="${data.id}" data-value="${data.value}" ${
+                            data.active ? 'aria-selected="true"' : ''
+                            } ${data.disabled ? 'aria-disabled="true"' : ''} data-obj='${obj}'>
+                                ${data.label}
+                            </div>
+                        `);
+                    }
+                };
+            }
+        });
+
+        const $dropdown_list = $(`select[name='${select_box[i]}']`).parent().next();
+
+        $dropdown_list.find(".choices__input").keyup(function() {
+            const inputValue = $(this).val().toUpperCase();
+
+            $dropdown_list.find(".choices__item--choice").each(function() {
+                const searchValue = $(this).text().toUpperCase();
+
+                if(searchValue.indexOf(inputValue) < 0) {
+                    $(this).remove();
+                }
+            });
+
+            if ($.trim($dropdown_list.find(".choices__list").html()) === '') {
+                $dropdown_list.find(".choices__list").html("<div class='choices__item choices__item--choice has-no-results'>No results found</div>");
+            }
+        });
+    }
 }

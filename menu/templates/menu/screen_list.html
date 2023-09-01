@@ -1,0 +1,50 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    화면 메뉴 목록
+{% endblock %}
+{% block header %}
+    <script type="text/javascript" src="{% static 'apps/menu/menu/js/screen_list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu/css/screen_list.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/tree.js' %}"></script>
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <article class="context-horizontal-center">
+        <section class="list-default">
+        <section class="buttonToolbar flex-between">
+            <section>
+                <p>조회 수량 총 대상 갯수  <span style='color:red;'>{{object_list|length}} </span> 개 입니다.</p>
+            </section>
+        </section>
+        <table class="table table-bordered" id="table">
+            <thead>
+                <tr>
+                    <th>대메뉴</th>
+                    <th>중메뉴</th>
+                    <th>화면</th>
+                    <th>메뉴 표기 여부</th>
+                    <th>상세</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for object in object_list %}
+                <tr>
+                    <td>{{ object.root.title }}</td>
+                    <td>{{ object.category_title }}</td>
+                    <td>
+                        <input type="hidden" name="id" value="{{ object.id }}">
+                        {{ object.screen_title }}
+                    </td>
+                    <td>
+                        <input type="checkbox" class="form-element-default" readonly {% if object.is_visible %}checked{% endif %}>
+                    </td>
+                    <td><a href="{% url 'menu_function_list' pk=object.id %}">이동</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </section>
+    </article>
+    {% include 'common/modal/delete_rows_modal.html' %}
+{% endblock %}

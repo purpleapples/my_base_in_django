@@ -2,17 +2,17 @@
 // table에 등록 기능이 있을 경우 수정으로 모드 변경
 
 function changeToEditMode(button_node, url='.'){
-    /**
-     * @desc : table row를 update 형태로 변환
-     * @requires : table에 동일 형식의 데이터 입력을 위한 .input-row 가 존재할 것
-     * @param  {HTMLElement} button_node : 수정 버튼
-     * @param : {string} url : 수정 내역 전송 url
-     * */
-    //********************************************** 변수 및 기능 준비 ***************************************************//
+
     let tr = button_node.closest('tr');
     let clone_node = tr.closest('table').querySelector('.input-row tr').cloneNode(true);
     let clone_td_list = clone_node.querySelectorAll('td');
     let insert_value = '';
+    const terminateEditMode = (event, container_selector) =>{
+        let tr = event.target.closest(container_selector);
+        let tr_origin = document.getElementById('tr-origin-' + Array.from(tr.parentNode.children).indexOf(tr));
+        tr.innerHTML = tr_origin.innerHTML;
+    }
+
 
     let setElementValue = (el, insert_value) => {
         // pass file type
@@ -28,6 +28,7 @@ function changeToEditMode(button_node, url='.'){
                 el.value = insert_value;
             }
         }else{
+
             for(let option of el.options){
                 if(option.textContent == insert_value){
                     el.value = option.value;
@@ -36,7 +37,7 @@ function changeToEditMode(button_node, url='.'){
             }
         }
     }
-    //******************************************** copy element ******************************************************//
+    // 복제 후 저장
     let div = document.createElement('div');
     let tr_origin = document.createElement('tr');
     tr_origin.innerHTML = tr.innerHTML;
@@ -47,22 +48,15 @@ function changeToEditMode(button_node, url='.'){
     div.classList.add('hidden');
     document.body.appendChild(div);
 
-    //******************************************** form element setting **********************************************//
-    for (const checkbox of tr.querySelectorAll('input[type=checkbox]')){
-        const cloneBox = clone_node.querySelector(`[name="${checkbox.name}"]`);
-        cloneBox.checked = checkbox.checked;
-    }
 
     for (const hidden of tr.querySelectorAll('input[type=hidden]')){
         clone_node.firstElementChild.appendChild(hidden.cloneNode(true));
     }
 
-    //******************************************** text value setting ************************************************//
     const hiddenInputs = new Array();
     for(let i=0; i<clone_td_list.length; i++){
         let td = clone_td_list[i];
         let formElements = td.querySelectorAll('input, textarea, checkbox, select');
-
         for(let el of formElements){
             if (el.type == 'hidden'){
                 hiddenInputs.push(el.cloneNode(true));
@@ -73,11 +67,13 @@ function changeToEditMode(button_node, url='.'){
         }
     }
 
-    //********************************************** add cancel button ***********************************************//
+    // 등록 옆에 취소 버튼 부착
     let button = document.createElement('span');
     button.classList.add('button');
     button.classList.add('function');
     button.textContent = '취소';
+
+
     button.onclick = (event) => terminateEditMode(event, 'tr')
 
     clone_node.lastElementChild.appendChild(button);
@@ -85,27 +81,6 @@ function changeToEditMode(button_node, url='.'){
     tr.parentNode.insertBefore(clone_node, tr);
     tr.remove();
 }
-
-function terminateEditMode(event, container_selector){
-    let tr = event.target.closest(container_selector);
-    let tr_origin = document.getElementById('tr-origin-' + Array.from(tr.parentNode.children).indexOf(tr));
-    tr.innerHTML = tr_origin.innerHTML;
-
-}
-
-function setTableDataToForm(button_node, form, form_element_selector_list, td_index_list){
-
-    let tr = button_node.closest('tr');
-    // if (td_index_list == undefined){
-    //     return;
-    // }
-    for(let i =0; i<td_index_list.length; i++){
-        form.querySelector(form_element_selector_list[i]).value =
-            tr.children.item(td_index_list[i].textContent).textContent.trim();
-    }
-    form.id.value = tr.querySelector('[name=id]').value;
-}
-
 
 function setTableHeader(row_id_list, table_selector =undefined){
 
@@ -121,11 +96,6 @@ function setTableHeader(row_id_list, table_selector =undefined){
     },);
 }
 
-function addTrSelectEvent(table_selector, only=false){
-    Array.from(document.querySelector(table_selector).children).forEach((tr)=>{
-        tr.addEventListener('click', function(event){selectRow(this, only)});
-    })
-}
 
 function selectRow(tr, only=false){
 
@@ -138,7 +108,6 @@ function selectRow(tr, only=false){
     }
     check ? tr.classList.remove('is_chk') : tr.classList.add('is_chk');
 }
-
 
 function setTableWithList(datalist, table_id, isInit, callback=undefined){
 
@@ -196,83 +165,6 @@ function changeTdToSelect(tr, td_index, name, option_list){
     tr.children.item(td_index).appendChild(select);
     return tr;
 }
-
-function setTableWidth(event, params = undefined, callback=undefined){
-    let table_body = document.querySelector(params['table_body_selector']);
-    _controlTableScrollByClass(
-        table_body,
-        table_body.offsetHeight,
-        params['scroll_height'],
-        params['class_name']
-    );
-}
-
-function _controlTableScrollByClass (table_body, now_height, scroll_height, class_name){
-
-    if (now_height >= scroll_height.toString()){
-        table_body.classList.add(class_name);
-    }else{
-        table_body.classList.remove(class_name);
-    }
-}
-
-function pasteRow(source_table_selector, target_table_selector, setRowFunc, max_row){
-    let source_table = document.querySelector(source_table_selector);
-    let target_table_tbody = document.querySelector(target_table_selector+ ' tbody');
-    let target_row = source_table.querySelector('tr.is_chk');
-
-    if (target_row == null){ return;}
-    if(target_table_tbody.children.length >= max_row){
-        return;
-    }
-    if (setRowFunc == undefined) {return}
-    target_row.classList.remove('is_chk');
-    target_row = setRowFunc(target_row);
-    target_table_tbody.appendChild(target_row);
-}
-
-
-function moveUpRow(source_table_selector, target_table_selector, remove_cell_list, callback=undefined){
-    let compare_selector = '[type=checkbox]';
-    let source_table = document.querySelector(source_table_selector);
-    let target_row = source_table.querySelector('tr.is_chk');
-    let order = parseInt(target_row.querySelector(compare_selector).value);
-    if(target_row == null){return;}
-    let remove_target_list = [];
-    for (let cell_index of remove_cell_list){
-        remove_target_list.push(target_row.children[cell_index]);
-    }
-    for(let remove_target of remove_target_list){
-        remove_target.remove();
-    }
-
-    let target_table_body =document.querySelector(target_table_selector + ' tbody');
-    if(target_table_body.children.length <1){
-        target_row.remove();
-        return;
-    }
-    for(let checkbox of target_table_body.querySelectorAll(compare_selector)){
-        if (order == parseInt(checkbox.value) -1){
-            target_table_body.insertBefore(target_row, checkbox.closest('tr'));
-            if(callback!= undefined){
-                callback(target_row, target_table_selector);
-                return;
-            }
-            return;
-        }
-    }
-    // 처음에 넣거나 나중에 넣거나
-    let firstChild =target_table_body.children[0];
-    if( order > firstChild.querySelector('[type=checkbox]').value){
-        target_table_body.appendChild(target_row);
-    }else{
-        target_table_body.insertBefore(target_row, firstChild);
-    }
-    if(callback!= undefined){
-        callback(target_row, target_table_selector);
-    }
-}
-
 
 function checkAllRow(button, target_table_selector){
     let tbody = document.querySelector(target_table_selector+ ' tbody');
@@ -357,6 +249,7 @@ function exportTableToExcelDefault(target_table, hiddenRowList, hiddenColumnList
         ]
     }).export(document_name,'xlsx');
 }
+
 function addTableExportEvent(button_node, target_table, hiddenRowList, hiddenColumnList, document_name){
     // event 부착 간소하
     button_node.addEventListener('click', function(event){
@@ -432,9 +325,6 @@ function setTableEventListerDefault(table){
     setTableScroll(table);
 }
 
-function createTableColumnFilter(th, index){
-
-}
 function _eventOnFilterValueChange(event){
     const elIndex= new array();
     event.target.closest('tr').querySelectorAll('input, select').forEach(el=>{
@@ -553,18 +443,6 @@ function movePage(a, page_number){
     urlParams.set('page', page_number);
     a.href= '?' + urlParams;
     a.click();
-}
-
-function setStickyTableFilter(){
-    Array.from(document.querySelectorAll('.table')).forEach((table)=>{
-        if (table.id.indexOf('sticky') != -1){
-            setTableSorter(table);
-        }
-    });
-}
-
-function selectSerialRows(){
-    // ....
 }
 
 function setTableScroll(table){
@@ -755,3 +633,182 @@ function setStickyPosition(table, fixedColumnIndexes){
 //
 // }
 
+
+/* 테이블 셀 자동 병합 */
+function fn_autoHtmlTrRowspanClass(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
+
+    var selectorStr = "." + selector;
+    fn_autoHtmlTrRowspan(selectorStr, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep);
+}
+
+function fn_autoHtmlTrRowspanId(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
+
+    var selectorStr = "#" + selector;
+    fn_autoHtmlTrRowspan(selectorStr, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep);
+}
+
+
+function fn_autoHtmlTrRowspan(selector, tdIdxSep, idxInExYn, trChkYn, tdIdxChkSep) {
+
+    var trObj;							// TBODY TR object
+    var trIdx;							// TR index
+    var tdObj;							// TBODY TD object
+    var tdIdx;							// TD index
+    var tdTxt;							// TD text
+    var nextRwTdObj;				// next row TD Object
+    var nextRwTdTxt;				// next row TD text
+    var rwspNum;						// RowSpan number
+    var tempTdObj;					// set RowSpan target TD object
+
+    var chkBoolean = true;	// check use Flag
+    var compChildTdObj;	    // compare TR children TD Object Array
+    var compCurrTdObjTxt;		// compare TR children Current Row TD text(Array Index)
+    var compNextTdObjTxt;		// compare TR children Next Row TD text(Array Index)
+    var flagCnt = 0;				// Not RowSpan count
+
+    var idxArr;
+    var idxBoolean = true;			// default(true) : idxArr only rowspan, false : idxArr not rowspan
+
+    var idxNonChkArr;						// choice compare TR children TD Array
+
+    // parameter check
+    if (tdIdxSep != undefined) {
+        idxArr = tdIdxSep.split(",", -1);
+    }
+
+    // parameter check
+    if (idxInExYn != undefined) {
+        idxBoolean = eval(idxInExYn);
+    }
+
+    // parameter check
+    if (trChkYn != undefined) {
+        chkBoolean = eval(trChkYn);
+    }
+
+    // parameter check
+    if (tdIdxChkSep != undefined) {
+        idxNonChkArr = tdIdxChkSep.split(",", -1);
+    }
+
+    $(selector).find("tr").each(function (i) {
+
+        trObj = $(this);
+        trIdx = $(trObj).index();
+
+        $(trObj).find("td").each(function (j) {
+
+            tdObj = $(this);
+            tdIdx = $(tdObj).index();
+            tdTxt = $.trim($(tdObj).text());
+            nextRwTdObj = $(trObj).next().find("td:eq(" + tdIdx + ")");
+            nextRwTdTxt = $.trim($(nextRwTdObj).text());
+
+            if ($(tdObj).css("visibility") == "hidden") {
+
+                // current prevAll only visibility TD Array
+                tempTdObj = $(trObj).prevAll("tr").find("td:eq(" + tdIdx + ")").filter(":visible");
+                tempTdObj = $(tempTdObj)[$(tempTdObj).size() - 1];	// array last is closest
+                rwspNum = $(tempTdObj).prop("rowspan") + 1;
+
+                /* rowspan and display:none */
+                $(tempTdObj).prop("rowspan", rwspNum);
+                $(tdObj).hide();
+            }
+
+            flagCnt = 0;	// initialization
+
+            if (chkBoolean && tdIdx != 0) {
+                compChildTdObj = new Array();
+
+                var tempIdx;
+                var ifStr = "";
+                var idxStr = "";
+
+                // tr in td All or td choice
+                if (idxNonChkArr != undefined) {
+                    // make tr in td array for check
+                    $.each(idxNonChkArr, function (x) {     // choice td
+                        tempIdx = Number(idxNonChkArr[x]);
+                        compChildTdObj[x] = $(trObj).find("td:eq(" + tempIdx + ")");
+                        //console.log($(compChildTdObj[x]).prop("outerHTML"));
+                    });
+
+                    ifStr = "tempIdx < tdIdx";
+                    idxStr = "tempIdx";
+                } else {
+                    // make tr in td array for check
+                    compChildTdObj = $(trObj).children("td");  // all td
+
+                    ifStr = "m < tdIdx";
+                    idxStr = "m";
+                }
+
+                // this TR children TD check(low index TD RowSpan possible) : 앞쪽 td의 rowspan을 초과 못함
+                $.each(compChildTdObj, function (m) {
+
+                    tempIdx = $(compChildTdObj[m]).index();
+
+                    if (eval(ifStr)) {
+
+                        compCurrTdObjTxt = $(trObj).find("td:eq(" + eval(idxStr) + ")").text();
+                        compNextTdObjTxt = $(trObj).next().find("td:eq(" + eval(idxStr) + ")").text();
+
+                        // not RowSpan
+                        if (compCurrTdObjTxt != compNextTdObjTxt) {
+                            flagCnt++;
+                        }
+                    }
+                });	// TD check each end
+            }
+
+            if (tdTxt == nextRwTdTxt && flagCnt == 0) {
+                $(nextRwTdObj).css("visibility", "hidden");	// not equal display:none
+            }
+
+            if (idxArr != undefined) {
+                if (idxBoolean) {
+                    // idxArr only rowspan
+                    if (idxArr.indexOf(tdIdx.toString()) == -1) {
+                        $(nextRwTdObj).css("visibility", "");	// remove style visibility, not RowSpan
+                    }
+                } else {
+                    // idxArr not rowspan
+                    if (idxArr.indexOf(tdIdx.toString()) > -1) {
+                        $(nextRwTdObj).css("visibility", "");	// remove style visibility, not RowSpan
+                    }
+                }
+            }
+        });	// TD each end
+    });	// TR each end
+}
+
+// const createTreeDropdownTable =(container, data, headerClassList, cellClassList) =>{
+//     // header -> data first
+//     const table = document.createElement('table');
+//     table.innerHTML = "<thead><tr></tr></thead><tbody></tbody>"
+//     const theadTr = table.querySelector('thead tr');
+//     const tbody = table.querySelector('tbody');
+//     console.log(theadTr);
+//     container.appendChild(table);
+// }
+
+
+const _eventOnPageDropdownTable = (table) => {
+    const tBody = table.querySelector('tbody');
+    const _eventOnMouseover = (event) =>{
+        const category = document.querySelector(`[data-id='${event.currentTarget.dataset['parentId']}']`);
+        category.style.background = 'blue'
+        category.style.color = 'white';
+    }
+    const _eventOnMouseleave = (event) =>{
+        const category = document.querySelector(`[data-id='${event.currentTarget.dataset['parentId']}']`);
+        category.style.background = 'white'
+        category.style.color = 'rgba(17,1,1,0.71)';
+    }
+
+    Array.from(tBody.querySelectorAll('td:not(.category)')).forEach(td=> {
+        td.addEventListener('mouseover', _eventOnMouseover);
+        td.addEventListener('mouseleave', _eventOnMouseleave);
+    })
+}

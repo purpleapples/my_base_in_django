@@ -4,12 +4,9 @@ window.onload = function(){
     menuSaveButton.onclick = (event)=> saveMenu(event);
 
     document.getElementById('is-screen').onclick = (event)=>{
-        console.log(event)
         const idList = ['url', 'screen-id','user-comment'];
-        console.log(event.target.checked)
         if(event.target.checked){
             for(const idStr of idList){
-                console.log(idStr)
                 const el = document.getElementById(idStr);
                 el.disabled=false;
                 el.required=true;
@@ -33,8 +30,9 @@ window.onload = function(){
         }, {
             textAttribute:'title',
             field_list:['is_screen'],
+            classList:['content-arrow-down', 'box-shadow-below-diagonal'],
             callbacks:{
-                click:clickCallback,
+                click:menuClickCallback,
                 create:createCallback,
                 delete:deleteFunc
             },
@@ -50,9 +48,9 @@ window.onload = function(){
     });
 }
 
-const clickCallback = (event) => {
+const menuClickCallback = (event) => {
     /**
-     * description : 수정 데이터 저장 및 관련데이터(menu, menu-permission, screen, screen_function) 조회 및 form 수정사항 treeDataset에 저장
+     * description : 수정 데이터 저장 및 관련데이터(menu, menu-permission) 조회 및 form 수정사항 treeDataset에 저장
      * - 조건에 대해서는 각 함수에서 알아서 실행한다. 해당 영역에서는 함수만 호출한다.
      * */
     const selected = event.target;
@@ -88,15 +86,20 @@ const clickCallback = (event) => {
     setTreeRows(permissionUrl, nodeDataset, 'menu-permission', key,
         {
         menu_id:nodeDataset['id'],
-        reference_values: ['team__name','account__name','account_type_code__name']
+        reference_values: ['account__name']
         }, document.getElementById('menu-permission-tbody'),
         [
-            'team_name',
-            'account_type_code_name',
-            'account_name'],
+            'account_name'
+        ],
         ['id','menu_id','duty_code_id'],
         true,
         '/menu/menu-permission/api');
+    setTimeout(
+        ()=>{
+            const isScreen = document.querySelector('[name=is_screen]');
+            isScreen.dispatchEvent(new Event('click'));
+        }, 150
+    )
 
     const deleteTarget =document.querySelectorAll('span.selected');
     document.querySelector('.delete').disabled = deleteTarget.length == 0;

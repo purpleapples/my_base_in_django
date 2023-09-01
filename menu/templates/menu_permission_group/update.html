@@ -1,0 +1,134 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    메뉴 권한 갱신
+{% endblock %}
+{% block header %}
+    <script type="text/javascript" src="{% static 'apps/menu/menu_permission_group/js/update.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu_permission_group/css/create.css' %}">
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <article class="context-horizontal-center">
+        <section class="grid-column-pair">
+        <section class="list-default">
+            <p class="content-title box-shadow-underscore"> 화면별 권한 및 기능 설정</p>
+            <table class="table table-bordered" id="menu-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2">대메뉴</th>
+                        <th rowspan="2">상위메뉴</th>
+                        <th rowspan="2">화면</th>
+                        <th rowspan="2">사용여부</th>
+                        <th colspan="7">기능 사용 여부</th>
+                    </tr>
+                    <tr>
+                        <th>전체</th>
+                        <th>조회</th>
+                        <th>생성</th>
+                        <th>갱신</th>
+                        <th>삭제</th>
+                        <th>다운로드</th>
+                        <th>업로드</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                    <tr>
+                        <td>
+                            <input type="hidden" name="id" value="{{ object.id }}">
+                            {{ object.root.title }}
+                        </td>
+                        <td>{{ object.parent.title }}</td>
+                        <td>{{ object.title }}</td>
+                        <td>
+                            <input type="checkbox" class="form-element-default" name="use"
+                            {% if object.use %}checked{% endif %}>
+                        </td>
+                        <td>
+                            <input type="checkbox" class="form-element-default" name="check_all_checkbox" disabled>
+                        </td>
+                        <td>{% if object.screen.have_search %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="search_permitted"
+                                   {% if object.search_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                        <td>{% if object.screen.have_create %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="create_permitted"
+                                   {% if object.create_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                        <td>{% if object.screen.have_update %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="update_permitted"
+                                   {% if object.update_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                        <td>{% if object.screen.have_delete %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="delete_permitted"
+                                   {% if object.delete_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                        <td>{% if object.screen.have_upload %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="upload_permitted"
+                                   {% if object.upload_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                        <td>{% if object.screen.have_download %}
+                            <input type="checkbox"
+                                   class="form-element-default" name="download_permitted"
+                                   {% if object.download_permitted %} checked{% endif %}
+                                   disabled> {% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </section>
+            <section class="list-default">
+                <p class="content-title box-shadow-underscore">권한 정보</p>
+                <table class="table table-bordered" id="info-table">
+                    <tbody>
+                        <tr>
+                            <th><label for="group_name">권한명</label></th>
+                            <td colspan="3">
+                                <input type="hidden" name="id" value="{{  permission_group.id }}">
+                                <input type="text" class="form-element-default" name="group_name" id="group_name"
+                                       value={{ permission_group.group_name }}></td>
+                        </tr>
+                        <tr>
+                            <th><label for="group_name">권한 복제 </label></th>
+                            <td colspan="2">
+                                <select class="form-element-default" name="ref-permission-group" id="ref-permission-group">
+                                <option value="">-----------------------</option>
+                                    {% for menu_permission_group in  menu_permission_group_list %}
+                                    <option value="{{ menu_permission_group.id }}"> {{ menu_permission_group.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-right">
+                                <button class="button function"> 복사</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label for="comment">비고</label></th>
+                            <td colspan="3">
+                                <textarea name="comment" id="comment" class="form-element-default" style="height:150px;">{{ permission_group.comment }}</textarea>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4">
+                                <div class="buttonToolbar">
+                                    <button class="button save" id="save"> 저장</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+            </section>
+
+        </section>
+    </article>
+{% endblock %}

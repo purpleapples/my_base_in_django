@@ -1,7 +1,7 @@
-.table {
+#table {
     width:1500px;
 }
-table tr td{
+#table tr td{
     height: 70px !important;
 }
 textarea{

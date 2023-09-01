@@ -5,6 +5,7 @@ from django.http import HttpResponse
 
 from common.cbvs import ApiView
 from common.functions import create_or_update_record
+from common.serializer import CustomDjangoJSONEncoder
 from menu.models import Menu, Screen
 
 
@@ -17,6 +18,7 @@ class MenuApiView(ApiView):
         params['author'] = self.request.user
         instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
                                                             request.FILES)
+
         if instance.parent is None:
             instance.root_id = instance.id
             instance.save()
@@ -55,10 +57,9 @@ def get_menu_excel(qs):
         'user_comment':'화면 표기 문구'
     })
 
-
     return menu_df
 
-def get_menu_tree(account, user_agent):
+def get_menu_tree(account, user_agent, template='each-dropdown'):
 
     order_by = ['level', 'order', 'id']
     # is_mobile_support = False
@@ -73,64 +74,69 @@ def get_menu_tree(account, user_agent):
         pass
     else:
         # 차후 권한 그룹 생성 으로 해당 로직 변경
-        if account.teammember_set.exists() and hasattr(account, 'info') and account.info.account_type_code is not None:
-            # 다 있을 경우
-            # 다중 조건 : 부서 있고 나머지 없는 경우, 부서 있고 직책있는 경우, 부서 있고 직책 있고 계정 일치하는 경우, 부서 있고 계정 일치하는 경우
-            #           직책 있는 경우, 직책 있고 계징 일치 하는 경우, 계정 일치하는 경우
-            team_id = account.teammember_set.last().team.id
-            # 재설계
-            q_filters = Q()
-
-            qs = qs.filter(
-                Q(permission_set__team_id=team_id, permission_set__account=account, permission_set__account_type_code=account.info.account_type_code)
-                | Q(permission_set__team_id=team_id, permission_set__account=account, permission_set__account_type_code__isnull=True)
-                | Q(permission_set__team_id=team_id, permission_set__account__isnull=True, permission_set__account_type_code=account.info.account_type_code)
-                | Q(permission_set__team_id=team_id, permission_set__account__isnull=True, permission_set__account_type_code=account.info.account_type_code)
-                | Q(permission_set__team_id=team_id, permission_set__account__isnull=True, permission_set__account_type_code__isnull=True)
-                | Q(permission_set__team__isnull=True, permission_set__account=account,permission_set__account_type_code=account.info.account_type_code)
-                | Q(permission_set__team__isnull=True, permission_set__account=account, permission_set__account_type_code__isnull=True)
-            )
-        elif account.teammember_set.exists():
-            team_id = account.teammember_set.last().team.id
-            qs = qs.filter(
-                Q(permission_set__team_id=team_id, permission_set__account=account, permission_set__account_type_code__isnull=True)
-                | Q(permission_set__team_id=team_id, permission_set__account__isnull=True, permission_set__account_type_code__isnull=True)
-                | Q(permission_set__team__isnull=True, permission_set__account=account, permission_set__account_type_code__isnull=True)
-            )
-        elif hasattr(account, 'info') and account.info.account_type_code is not None:
-            qs = qs.filter(
-                Q(permission_set__team__isnull=True, permission_set__account=account,
-                  permission_set__account_type_code = account.info.account_type_code)
-                | Q(permission_set__team__isnull=True, permission_set__account=account,
-                    permission_set__account_type_code__isnull=True)
-            )
+        if hasattr(account, 'info') and account.info.permission_group is not None:
+            qs = qs.filter(Q(permission_set__permission_group_id = account.info.permission_group.id))
         else:
-            qs = qs.filter(permission_set__team__isnull=True,
-                                     permission_set__account_type_code__isnull=True,
-                                     permission_set__account=account)
+            qs = qs.filter(permission_set__account=account)
     if not qs.exists():
         return None
 
-    qs = qs.annotate(url = F('screen__url')).order_by(*order_by)
-    menu_list = list()
-    # tree to dict 함수
-    # 해당 함수는 따로 작성
-    # order list 로 담아햐 하는데 dict로 담으면 안되는데
-    def tree_qs_to_dict(tree_qs, tree_list, field_list=['id', 'title', 'level', 'order', 'parent_id', 'url'], key_list = [], annotation=None):
-        if annotation is not None:
-            tree_qs = tree_qs.annotate(**annotation)
-        for node in tree_qs:
-            data_id = str(node.id)
-            if data_id not in key_list:
-                branch =  {field: getattr(node, field) for field in field_list}
-                tree_list.append(branch)
-                key_list.append(data_id)
-                # 저장한다.
-                if node.children_set.exists():
-                    branch['children'] = list()
-                    tree_qs_to_dict(node.children_set.all().order_by('order'), branch['children'], field_list, key_list, annotation)
-    tree_qs_to_dict(qs, menu_list, key_list=[], annotation=dict(url = F('screen__url')))
+    qs = qs.order_by(*order_by)
+    if template == 'each-dropdown':
+        menu_list = list()
+        # tree to dict 함수
+        # 해당 함수는 따로 작성
+        # order list 로 담아햐 하는데 dict로 담으면 안되는데
+        def tree_qs_to_dict(tree_qs, tree_list, field_list=['id', 'title', 'level', 'order', 'parent_id', 'url'], key_list = [], annotation=None):
+            if annotation is not None:
+                tree_qs = tree_qs.annotate(**annotation)
+            for node in tree_qs:
+                data_id = str(node.id)
+                if data_id not in key_list:
+                    branch =  {field: getattr(node, field) for field in field_list}
+                    tree_list.append(branch)
+                    key_list.append(data_id)
+                    # 저장한다.
+                    if node.children_set.exists():
+                        branch['children'] = list()
+                        tree_qs_to_dict(node.children_set.all().order_by('order'), branch['children'], field_list, key_list, annotation)
+        tree_qs_to_dict(qs, menu_list, key_list=[])
+        menu_list = json.dumps(list(menu_list), cls=CustomDjangoJSONEncoder)
+    elif template == 'row_dropdown':
+        pass
+    elif template == 'page-dropdown':
+        max_row = 0
+        values = ['id','parent_id', 'root_id','title', 'url', 'is_screen']
+        menu_pivot = list()
+        menu_list = list()
 
+        for instance in qs.filter(level=0):
+            ancestor_length = instance.node_set.count()
+            row = [{value:getattr(instance,value) for value in values}]
+            descendent_qs = instance.node_set.filter(parent_id__isnull=False, is_visible=True)
+            if descendent_qs.exists():
+                # extend row with child and screen menus
+                row.extend(list(descendent_qs.order_by('pre_order_index').values(*values)))
+            menu_pivot.append(row)
+            max_row = ancestor_length if ancestor_length > max_row else max_row
+        # 새로줄
+        for menu_row in menu_pivot:
+            row_length = len(menu_row)
+            if row_length < max_row:
+                for i in range(max_row - row_length):
+                    menu_row.append({value:'' for value in values})
+        menu_list_length = len(menu_pivot)
+
+        # column, row
+        for i in range(0,max_row):
+            rows = list()
+            for j in range(0, menu_list_length):
+                rows.append(menu_pivot[j][i])
+            menu_list.append(rows)
+        menu_list = dict(
+            header=menu_list[0],
+            body=menu_list[1:]
+        )
     return menu_list
 
 

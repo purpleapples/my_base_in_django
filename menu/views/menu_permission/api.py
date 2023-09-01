@@ -7,61 +7,61 @@ from common.cbvs import ApiView
 from common.functions import create_or_update_record, subset
 from menu.models import MenuPermission
 
-
+api_model = MenuPermission
 class MenuPermissionApiView(ApiView):
     model = MenuPermission
 
-    @transaction.atomic
     def post(self, request):
         params = request.POST.dict()
-        from menu.models import Menu
-
-        menu = Menu.objects.get(id=params['menu_id'])
         params['author'] = self.request.user
+        message, status = save_menu_permission(params, self.duplicate_field_list, request.FILES)
 
-        combination_dict = dict()
-        # 중복 검사
-        combination_dict['menu_id'] = menu.id
-        duplicated_qs = self.model.objects.filter(**combination_dict)
-        if duplicated_qs.exists():
-            if 'id' in params.keys() and params['id'] != '':
-                if duplicated_qs.count > 1:
-                    return HttpResponse(
-                        json.dumps({
-                            'message':'이미 등록된 권한입니다.'
-                        }), content_type='application/json', status=422  # status for unprocessable entity
-                    )
-        # 하위 메뉴의 경우에는 검사 후 등록 상위 메뉴 일 경우 무시
-        while True:
-            # 해당 menu의 root부터 실시
-            condition_field_list = ['team_id','account_type_code_id','account_id']
-            params['menu_id'] = menu.id
-            query_str = _create_search_query(params)
-
-            with connection.cursor() as cursor:
-                cursor.execute(query_str)
-                result = cursor.fetchall()
-                if len(result) == 0:
-                    instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
-                                                                        request.FILES)
-                else:
-                    # print(menu.title)
-                    if not menu.children_set.exists():
-                        return HttpResponse(json.dumps({
-                            'message':'넓은 범주의 권한이 등록되어 있습니다.\n 해당 권한 삭제 후 등록 가능합니다.'
-                        }), content_type='application/json', status=422)
-            # instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
-            #                                                     request.FILES)
-            # 윗선 전부 등록
-            # 최상 위 메뉴 까지 검색 후 권한 없을 경우 부여
-            if menu.parent is None:
-                break
-            menu = menu.parent
         return HttpResponse(
             json.dumps({
                 'message':message
             }), content_type='application/json', status=status
         )
+
+@transaction.atomic
+def save_menu_permission(params, duplicate_field_list, files):
+    from menu.models import Menu
+
+    menu = Menu.objects.get(id=params['menu_id'])
+
+    combination_dict = dict()
+    # 중복 검사
+    combination_dict['menu_id'] = menu.id
+    duplicated_qs = api_model.objects.filter(**combination_dict)
+    if duplicated_qs.exists():
+        if 'id' in params.keys() and params['id'] != '':
+            if duplicated_qs.count > 1:
+                return '이미 등록된 권한입니다.', 422  # status for unprocessable entity
+
+    # 하위 메뉴의 경우에는 검사 후 등록 상위 메뉴 일 경우 무시
+    while True:
+        # 해당 menu의 root부터 실시
+        condition_field_list = ['team_id', 'account_type_code_id', 'account_id']
+        params['menu_id'] = menu.id
+        query_str = _create_search_query(params)
+
+        with connection.cursor() as cursor:
+            cursor.execute(query_str)
+            result = cursor.fetchall()
+            if len(result) == 0:
+                instance, message, status = create_or_update_record(params, api_model, duplicate_field_list,
+                                                                    files)
+            else:
+                if not menu.children_set.exists():
+                    return '넓은 범주의 권한이 등록되어 있습니다.\n 해당 권한 삭제 후 등록 가능합니다.', 422
+
+        # instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
+        #                                                     request.FILES)
+        # 윗선 전부 등록
+        # 최상 위 메뉴 까지 검색 후 권한 없을 경우 부여
+        if menu.parent is None:
+            break
+        menu = menu.parent
+    return instance, 200
 
 def _create_search_query(param):
 

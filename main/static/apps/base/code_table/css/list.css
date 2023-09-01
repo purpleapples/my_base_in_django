@@ -2,9 +2,9 @@
 .search-table {
     width:400px;
 }
-.list-default, table{
+.list-default, #table{
     width:1100px;
 }
-table td:first-child, table th:first-child {
+#table td:first-child, #table th:first-child {
     width:100px;
 }

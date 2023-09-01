@@ -2,7 +2,7 @@ import json
 
 from django.db import transaction
 from django.db.models import F
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views import View
 from django.views.generic import ListView, DetailView
 
@@ -139,6 +139,7 @@ class ApiView(View):
 
     def post(self, request):
         params = request.POST.dict()
+
         params['author'] = self.request.user
 
         instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list, request.FILES)
@@ -147,7 +148,6 @@ class ApiView(View):
                 'message':message
             }), content_type='application/json', status=status
         )
-
 
     @transaction.atomic
     def patch(self, request):
@@ -174,7 +174,6 @@ class ApiView(View):
 
     @transaction.atomic
     def delete(self, request):
-
         message, status = delete_common(self)
         params = {
                 'message':message

@@ -4,11 +4,9 @@
     메뉴 관리
 {% endblock %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/tree.css' %}" />
     <script type="text/javascript" src="{% static 'apps/menu/menu/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu/css/list.css' %}">
-    <script type="text/javascript" src="{% static 'common/js/tree.js' %}"></script>
+
 {% endblock %}
 {% block contents %}
     <section style="margin-left:2%;display:grid;grid-template-columns:48%50%;grid-gap:2%;">
@@ -23,7 +21,7 @@
                 <li class="detail act">상세</li>
                 <li class="hidden" data-name="permission">권한</li>
             </ul>
-            <section class="body">
+            <section class="body box-shadow-below-diagonal">
                 <section id="tree">
                     <form id="menuForm">
                         <input type="hidden" name="id">
@@ -32,7 +30,7 @@
                         <input type="hidden" name="level">
                         <input type="hidden" name="parentId">
                         <input type="hidden" name="nodeIndex">
-                        <table class="table table-bordered" id="menu-table">
+                        <table class="table" id="menu-table">
                             <tbody>
                                 <tr><th>상위 메뉴</th><td><input type="text" class="form-element-default" name="parent_title" readonly></td></tr>
                                 <tr><th>메뉴명</th><td><input type="text" name="title" class="form-element-default" required> </td></tr>
@@ -41,7 +39,7 @@
                                 <tr><th>화면 제공 여부</th><td><input type="checkbox" id="is-screen" name="is_screen" class="form-element-default"> </td></tr>
                                 <tr class="hidden">
                                     <th>기준 화면</th>
-                                    <td><select class="form-element-default" name="screen_id" id="screen-id" required>
+                                    <td><select class="form-element-default" name="screen_id" id="screen-id">
                                     {% for screen in screen_list %}
                                         <option value="{{ screen.id }}">{{ screen.title }}</option>
                                     {% endfor %}
@@ -78,8 +76,6 @@
                     <table class="table table-bordered" id="table2">
                         <thead>
                             <tr>
-                                <th>부서</th>
-                                <th>직책</th>
                                 <th>사용자</th>
                                 <th>저장</th>
                                 <th>삭제</th>
@@ -87,23 +83,6 @@
                         </thead>
                         <tbody class="input-row">
                             <tr>
-                                <td>
-                                    <input type="hidden" name="menu_id">
-                                    <select class="form-element-default" name="team_id">
-                                        <option value=""></option>
-                                        {% for team in team_list %}
-                                            <option value="{{ team.id }}"> {{ team.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
-                                <td>
-                                    <select class="form-element-default" name="account_type_code_id">
-                                        <option value=""></option>
-                                        {% for account_type_code in account_type_code_list %}
-                                            <option value="{{ account_type_code.id }}"> {{ account_type_code.name }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </td>
                                 <td>
                                     <select class="form-element-default" name="account_id">
                                         <option value=""></option>

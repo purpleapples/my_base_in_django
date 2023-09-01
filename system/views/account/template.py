@@ -8,6 +8,7 @@ from django.urls import reverse_lazy
 from common.cbvs import ConditionalListView
 from common.functions import get_screen_comment
 from system.models import Account
+from menu.models import MenuPermissionGroup
 
 logger = logging.getLogger('my')
 
@@ -18,8 +19,7 @@ class AccountCreateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        from base.models import CodeTable
-        context['account_type_code_list'] = CodeTable.objects.filter(parent__name='계정분류')
+        context['menu_permission_group_list'] = MenuPermissionGroup.objects.all().order_by('id')
         context['screen_user_comment'] = get_screen_comment(self.request.path)
         return context
 
@@ -42,8 +42,7 @@ class AccountUpdateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['object'] = self.model.objects.get(id=self.kwargs['pk'])
-        from base.models import CodeTable
-        context['account_type_code_list'] = CodeTable.objects.filter(parent__name='계정분류')
+        context['menu_permission_group_list'] = MenuPermissionGroup.objects.all().order_by('id')
         context['screen_user_comment'] = get_screen_comment(self.request.path)
         return context
 
@@ -62,6 +61,8 @@ class PasswordUpdateAccountView(TemplateView):
         # 비번 변경은 본인 혹은 관리자만 가능하도록
         if self.request.uesr.id == self.request.POST['id'] or self.request.user.is_superuser:
             account = self.model.objects.get(id=request.POST['id'])
+            print('x')
+            print(account.password, request.POST['password'])
             if account.password == make_password(request.POST['password']):
                 return HttpResponse(
                     json.dumps({

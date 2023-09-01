@@ -20,11 +20,18 @@ class AccountApiView(ApiView):
         params = request.POST
         model_instance = self.model()
         if  'id' in params.keys():
+            # 계정 검사
             model_instance = authenticate(username=request.POST.get('username'), password=request.POST.get('current_password'))
             if model_instance is None:
                 return HttpResponse(json.dumps({
                     'message':'계정 비밀번호가 다릅니다.',
                 }), content_type='application/json', status=400)
+            # 비밀 번호 변경 검사
+            else:
+                if model_instance.password == make_password(request.POST.get('password')):
+                    return HttpResponse(json.dumps({
+                        'message':'바꾸기 전과 동일한 비밀번호는 사용할 수 없습니다.'
+                    }), content_type='applicaton/json', status=400)
             from datetime import datetime
             model_instance.update_dt = datetime.now()
         for key, value in params.items():
@@ -40,15 +47,16 @@ class AccountApiView(ApiView):
 
         author = self.request.user
         # 본인이면 로그아웃 시켜버린다.
+
         if model_instance.id is None:
-            if author.is_superuser or author.info.account_type_code.name == '관리자':
+            if author.is_superuser or author.info.permission_group.group_name == '관리자':
                 model_instance.save()
             else:
                 return HttpResponse(
                     json.dumps(dict(message='계정 편집 권한이 없는 사용자입니다.')), content_type='application/json',status=403
                 )
         else:
-            if author.is_superuser or author.info.account_type_code.name == '관리자':
+            if author.is_superuser or author.info.permission_group.group_name == '관리자':
                 model_instance.save()
             elif model_instance.id == author.id:
                 model_instance.save()
@@ -64,8 +72,9 @@ class AccountApiView(ApiView):
             info = model_instance.info
         else:
             info = AccountInfo(account_id=model_instance.id)
-        for field in ['birth_date', 'position', 'effective_date', 'phone_number', 'duty_code_id']:
+        for field in ['birth_date', 'position', 'effective_date', 'phone_number', 'permission_group_id']:
             if field in params_key and params[field] != '':
+                print(field)
                 setattr(info, field, params[field])
         info.save()
 
@@ -100,7 +109,7 @@ def update_password(request):
 
 def force_logout(request):
     administer = request.user
-    if administer.is_superuser or administer.info.account_type_code.name=='관리자':
+    if administer.is_superuser or administer.info.permission_group.group_name == '관리자':
         account_qs = Account.objects.filter(username=json.loads(request.body.decode('UTF-8'))['username'])
         if account_qs.exists():
             account = account_qs.last()

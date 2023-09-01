@@ -1,7 +1,7 @@
 {% extends 'common/base.html' %}
 {% load static %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
+
     <script type="text/javascript" src="{% static 'apps/base/code_table/js/adjustment_code_detail_update_list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/base/code_table/css/list.css' %}">
 {% endblock %}
@@ -12,12 +12,6 @@
     {% csrf_token %}
     <article class="context-horizontal-center">
         <section class="list-default">
-        {% if screen_user_comment %}
-        <div class="tooltip buttonToolbar">
-            <span class="button information" onclick="showTooltip()">화면 설명</span>
-            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
-        </div>
-        {% endif %}
         <section class="buttonToolbar">
             <section>
                 <p>조회량 전체: <span style='color:red;'>　{{object_list|length}}</span></p>

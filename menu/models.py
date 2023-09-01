@@ -1,19 +1,16 @@
 from django.db import models
-from common.models import LogModel
+from common.models import LogModel, TreeModel
+
 
 # tree 분할
-class Menu(LogModel):
-    parent = models.ForeignKey('menu.Menu', related_name='children_set', on_delete=models.CASCADE, null=True, blank=True)
-    root = models.ForeignKey('menu.Menu', related_name='node_set', on_delete=models.CASCADE, null=True, blank=True)
-    level = models.IntegerField(default=0, verbose_name='등급')
+class Menu(TreeModel):
     title = models.CharField(max_length=100, verbose_name='제목')
-    order = models.IntegerField(default=1, verbose_name='순서')
     is_visible = models.BooleanField(default=True, verbose_name='메뉴표기여부')
     is_mobile_support = models.BooleanField(default=False, verbose_name='모바일 지원 여부')
     is_screen = models.BooleanField(default=False, verbose_name='화면 여부')
     user_comment = models.CharField(max_length=200, verbose_name='사용자 화면 표기용 비고', null=True, blank=True)
-    screen_id = models.ForeignKey('menu.Screen', on_delete=models.SET_NULL, null=True, blank=True)
-    urls = models.URLField(max_length=200, verbose_name='url', null=True, blank=True)
+    screen = models.ForeignKey('menu.Screen', on_delete=models.SET_NULL, null=True, blank=True)
+    url = models.URLField(max_length=200, verbose_name='url', null=True, blank=True)
     description = models.CharField(max_length=500, verbose_name='설명', null=True, blank=True)
 
     class Meta:
@@ -26,12 +23,12 @@ class Screen(LogModel):
     url = models.URLField(max_length=200, verbose_name='url', null=True, blank=True)
     screen_file = models.FilePathField(max_length=256, verbose_name='화면파일 주소', null=True, blank=True)
     usage = models.CharField(max_length=100, verbose_name='용도', null=True, blank=True)
-    is_search = models.BooleanField(default=False, verbose_name='조회기능')
-    is_create = models.BooleanField(default=False, verbose_name='조회기능')
-    is_update = models.BooleanField(default=False, verbose_name='조회기능')
-    is_delete = models.BooleanField(default=False, verbose_name='조회기능')
-    is_upload = models.BooleanField(default=False, verbose_name='조회기능')
-    is_download = models.BooleanField(default=False, verbose_name='조회기능')
+    have_search = models.BooleanField(default=False, verbose_name='조회기능')
+    have_create = models.BooleanField(default=False, verbose_name='생성기능')
+    have_update = models.BooleanField(default=False, verbose_name='갱신기능')
+    have_delete = models.BooleanField(default=False, verbose_name='삭제기능')
+    have_upload = models.BooleanField(default=False, verbose_name='업로드기능')
+    have_download = models.BooleanField(default=False, verbose_name='다운로드기능')
     comment = models.CharField(max_length=500, verbose_name='비고', null=True, blank=True)
 
     class Meta:
@@ -39,38 +36,43 @@ class Screen(LogModel):
         verbose_name = '화면'
 
 
-class ScreenFunction(LogModel):
-    screen = models.ForeignKey('menu.Screen', on_delete=models.CASCADE, related_name='function_set')
-    title = models.CharField(max_length=100, verbose_name='기능명')
-    type_code = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True) # 시스템 - 메뉴
+class MenuFunction(LogModel):
+    menu = models.ForeignKey('menu.Menu', on_delete=models.CASCADE, related_name='function_set')
+    name = models.CharField(max_length=100, verbose_name='기능명')
+    type_code = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True) # 시스템 - 메뉴 - 기능
+    prerequisite = models.CharField(max_length=300, verbose_name='전제조건', default='', null=True, blank=True)
     description = models.CharField(max_length=500, verbose_name='설명', null=True, blank=True)
 
     class Meta:
-        db_table = 'screen_function'
+        db_table = 'menu_function'
         verbose_name = '메뉴 기능'
+
+
+class MenuPermissionGroup(LogModel):
+    group_name = models.CharField(max_length=100, verbose_name='권한 그룹 명')
+    comment = models.TextField(max_length=500, verbose_name='비고', null=True, blank=True)
+
+    class Meta:
+        db_table = 'menu_permission_group'
+        verbose_name = '메뉴 권한 그룹'
 
 
 class MenuPermission(LogModel):
     menu = models.ForeignKey('menu.Menu', on_delete=models.CASCADE, related_name='permission_set')
     team = models.ForeignKey('base.Team', on_delete=models.CASCADE, null=True, blank=True)
+    permission_group = models.ForeignKey('menu.MenuPermissionGroup', on_delete=models.CASCADE, null=True, blank=True)
     account_type_code = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True) # 시스템 - 계정 - 계정 분류
     account = models.ForeignKey('system.Account', on_delete=models.SET_NULL, null=True, blank=True)
+    search_permitted = models.BooleanField(default=False, verbose_name='조회기능')
+    create_permitted = models.BooleanField(default=False, verbose_name='생성기능')
+    update_permitted = models.BooleanField(default=False, verbose_name='갱신기능')
+    delete_permitted = models.BooleanField(default=False, verbose_name='삭제기능')
+    upload_permitted = models.BooleanField(default=False, verbose_name='업로드기능')
+    download_permitted = models.BooleanField(default=False, verbose_name='다운로드기능')
 
     class Meta:
         db_table = 'menu_permission'
         verbose_name = '메뉴 권한'
-
-# 미사용
-class ScreenPermission(LogModel):
-    screen = models.ForeignKey('menu.Screen', on_delete=models.CASCADE, related_name='permission_set')
-    authority_type = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True, related_name='same_authority_screen_permission_set')
-    team = models.ForeignKey('base.Team', on_delete=models.CASCADE, null=True, blank=True)
-    rank_code = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True, related_name='same_position_screen_permission_set')
-    account = models.ForeignKey('system.Account', on_delete=models.SET_NULL, null=True, blank=True)
-
-    class Meta:
-        db_table = 'screen_permission'
-        verbose_name = '화면 권한'
 
 
 class MenuFavorite(LogModel):

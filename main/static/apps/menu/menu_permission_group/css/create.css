@@ -1,0 +1,20 @@
+
+.tab-container .body {
+    width:700px;
+}
+.table {
+    width:100%;
+}
+
+textarea{
+    height:150px;
+}
+#tree{
+    height:91.5%;
+}
+tfoot td{
+    text-align:right;
+}
+#info-table tbody tr:first-child{
+    border-top:3px solid red;
+}

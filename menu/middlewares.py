@@ -1,6 +1,9 @@
+import re
+
+import pandas as pd
 from django.shortcuts import redirect
 
-from menu.models import ScreenFunction
+from menu.models import Menu
 
 
 class AccountPermissionMiddleware:
@@ -22,103 +25,101 @@ class AccountPermissionMiddleware:
 		:return: response
 		"""
 
+		request_path= request.path
 		response = self.get_response(request)
-		from menu.models import Screen, MenuPermission
-		from django.db.models import Q
-		path_split = request.path.split('?')[0]
+		from menu.models import MenuPermission
+		# 단위계 추출 하되
+		#  /menu/3/function/list
+		if request_path == '/favicon.ico':
+			return response
 
 		if (request.user.is_authenticated and request.path == '/home/') or request.path == '/':
 			if request.path == '/' and request.user.is_authenticated:
-				print('2')
 				return redirect('/home/')
 			else:
-				print(response)
 				return response
-
 		if request.user.is_superuser:
 			return response
+		menu_qs = Menu.objects.filter(is_screen=True)
+		# divide by existence of path_converter
+		menu_df = pd.DataFrame.from_records(menu_qs.values())
+		path_converter_indexes = menu_df['url'].str.contains(':')
+		def change_path_converter_to_regex_pattern(url):
+			convert_dict = {}
+			for split_context in url.split('\/'):
+				if ':' in split_context:
+					type_str = split_context.split(':')
+					if type_str =='slug':
+						convert_dict[split_context] = '[\w]{1,}'
+					else:
+						convert_dict[split_context] = '[\d]{1,}'
+			for key, value in convert_dict.items():
+				url = url.replace(key, value)
+			return url
 
-		screen = None
-		if 'media' in path_split:
-			path_split = '/'+'/'.join(request.headers['Referer'].split('/')[3:])
+		menu_df['url'] = menu_df['url'].apply(lambda url: url.replace('/', '\/'))
+		menu_df.loc[path_converter_indexes, 'url'] = menu_df.loc[path_converter_indexes, 'url'].apply(
+			lambda url :change_path_converter_to_regex_pattern(url)
+		)
+		############################################# check by url type ################################################
+		menu = None
 
-		if 'api' in path_split:
-			path_split = '/' + '/'.join(request.headers['Referer'].split('/')[3:])
-			qs = Screen.objects.filter(url=path_split)
-			if not qs.exists():
-				path_split = '/'.join(path_split[:len(path_split) - 2]) + '/'
-				qs = Screen.objects.filter(url=path_split)
-				if not qs.exists():
-					return redirect('/')
-				else:
-					screen = qs.last()
+		is_not_screen = 'media' in request.path or 'api' in request.path
+
+		if is_not_screen:
+			request_path = '/' + '/'.join(request.headers['Referer'].split('/')[3:])
+			for record in menu_df.to_dict('records'):
+				result = re.findall(record['url'], request_path)
+				if len(result):
+					menu = menu_qs.get(id=record['id'])
 					account = request.user
-			else :
-				screen = qs.last()
-				account = request.user
-
+					break
 		else:
-
-			screen_qs = Screen.objects.filter(url=path_split)
-
-			if not screen_qs.exists():
-				# check path_converter is exists
-				path_split = path_split.split('/')
-				path_split = '/'.join(path_split[:len(path_split) - 2]) + '/'
-				screen_qs = Screen.objects.filter(url=path_split)
-				if not screen_qs.exists():
-					return redirect('/')
-				else:
-					screen = screen_qs.last()
-			else:
-				screen = screen_qs.last()
+			############################################## url check ###################################################
+			# / 로 split 하고 일치여부를 검사 한다.
+			for record in menu_df.to_dict('records'):
+				result = re.findall(record['url'], request_path)
+				if len(result):
+					menu = menu_qs.get(id=record['id'])
+					break
 			account = request.user
-
-		if screen is not None:
-			qs = MenuPermission.objects.filter(menu_id=screen.menu_id)
+		if menu is not None:
+			qs = MenuPermission.objects.filter(menu_id=menu.id)
 		else:
 			return redirect('/')
-
-		if account.teammember_set.exists() and hasattr(account, 'info') and account.info.account_type_code is not None:
-
-			team_id = account.teammember_set.last().team.id
-			qs = qs.filter(
-				Q(team_id=team_id, account=account,
-				  account_type_code=account.info.account_type_code)
-				| Q(team_id=team_id, account=account,
-				    account_type_code__isnull=True)
-				| Q(team_id=team_id, account__isnull=True,
-				    account_type_code=account.info.account_type_code)
-				| Q(team_id=team_id, account__isnull=True,
-				    account_type_code=account.info.account_type_code)
-				| Q(team_id=team_id, account__isnull=True,
-				    account_type_code__isnull=True)
-				| Q(team__isnull=True, account=account,
-				    account_type_code=account.info.account_type_code)
-				| Q(team__isnull=True, account=account,
-				    account_type_code__isnull=True)
-			)
-		elif account.teammember_set.exists():
-			team_id = account.teammember_set.last().team.id
-			qs = qs.filter(
-				Q(team_id=team_id, account=account,
-				  account_type_code__isnull=True)
-				| Q(team_id=team_id, account__isnull=True,
-				    account_type_code__isnull=True)
-				| Q(team__isnull=True, account=account,
-				    account_type_code__isnull=True)
-			)
-		elif hasattr(account, 'info') and account.info.account_type_code is not None:
-			qs = qs.filter(
-				Q(team__isnull=True, account=account,
-				  account_type_code=account.info.account_type_code)
-				| Q(team__isnull=True, account=account,
-				    account_type_code__isnull=True)
-			)
+		if hasattr(account, 'info') and account.info.permission_group is not None:
+			qs = qs.filter(permission_group_id=account.info.permission_group.id)
 		else:
-			qs = qs.filter(team__isnull=True,
-			                         account_type_code__isnull=True,
-			                         account=account)
+			qs = qs.filter(account=account)
 		if not qs.exists():
 			return redirect('/')
+
+		# 405 method not allowed
+		if is_not_screen:
+			method = request.method
+			if 'media' in request_path and method == 'GET':
+				if not qs.filter(download_permitted=True).exists():
+					# 권한 에러 처리
+					return redirect('/')
+			elif method == 'GET':
+				if not qs.filter(search_permitted=True).exists():
+					# 권한 에러 처리
+					return redirect('/')
+			elif method == 'POST':
+				if len(request._files):
+					if not qs.filter(upload_permitted=True).exists():
+						# 권한 에러 처리
+						return redirect('/')
+				else:
+					if 'id' in request.POST.keys():
+						if not qs.filter(update_permitted=True).exists():
+							return redirect('/')
+						else:
+							if not qs.filter(create_permitted=True).exists():
+								return redirect('/')
+			elif method == 'DELETE':
+				if not qs.filter(delete_permitted=True).exists():
+					return redirect('/')
+			# 권한 에러
+
 		return response

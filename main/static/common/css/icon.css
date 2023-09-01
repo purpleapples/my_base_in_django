@@ -26,6 +26,6 @@
     content-visibility: visible;
 }
 
-.content-arrow-down::after{
+.content-arrow-down::before{
     content:' \25bc';
 }

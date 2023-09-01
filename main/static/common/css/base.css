@@ -200,22 +200,3 @@ ul {
     display:grid;
     gap:10px;
 }
-.tab.container{}
-.tab.header{
-    display:flex;
-    gap:10px;
-}
-.tab.header .button{
-    border-radius:0;
-    padding:8px 14px;
-
-}
-.tab.header .button:not(act){
-    border: 1px solid #505b78;
-    color: #505b78;
-}
-.tab.header .button.act{
-    background: #505b78;
-    color: white;
-    border: 1px solid #505b78;
-}

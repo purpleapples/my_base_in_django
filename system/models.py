@@ -36,6 +36,7 @@ class AccountInfo(LogModel):
     phone_number = models.CharField(max_length=32, verbose_name='연락처', default='', blank=True)
     effective_dt = models.DateTimeField(verbose_name='급여 계산 시작일', null=True, blank=True)
     birth_dt = models.DateTimeField(verbose_name='생년월일', null=True, blank=True)
+    permission_group = models.ForeignKey('menu.MenuPermissionGroup', on_delete=models.PROTECT, null=True, blank=True)
     account_type_code = models.ForeignKey('base.CodeTable', on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
@@ -139,6 +140,7 @@ class OutdatedRecord(models.Model):
 class AttachmentFile(models.Model):
     table_name = models.CharField(max_length=50, verbose_name='테이블 이름')
     table_pk = models.IntegerField(verbose_name='테이블 pk')
+    file_type = models.CharField(max_length=100, verbose_name='파일 종류', null=True, blank=True)
     file = models.FileField(verbose_name= '파일', upload_to=get_attachment_file_path)
     access_log = models.ForeignKey('system.AccountAccessLog', on_delete=models.PROTECT)
     create_dt = models.DateTimeField(verbose_name='생성일시')

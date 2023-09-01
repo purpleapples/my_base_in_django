@@ -26,13 +26,13 @@ th.sticky, td.sticky{
 
 .table{
     border-spacing: 0;
+}
+.table.table-bordered{
     border-collapse: collapse;
 }
-.table tr{
-    height:2em;
-}
+
 .table th, .table td{
-    padding:1.5em;
+    padding:1.1em;
     border:1px solid rgba(0, 0, 0, 0.33);
 }
 .table th[data-order=ascending]::after{
@@ -68,7 +68,7 @@ th.sticky, td.sticky{
 .table tbody tr:hover{
     filter: brightness(90%);
 }
-#table {
+.table {
     border-color: rgba(0, 0, 0, 0.33);
 }
 .table thead tr:first-child th{
@@ -79,10 +79,7 @@ th.sticky, td.sticky{
     word-break: keep-all;
     text-align: center;
 }
-.table tbody tr td {
-    padding:15px 8px;
-    word-break: break-all;
-}
+
 .table thead .glyphicon {
     font-size:12px;
 }
@@ -124,6 +121,57 @@ th.sticky, td.sticky{
 .table .button.disabled:hover {
     opacity: 1;
 }
+/********************************************* body dropdown table ****************************************************/
+.table-dropdown-body{
+    position:absolute;
+    z-index:3;
+}
+.table-dropdown-body thead tr{
+    height:55px;
+}
+.table-dropdown-body thead tr th{
+    padding-left: 10px;
+    padding-right: 100px;
+    padding-top: 15px;
+    padding-bottom:20px;
+    font-size: 18px;
+    /*color: #003eff;*/
+}
+/*.table-dropdown-body tbody:before{*/
+/*    content: "-";*/
+/*    display: block;*/
+/*    line-height: 3em;*/
+/*    color: transparent;*/
+/*}*/
+.table-dropdown-body tbody{
+    background : white;
+    padding-top: 30px;
+    border-collapse: collapse;
+}
+.table-dropdown-body tbody td{
+    border:none;
+}
+.table-dropdown-body tbody td.category{
+    color:rgba(17,1,1,0.71);
+    text-indent:1em;
+}
+.table-dropdown-body tbody td.category:hover{
+    color:white;
+    background:blue;
+}
+.table-dropdown-body td:not(.category){
+    text-indent:2em;
+}
+.table-dropdown-body td:not(.category):before{
+    content:'-';
+}
+.table-dropdown-body td:not(.category):hover{
+    color:white;
+    background:darkgray;
+}
+
+
+/******************************************* body dropdown table end  *************************************************/
 /* 테이블 내 버튼 - end */
 
 /* 테이블 선택 목록 모달 - start */

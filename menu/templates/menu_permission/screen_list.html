@@ -4,7 +4,6 @@
     화면 권한 관리
 {% endblock %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
     <script type="text/javascript" src="{% static 'apps/menu/menu_permission/js/screen_list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu_permission/css/screen_list.css' %}">
     <script type="text/javascript" src="{% static 'common/js/tree.js' %}"></script>
@@ -28,7 +27,7 @@
                     <th>부서</th>
                     <th>직책</th>
                     <th>사용자</th>
-                    <th>기능</th>
+                    <th>기능 사용 여부</th>
                 </tr>
             </thead>
             <tbody class="input-row">

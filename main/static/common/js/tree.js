@@ -14,26 +14,23 @@ function createTree(data,
                     container,
                     treeOption={},
                     nodeOption={},
-                    createNode=true,
+                    is_node_editable=true,
                     useDataset = false,
-                    datasetAttributes =['id','parentIndex', 'rootId','level', 'nodeIndex','order'])
-{
+                    datasetAttributes =['id','parentIndex', 'rootId', 'level', 'nodeIndex','order'])
+    {
     if (useDataset){
         treeDataset[container.id] = {
             'container':container,
             'datasetAttributes':datasetAttributes
         };
     }
-    
+    const key = container.id;
+    //************************************************** set global attributes ***************************************//
     if (Object.keys(nodeOption).indexOf('textAttribute') == -1 ||nodeOption['text'] == ''){
         nodeOption['textAttribute'] = '텍스트없음';
     }
-    if (nodeOption['callbacks'] != {}){
-        nodeOptions['callbacks'] = nodeOption['callbacks'];
-    }
-    if (treeOption['callback'] != {}){
-        treeOptions['callbacks'] = treeOption['callbacks'];
-    }
+    nodeOptions[key] = nodeOption;
+    treeOptions[key] = treeOption;
 
     //********************************************* set button *******************************************************//
 
@@ -43,18 +40,21 @@ function createTree(data,
     treeContainer.classList.add('tree');
     switch(treeOption['direction']){
         case 'horizontal':
-            treeContainer.style.display='flex';
-            treeContainer.style.flexDirection='row';
+            treeContainer.style.display='grid';
+            // container 길이 계산해서 repeat 와 pixel 값 설정
+            treeContainer.style.gridTemplateColumns = 'repeat(9, max-content)';
+            treeContainer.style.gridTemplateRows = '';
+            // treeContainer.style.flexDirection='row';
             break;
         default:
             treeContainer.style.display='flex';
             treeContainer.style.flexDirection='column';
     }
-    switch(nodeOption['childLength']){
-        default:
-            nodeOptions['nodeLength'] = container.offsetWidth;
-            break;
+
+    if (Object.keys(nodeOption).indexOf('nodeLength') == -1){
+        nodeOptions[key]['nodeLength'] = container.offsetWidth;
     }
+
     let nodeIndex = 0;
 
     // level, parent 단위 data structure 재확인
@@ -79,8 +79,10 @@ function createTree(data,
     treeDataset[container.id] = {};
 
     for (const instance of data){
-        let node = createLeaf(instance[nodeOption['textAttribute']]);
-        node.querySelector('span').style.textIndent= (10 * instance.level).toString() +'px';
+        let node = createLeaf(instance[nodeOption['textAttribute']], key);
+        const span = node.querySelector('span');
+        span.style.paddingLeft = (instance.level * 20).toString() +'px';
+        // console.log()
         const attributes = {
             'nodeIndex':nodeIndex,
             'level':instance.level,
@@ -95,14 +97,12 @@ function createTree(data,
                 }
             }
         }
-        _addNodeClasses(node);
+
+        _addNodeClasses(node, key);
         treeDataContainer[instance.id] = node;
-        _eventOnClickNode(node);
+        _eventOnClickNode(node, key);
         if (instance.level != 0){
             let parent = treeDataContainer[instance.parent_id];
-            if (parent.querySelector('span').textContent.indexOf('+') == -1){
-                parent.querySelector('span').textContent = '+' + parent.querySelector('span').textContent;
-            }
             addChild(parent.querySelector('section'), node);
             node.dataset['parentIndex'] = parent.dataset['nodeIndex'];
         }else{
@@ -111,14 +111,14 @@ function createTree(data,
         setDefaultAttribute(node, attributes);
         nodeIndex++;
     }
-    if(createNode){
+    if(is_node_editable){
         const buttonContainer = document.createElement('article');
         buttonContainer.classList.add('buttonToolbar');
         const createButton = document.createElement('button');
         const deleteButton = document.createElement('button');
         createButton.textContent = '추가';
         deleteButton.textContent = '삭제';
-        for (const classStr of ['button']){
+        for (const classStr of ['button','middle-long']){
             createButton.classList.add(classStr);
             deleteButton.classList.add(classStr);
         }
@@ -128,8 +128,8 @@ function createTree(data,
         buttonContainer.appendChild(createButton);
         buttonContainer.appendChild(deleteButton);
 
-        createButton.onclick = (event)=>_eventOnClickCreateButton(event);
-        deleteButton.onclick = (event)=>deleteNode(event);
+        createButton.onclick = (event)=>_eventOnClickCreateButton(event, key);
+        deleteButton.onclick = (event)=>deleteNode(event, key);
         container.appendChild(buttonContainer);
     }
     container.appendChild(treeContainer);
@@ -172,18 +172,19 @@ function addChild(container, node){
     }
 }
 
-function createLeaf(text){
+function createLeaf(text, key){
     const li = document.createElement('li');
     const section = document.createElement('section');
     section.classList.add('node-list-container');
     const span = document.createElement('span');
     span.classList.add('node');
     span.textContent = text;
+
     span.setAttribute('aria-haspopup', 'true');
     span.setAttribute('aria-expanded', 'false');
     section.appendChild(span);
     li.appendChild(section);
-    li.style.width = nodeOptions['nodeLength'];
+    li.style.width = nodeOptions[key]['nodeLength'];
     return li;
 }
 
@@ -193,20 +194,28 @@ function setDefaultAttribute(node, attributes={}){
     }
 }
 
-function _addNodeClasses(node){
+function _addNodeClasses(node, key){
     const nodeContainer = node.firstElementChild;
+
     const span = nodeContainer.querySelector('span');
+
     nodeContainer.classList.add('node-list-container');
-    ['tree','node-dropdown-toggler','content-arrow-down'].forEach(string =>{
+    ['tree','node-dropdown-toggler'].forEach(string =>{
         span.classList.add(string);
     });
+
+    if (Object.keys(nodeOptions).indexOf(key) != -1 &&Object.keys(nodeOptions[key]).indexOf('classList') != -1){
+        Array.from(nodeOptions[key]['classList']).forEach(classStr =>span.classList.add(classStr));
+    }
 }
 
-function _eventOnClickCreateButton(event){
+function _eventOnClickCreateButton(event,key){
     event.stopImmediatePropagation();
-    const [container, child] = createNode(event);
+    const [container, child] = createNode(event, key);
     addChild(container, child);
-    [_addNodeClasses, _eventOnNodeMouseOver, _eventOnClickNode, saveDefaultTreeData].forEach(func => {func(child)});
+    [_eventOnNodeMouseOver, saveDefaultTreeData].forEach(func => {func(child)});
+    _addNodeClasses(child, key);
+    _eventOnClickNode(child, key);
 
     if (Object.keys(nodeOptions).indexOf('callbacks') != -1 && Object.keys(nodeOptions['callbacks']).indexOf('create') != -1){
         nodeOptions['callbacks']['create'](child);
@@ -228,12 +237,12 @@ function saveDefaultTreeData(node){
     setNodeDataset(data, key, index);
 }
 
-function _eventOnClickNode(node){
+function _eventOnClickNode(node, key){
     node.addEventListener('click', function(event){
         event.stopImmediatePropagation();
         _eventOnNodeDropdownToggle(event, event.target.closest('ul'), true);
-        if (nodeOptions['callbacks']['click'] != undefined){
-            nodeOptions['callbacks']['click'](event);
+        if (nodeOptions[key]['callbacks']['click'] != undefined){
+            nodeOptions[key]['callbacks']['click'](event);
         }
     });
 }
@@ -258,7 +267,7 @@ function getMaxRowIndex(container){
     return nodeIndexes[0];
 }
 
-function createNode(event){
+function createNode(event, key){
     /**
      * @params event : MouseEvent
      * @desc create leaf node and set default tree attribute to dataset
@@ -266,7 +275,7 @@ function createNode(event){
     // 1. create leaf
     // 2. set default dataset : level, order, parentIndex, dataIndex, parentId
 
-    const leaf = createLeaf('leaf');
+    const leaf = createLeaf('leaf', key);
     const tree = event.target.closest('.tree-container');
     const selected = tree.querySelectorAll('.selected');
     let parent = selected[selected.length-1];
@@ -301,13 +310,13 @@ function createNode(event){
     return [parent, leaf];
 }
 
-function deleteNode(event){
+function deleteNode(event, key){
     const target = document.querySelector('.selected').closest('li');
     if (target.dataset.id == ''){
         target.remove();
     }
-    if(Object.keys(nodeOptions['callbacks']).indexOf('delete') != -1){
-        nodeOptions['callbacks']['delete'](event);
+    if(Object.keys(nodeOptions[key]['callbacks']).indexOf('delete') != -1){
+        nodeOptions[key]['callbacks']['delete'](event);
     }
 }
 

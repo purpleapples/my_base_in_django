@@ -1,7 +1,7 @@
 {% extends 'common/base.html' %}
 {% load static %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
+
     <script type="text/javascript" src="{% static 'apps/base/code_table/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/base/code_table/css/list.css' %}">
 {% endblock %}
@@ -11,12 +11,6 @@
 {% block contents %}
     <article class="context-horizontal-center">
         <section class="list-default">
-        {% if screen_user_comment %}
-        <div class="tooltip buttonToolbar">
-            <span class="button information" onclick="showTooltip()">화면 설명</span>
-            <div class="tooltip-text">{{ screen_user_comment|linebreaksbr }}</div>
-        </div>
-        {% endif %}
         <section class="buttonToolbar flex-between" dir="rtl">
             <section>
                 <button id="table-delete" class="button delete">정보 삭제</button>

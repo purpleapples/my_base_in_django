@@ -1,14 +1,14 @@
 {% load static %}
 <html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
 
-  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery-latest.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/jquery-latest.js' %}"></script>
 {#  <script src="{% static 'third/js/third_lib/jquery-ui.min.js' %}"></script>#}
 {#  <link rel="stylesheet" href="{% static 'common/css/jquery-ui.min.css' %}">#}
 {#  <script src="{% static 'third/js/third_lib/jquery.ui.touch-punch.min.js' %}"></script>#}
@@ -17,60 +17,78 @@
 {#  <link rel="stylesheet" type="text/css" href="{% static 'common/css/bootstrap-theme.min.css' %}">#}
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/bootstrap.min.js' %}"></script>#}
 {##}
-  <script type="text/javascript" src="{% static 'third/js/third_lib/moment-with-locales.js' %}"></script>
-  <script src="{% static 'third/js/third_lib/moment.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/moment-with-locales.js' %}"></script>
+    <script src="{% static 'third/js/third_lib/moment.min.js' %}"></script>
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/bootstrap-datetimepicker.min.js' %}"></script>#}
 {##}
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery.tablesorter.combined.min.js' %}"></script>#}
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery.tablesorter.min.js' %}"></script>#}
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery.tablesorter.widgets.min.js' %}"></script>#}
 
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/theme.default.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/tableexport.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/icon.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
-  <script type="text/javascript" src="{% static 'third/js/third_lib/xlsx.core.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/Blob.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/FileSaver.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/tableexport.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/Chart.js' %}" ></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/chartjs-plugin-datalabels.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/jszip.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/jszip-utils.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/theme.default.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/tableexport.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/icon.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+    <script type="text/javascript" src="{% static 'third/js/third_lib/xlsx.core.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/Blob.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/FileSaver.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/tableexport.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/Chart.js' %}" ></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/chartjs-plugin-datalabels.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/jszip.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/jszip-utils.min.js' %}"></script>
 
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
-  <script type="text/javascript" src="{% static 'third/js/third_lib/choices.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
+    <script type="text/javascript" src="{% static 'third/js/third_lib/choices.min.js' %}"></script>
 
-  <link rel="stylesheet" type="text/css" href="{% static 'common/css/base.css' %}">
-  <script type="text/javascript" src="{% static 'common/js/base.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/pdfobject.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/base.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/base.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/pdfobject.min.js' %}"></script>
 
-  <script type="text/javascript" src="{% static 'third/js/third_lib/exceljs.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/table2excel.core.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/exceljs.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/table2excel.core.js' %}"></script>
   
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
 
-  <script type="text/javascript" src="{% static 'third/js/third_lib/html2canvas.js' %}"></script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-  <script type="text/javascript" src="{% static 'third/js/third_lib/qrcode.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'common/js/modal.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/html2canvas.js' %}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/qrcode.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/modal.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/template.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/nav.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/tree.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/form.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/table.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/nav.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/tree.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/table.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/form_control.js' %}"></script>
 
   {% block header %}
   {% endblock %}
 </head>
     
-<body>
-    <input type="hidden" name="is_user" value="{{ request.session.username }}">
+<body class="screen-background-shadow">
     {% include "common/nav.html" %}
-    <article class="container-fluid">
-        <section class="text-center">
-            <h1>{% block title %}(no title){% endblock %}</h1>
+    <main class="container-fluid">
+        <section class="text-left screen-title flex-between">
+            <h3 style="text-indent:100px;font-weight:bold">{% block title %}(no title){% endblock %}
+            </h3>
+        <section class="buttonToolbar">
+            {% if screen_user_comment %}
+            <div class="tooltip buttonToolbar">
+                <span class="button information" onclick="showTooltip([-100,50])">화면 설명 툴팁</span>
+                <div class="tooltip-text box-shadow-below-diagonal">{{ screen_user_comment|linebreaksbr }}</div>
+            </div>
+            {% endif %}
+            <button class="button download">화면 사용 문서</button>
+            </section>
         </section>
         {% block contents %}   
         {% endblock %}
-    </article>
+    </main>
 
     <!-- 데이터 처리중 안내 -->
     {% include 'common/modal/load_bg.html' %}

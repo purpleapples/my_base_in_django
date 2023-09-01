@@ -3,10 +3,9 @@ from collections import OrderedDict
 from datetime import datetime
 import pandas as pd
 from django.apps import apps
-from django.db import transaction
 from django.db.models import Q, ProtectedError
 from common.models import LogModel
-from menu.models import Screen
+from menu.models import Menu
 from system.models import OutdatedRecord, AttachmentFile
 from itertools import chain, combinations
 
@@ -696,6 +695,7 @@ def create_record(params, model, duplicate_field_list):
                     [key + ':' + str(value) for key, value in filter_condition.items()]) + ' 값은 중복 등록 될 수 없습니다.')
         for key, value in params.items():
             if hasattr(model_instance, key):
+
                 setattr(model_instance, key, value)
         model_instance.save(force_insert = True)
     except ValueError as ve:
@@ -734,6 +734,8 @@ def set_instance_parameter(model, params):
     access_log_id = params['author'].accountaccesslog_set.last().id
     model_params = dict()
     params_key = params.keys()
+    if 'id' in params:
+        model_instance = model.objects.get(id=params['id'])
     if issubclass(model, LogModel):
         if 'id' in params_key and params['id'] == '':
             params['access_log_id'] = access_log_id
@@ -758,14 +760,13 @@ def set_instance_parameter(model, params):
 
 
 def create_or_update_record(params, model, duplicate_field_list, files=None):
-
     params, model_instance, access_log_id, now = set_instance_parameter(model, params)
 
     try:
         for field_list in duplicate_field_list:
             filter_condition = {field:params[field] for field in field_list}
             duplicated_qs = model.objects.filter(**filter_condition)
-            if duplicated_qs.exists() and ('id' not in params.keys() or  duplicated_qs.filter(~Q(pk=params['id'])).exists()):
+            if duplicated_qs.exists() and (model_instance.id is None or  duplicated_qs.filter(~Q(pk=model_instance.id)).exists()):
                 raise ValueError(''.join([key +':' + str(value) for key, value in filter_condition.items() ])  + ' 값은 중복 등록 될 수 없습니다.')
         for key, value in params.items():
             if hasattr(model_instance, key):
@@ -774,6 +775,7 @@ def create_or_update_record(params, model, duplicate_field_list, files=None):
                 if value == "None" or value == 'null' :
                     value = None
                 setattr(model_instance, key, value)
+
         model_instance.save()
         if files is not None and len(files):
 
@@ -938,15 +940,16 @@ def delete_common(view_instance, save_record_field=None):
         except ProtectedError as protect:
             reference_protected_list.append(view_instance.model.objects.get(id=obj_id).__str__() +'는 ' + protect.args[1][0]._meta.verbose_name + '에서 참조 중입니다.')
             reference_protected_list.append('\n')
-    status_code = 200
+    status_code = 202
 
     return str(len(pk_list) - len(reference_protected_list)) + ' 건 삭제 되었습니다. \n' + ''.join(reference_protected_list), status_code
 
 
 def get_screen_comment(path):
     path = path.split('?')[0]
-    screen_qs = Screen.objects.filter(url=path)
-    if screen_qs.exists():
-        return screen_qs.last().user_comment
+
+    menu_qs = Menu.objects.filter(url=path)
+    if menu_qs.exists():
+        return menu_qs.last().user_comment
     else:
         return None

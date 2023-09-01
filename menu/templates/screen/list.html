@@ -1,12 +1,11 @@
 {% extends 'common/base.html' %}
 {% load static %}
 {% block header %}
-    {% include 'common/header/complex_header_base.html' %}
     <script type="text/javascript" src="{% static 'apps/menu/screen/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/screen/css/list.css' %}">
 {% endblock %}
 {% block title %}
-    화면 표기용 비고 관리
+    화면 관리
 {% endblock %}
 {% block contents %}
     <article class="context-horizontal-center">
@@ -19,7 +18,6 @@
         </section>
         <table class="table table-bordered" id="table">
             <colgroup>
-
             </colgroup>
             <thead>
                 <tr>
@@ -31,12 +29,12 @@
                     <th rowspan="2">수정</th>
                 </tr>
                 <tr>
-                    <th><label for="is_search">조회</label></th>
-                    <th><label for="is_create">생성</label></th>
-                    <th><label for="is_update">수정</label></th>
-                    <th><label for="is_delete">삭제</label></th>
-                    <th><label for="is_upload">업로드</label></th>
-                    <th><label for="is_download">다운로드</label></th>
+                    <th><label for="have_search">조회</label></th>
+                    <th><label for="have_create">생성</label></th>
+                    <th><label for="have_update">수정</label></th>
+                    <th><label for="have_delete">삭제</label></th>
+                    <th><label for="have_upload">업로드</label></th>
+                    <th><label for="have_download">다운로드</label></th>
                 </tr>
             </thead>
             <tbody class="input-row">
@@ -44,13 +42,13 @@
                     <td><input type="text" class="form-element-default" id="title" name="title" required></td>
                     <td><input type="text" class="form-element-default" id="url" name="url" required></td>
                     <td><input type="text" class="form-element-default" id="usage" name="usage" required></td>
-                    <td><input type="text" class="form-element-default" id="comment" name="comment" required></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_search" name="is_search"></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_create" name="is_create"></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_update" name="is_update"></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_delete" name="is_delete"></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_upload" name="is_upload"></td>
-                    <td><input type="checkbox" class="form-element-default" id="is_download" name="is_download"></td>
+                    <td><input type="text" class="form-element-default" id="comment" name="comment"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_search" name="have_search"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_create" name="have_create"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_update" name="have_update"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_delete" name="have_delete"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_upload" name="have_upload"></td>
+                    <td><input type="checkbox" class="form-element-default" id="have_download" name="have_download"></td>
                     <td class="text-center"><input class="button add" type="submit" value="등록" onclick="defaultPost(event, 'tr' ,'/menu/screen/api')"></td>
                 </tr>
             </tbody>
@@ -58,23 +56,22 @@
                 {% for object in object_list %}
                     <tr>
                         <td>
-                            <input type="hidden" name="id" value="{{ object.id }}">
-                            {{ object.title }}</td>
+                            <input type="hidden" name="id" value="{{ object.id }}">{{ object.title }}</td>
                         <td>{{ object.url }}</td>
                         <td>{{ object.usage }}</td>
                         <td>{{ object.comment }}</td>
-                        <td><input type="checkbox" name="is_search" value="object.is_search"
-                        {% if object.is_search %}checked{% endif %} class="form-element-default" disabled></td>
-                        <td><input type="checkbox" name="is_create" value="object.is_create"
-                        {% if object.is_create %}checked{% endif %} class="form-element-default" disabled></td>
-                        <td><input type="checkbox" name="is_update" value="object.is_update"
-                        {% if object.is_update %}checked{% endif %} class="form-element-default" disabled></td>
-                        <td><input type="checkbox" name="is_delete" value="object.is_delete"
-                        {% if object.is_delete %}checked{% endif %} class="form-element-default" disabled></td>
-                        <td><input type="checkbox" name="is_upload" value="object.is_upload"
-                        {% if object.is_upload %}checked{% endif %} class="form-element-default" disabled></td>
-                        <td><input type="checkbox" name="is_download" value="object.is_download"
-                        {% if object.is_download %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_search" value="object.have_search"
+                        {% if object.have_search %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_create" value="object.have_create"
+                        {% if object.have_create %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_update" value="object.have_update"
+                        {% if object.have_update %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_delete" value="object.have_delete"
+                        {% if object.have_delete %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_upload" value="object.have_upload"
+                        {% if object.have_upload %}checked{% endif %} class="form-element-default" disabled></td>
+                        <td><input type="checkbox" name="have_download" value="object.have_download"
+                        {% if object.have_download %}checked{% endif %} class="form-element-default" disabled></td>
                         <td class="text-center"><button class="button update" onclick="changeToEditMode(this, '/menu/screen/api')">수정</button></td>
                     </tr>
                 {% endfor %}

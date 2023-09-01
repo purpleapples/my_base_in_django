@@ -1,0 +1,112 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}
+    {{ object.name }} 화면 기능 설정
+{% endblock %}
+{% block header %}
+    <script type="text/javascript" src="{% static 'apps/menu/menu_function/js/list.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu_function/css/list.css' %}">
+{% endblock %}
+{% block contents %}
+    {% csrf_token %}
+    <article class="context-horizontal-center">
+        <section class="grid-column-pair">
+            <section class="list-default">
+                <p class="box-shadow-underscore">화면 기본 정보</p>
+                <table class="table table-bordered" id="default-table">
+                    <tr>
+                        <th colspan="2">화면 이름</th>
+                        <td colspan="4">{{ object.title }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">화면 용도</th>
+                        <td colspan="4">{{ object.user_comment }}</td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">비고</th>
+                        <td colspan="4">{{ object.comment }}</td>
+                    </tr>
+                    <tr><th colspan="6">보유 기능</th></tr>
+                    <tr>
+                        <th>조회</th>
+                        <th>생성</th>
+                        <th>수정</th>
+                        <th>삭제</th>
+                        <th>업로드</th>
+                        <th>다운로드</th>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" class="form-element-default" name="have_search"
+                                   {% if object.screen.have_search %}checked{% endif %} disabled></td>
+                        <td><input type="checkbox" class="form-element-default" name="have_create"
+                                   {% if object.screen.have_create %}checked{% endif %} disabled></td>
+                        <td><input type="checkbox" class="form-element-default" name="have_update"
+                                   {% if object.screen.have_update %}checked{% endif %} disabled></td>
+                        <td><input type="checkbox" class="form-element-default" name="have_delete"
+                                   {% if object.screen.have_delete %}checked{% endif %} disabled></td>
+                        <td><input type="checkbox" class="form-element-default" name="have_upload"
+                                   {% if object.screen.have_upload %}checked{% endif %} disabled></td>
+                        <td><input type="checkbox" class="form-element-default" name="have_download"
+                                   {% if object.screen.have_download %}checked{% endif %} disabled></td>
+                    </tr>
+                    <tr>
+                        <th colspan="2">화면 설명서</th>
+                        <td colspan="4"><a download href="{{ guide_file.file }}">{{ guide_file.file_name }}</a></td>
+                    </tr>
+                    <tr><th colspan="6">화면 이미지</th></tr>
+                    <tr><td colspan="6"><img href="{{ screen.file }}"></td></tr>
+                </table>
+            </section>
+            <section>
+                <p class="box-shadow-underscore">화면 기능 목록</p>
+                <table class="table table-bordered" id="function-table">
+                    <thead>
+                    <tr>
+                        <th><label for="type_code_id">기능종류</label></th>
+                        <th><label for="name">기능명</label></th>
+                        <th><label for="prerequisite">전제조건</label></th>
+                        <th><label for="description">설명</label></th>
+                        <th colspan="2">기능</th>
+                    </tr>
+                    </thead>
+                    <tbody class="input-row">
+                    <tr>
+                        <td><input type="hidden" name="menu_id" value="{{ object.id }}">
+                            <select class="form-element-default" name="type_code_id">
+                                {% for type_code in type_code_list %}
+                                    <option value="{{ type_code.id }}">{{ type_code.name }} </option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                        <td><input type="text" name="name" class="form-element-default" required></td>
+                        <td><input type="text" name="prerequisite" class="form-element-default" required></td>
+                        <td><textarea name="description" class="form-element-default" required></textarea></td>
+                        <td colspan="2" class="text-center">
+                            <input class="button add" type="submit" value="등록"
+                                   onclick="defaultPost(event, 'tr' ,'/menu/menu-function/api')"></td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    {% for function in object.function_set.all %}
+                        <tr>
+                            <td><input type="hidden" name="type_code_id" value="{{ function.type_code.id }}">
+                                <input type="hidden" name="id" value="{{ function.id }}">
+                                <input type="hidden" name="menu_id" value="{{ object.id }}">
+                                {{ function.type_code.name }}</td>
+                            <td>{{ function.name }}</td>
+                            <td>{{ function.prerequisite }}</td>
+                            <td>{{ function.description }}</td>
+                            <td class="text-center"><button class="button update"
+                                                            onclick="changeToEditMode(this,'/menu/menu-function/api')">수정</button></td>
+                            <td class="text-center"><button class="button delete"
+                                                            onclick="deleteModalShow(document.body, {{ function.id }},
+                                                            '/menu/menu-function/api')">삭제</button></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+        </section>
+    </article>
+    {% include 'common/modal/delete_modal.html' %}
+{% endblock %}
