@@ -58,8 +58,8 @@
                                     <th>메뉴 설명</th>
                                     <td><textarea class="form-element-default" name="description">{{ object.title }}</textarea></td>
                                 </tr>
-
-                                <tr><th>guide 파일</th><td>{% include 'file_box/file_box.html' %}</td></tr>
+                                <tr><th>guide 파일</th><td><input type="file" name="guide_file" class="form-element-default"></td></tr>
+                                <tr><th>화면 이미지</th><td><input type="file" name="screen_file" class="form-element-default"></td></tr>
                             </tbody>
                             <tfoot>
                                 <tr>

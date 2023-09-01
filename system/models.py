@@ -129,6 +129,7 @@ class OutdatedRecord(models.Model):
     access_log = models.ForeignKey('system.AccountAccessLog', on_delete=models.PROTECT)
     record_pk = models.IntegerField(verbose_name='아이디')
     record_dict = models.JSONField(verbose_name='이전 기록')
+    access_log = models.ForeignKey('system.AccountAccessLog', on_delete=models.SET_NULL, null=True, blank=True)
     create_dt = models.DateTimeField(verbose_name='생성일시')
 
     class Meta:

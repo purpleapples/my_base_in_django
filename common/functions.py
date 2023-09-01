@@ -778,13 +778,21 @@ def create_or_update_record(params, model, duplicate_field_list, files=None):
 
         model_instance.save()
         if files is not None and len(files):
-
-            for file in files.getlist('file'):
-                instance = AttachmentFile.objects.create(table_name=model._meta.db_table,
-                                              table_pk=model_instance.pk,
-                                              file=file,
-                                              access_log_id=access_log_id,
-                                              create_dt=now)
+            # for key in files.keys():
+            attachment_file_list = list()
+            default_dict = dict(
+                table_name=model._meta.db_table,
+                table_pk=model_instance.pk,
+                access_log_id=access_log_id,
+                create_dt=now
+            )
+            for key in files.keys():
+                attachment_file_list.append(AttachmentFile(
+                    **default_dict,
+                    file_type=key,
+                    file=files.get(key)
+                ))
+            AttachmentFile.objects.bulk_create(attachment_file_list, batch_size=1000)
 
 
         if 'save_outdated_record' in params.keys():

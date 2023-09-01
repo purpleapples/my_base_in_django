@@ -137,6 +137,7 @@ class ApiView(View):
             }, cls=CustomDjangoJSONEncoder), content_type='application/json', status=status
         )
 
+    @transaction.atomic
     def post(self, request):
         params = request.POST.dict()
 

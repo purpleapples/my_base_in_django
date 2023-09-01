@@ -66,8 +66,10 @@ class MenuFunctionListView(ListView):
         context['object'] = self.model.objects.get(id=self.kwargs['pk'])
         menu = context['object']
         file_qs = AttachmentFile.objects.filter(table_name=self.model._meta.db_table, table_pk=menu.id)
-        context['guide_file'] = file_qs.filter(file_type='guide')
-        context['screen_file'] = file_qs.filter(file_type='screen')
+        for file_type in ['guide_file', 'screen_file']:
+            file = file_qs.filter(file_type='guide_file')
+            if file.exists():
+                context[file_type] = file.last()
         function_dict = {
             'have_search':'조회',
             'have_create':'생성',

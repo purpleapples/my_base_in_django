@@ -252,10 +252,8 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
         }
     }
 
-
     fetch(url, options).then((response)=> {
         $('.load_bg').hide();
-        console.log(response, response.status, response.ok)
         if (response.status < 300  && response.status > 201){
             if(response.status==203){
             }
@@ -288,7 +286,7 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
         else if (response.status==0 && response.type == 'opaque' ){
             return response
         }
-        else if(response.ok && [200,201,0].indexOf(response.status) !=-1){
+        else if(response.ok && [200,201].indexOf(response.status) !=-1){
             const jsonResponse = response.json()
             return jsonResponse;
         }else{

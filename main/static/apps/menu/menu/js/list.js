@@ -139,7 +139,17 @@ const saveMenu = (event) => {
         if( form.nodeIndex.value == ''){
             return;
         }
+
+        for (const deleteCandidateSelector of ['id','parent_id']){
+            let el = form.querySelector(`[name=${deleteCandidateSelector}]`);
+            if (el != undefined){
+                if(el.value == ''){
+                    el.disabled=true;
+                }
+            }
+        }
         const formData = new FormData(form);
+
         for (const el of form.elements){
             if (el.required && el.value == ''){
                 alert('필수 항목이 입력되지 않았습니다.');
@@ -150,6 +160,7 @@ const saveMenu = (event) => {
                 formData.set(el.name, el.checked ? 'True' : 'False');
             }
         }
+
         formData.set('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
         if(form.parentIndex.value != ''){
             formData.set('parent_id', document.querySelector(`[data-node-index='${form.parentIndex.value}']`).dataset['id']);
