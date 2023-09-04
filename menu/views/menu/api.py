@@ -17,7 +17,7 @@ class MenuApiView(ApiView):
         params = request.POST.dict()
         params['author'] = self.request.user
         instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
-                                                            request.FILES)
+                                                            request.FILES, remove_old_file = True)
 
         if instance.parent is None:
             instance.root_id = instance.id

@@ -27,3 +27,8 @@ tfoot td{
 #default-table th, #function-table th{
     background: #7db4ff;
 }
+
+img {
+    width:300px;
+    cursor:pointer;
+}

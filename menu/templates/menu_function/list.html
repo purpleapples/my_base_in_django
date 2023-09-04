@@ -54,7 +54,11 @@
                         <td colspan="4"><a download href="{{ guide_file.file }}">{{ guide_file.file_name }}</a></td>
                     </tr>
                     <tr><th colspan="6">화면 이미지</th></tr>
-                    <tr><td colspan="6"><img src="/media/{{ screen_file.file }}"></td></tr>
+                    <tr><td colspan="6">
+                    <a download href="{% if screen_file %}/media/{{ screen_file.file }}{% else %}#{% endif %}">
+                        <img src="{% if screen_file %}/media/{{ screen_file.file }}{% else %}#{% endif %}">
+                    </a>
+                    </td></tr>
                 </table>
             </section>
             <section>

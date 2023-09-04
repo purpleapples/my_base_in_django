@@ -67,7 +67,7 @@ class MenuFunctionListView(ListView):
         menu = context['object']
         file_qs = AttachmentFile.objects.filter(table_name=self.model._meta.db_table, table_pk=menu.id)
         for file_type in ['guide_file', 'screen_file']:
-            file = file_qs.filter(file_type='guide_file')
+            file = file_qs.filter(file_type=file_type)
             if file.exists():
                 context[file_type] = file.last()
         function_dict = {

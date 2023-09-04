@@ -759,7 +759,7 @@ def set_instance_parameter(model, params):
 
 
 
-def create_or_update_record(params, model, duplicate_field_list, files=None):
+def create_or_update_record(params, model, duplicate_field_list, files=None, remove_old_file=False):
     params, model_instance, access_log_id, now = set_instance_parameter(model, params)
 
     try:
@@ -787,6 +787,13 @@ def create_or_update_record(params, model, duplicate_field_list, files=None):
                 create_dt=now
             )
             for key in files.keys():
+                if remove_old_file:
+                    old_file_qs = AttachmentFile.objects.filter(
+                        table_name=default_dict['table_name'], table_pk=default_dict['table_pk'],
+                        file_type=key
+                    )
+                    if old_file_qs.exists():
+                        old_file_qs.delete()
                 attachment_file_list.append(AttachmentFile(
                     **default_dict,
                     file_type=key,

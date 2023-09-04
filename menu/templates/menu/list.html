@@ -6,32 +6,35 @@
 {% block header %}
     <script type="text/javascript" src="{% static 'apps/menu/menu/js/list.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'apps/menu/menu/css/list.css' %}">
-
 {% endblock %}
 {% block contents %}
     <section style="margin-left:2%;display:grid;grid-template-columns:48%50%;grid-gap:2%;">
     {% csrf_token %}
-        <article id="list">
+        <article id="list" class="list-default">
             <input type="hidden" name="object_list" value="{{ tree_data }}">
+            <p class="content-background box-shadow-underscore">메뉴 목록</p>
             <article class="tree-container" id="tree-container"></article>
         </article>
 
-        <article id="object" class="tab-container">
-            <ul class="tab header switch-tab-list">
-                <li class="detail act">상세</li>
-                <li class="hidden" data-name="permission">권한</li>
-            </ul>
-            <section class="body box-shadow-below-diagonal">
-                <section id="tree">
-                    <form id="menuForm">
-                        <input type="hidden" name="id">
-                        <input type="hidden" name="root_id">
-                        <input type="hidden" name="parentIndex">
-                        <input type="hidden" name="level">
-                        <input type="hidden" name="parentId">
-                        <input type="hidden" name="nodeIndex">
-                        <table class="table" id="menu-table">
-                            <tbody>
+        <section class="list-default" style="width:720px;">
+            <p class="content-background box-shadow-underscore">상세 및 권한</p>
+            <article id="object" class="tab-container">
+                <ul class="tab header switch-tab-list">
+                    <li class="detail act">상세</li>
+                    <li class="hidden" data-name="permission">권한</li>
+                </ul>
+
+                <section class="body box-shadow-below-diagonal">
+                    <section id="tree">
+                        <form id="menuForm">
+                            <input type="hidden" name="id">
+                            <input type="hidden" name="root_id">
+                            <input type="hidden" name="parentIndex">
+                            <input type="hidden" name="level">
+                            <input type="hidden" name="parentId">
+                            <input type="hidden" name="nodeIndex">
+                            <table class="table" id="menu-table">
+                                <tbody>
                                 <tr><th>상위 메뉴</th><td><input type="text" class="form-element-default" name="parent_title" readonly></td></tr>
                                 <tr><th>메뉴명</th><td><input type="text" name="title" class="form-element-default" required> </td></tr>
                                 <tr><th>메뉴 배치 순서</th><td><input type="number" name="order" class="form-element-default" required> </td></tr>
@@ -40,9 +43,9 @@
                                 <tr class="hidden">
                                     <th>기준 화면</th>
                                     <td><select class="form-element-default" name="screen_id" id="screen-id">
-                                    {% for screen in screen_list %}
-                                        <option value="{{ screen.id }}">{{ screen.title }}</option>
-                                    {% endfor %}
+                                        {% for screen in screen_list %}
+                                            <option value="{{ screen.id }}">{{ screen.title }}</option>
+                                        {% endfor %}
                                     </select></td>
                                 </tr>
                                 <tr class="hidden"><th>url</th><td><input type="url" name="url" id="url" class="form-element-default"></td></tr>
@@ -60,28 +63,28 @@
                                 </tr>
                                 <tr><th>guide 파일</th><td><input type="file" name="guide_file" class="form-element-default"></td></tr>
                                 <tr><th>화면 이미지</th><td><input type="file" name="screen_file" class="form-element-default"></td></tr>
-                            </tbody>
-                            <tfoot>
+                                </tbody>
+                                <tfoot>
                                 <tr>
                                     <td class="buttonToolbar" colspan="2">
                                         <span class="button save" id="menu-save-button">등록</span>
                                         <input type="reset" class="button reset" value="초기화">
                                     </td>
                                 </tr>
-                            </tfoot>
-                        </table>
-                    </form>
-                </section>
-                <section id="menu-permission" class="hidden">
-                    <table class="table table-bordered" id="table2">
-                        <thead>
+                                </tfoot>
+                            </table>
+                        </form>
+                    </section>
+                    <section id="menu-permission" class="hidden">
+                        <table class="table table-bordered" id="table2">
+                            <thead>
                             <tr>
                                 <th>사용자</th>
                                 <th>저장</th>
                                 <th>삭제</th>
                             </tr>
-                        </thead>
-                        <tbody class="input-row">
+                            </thead>
+                            <tbody class="input-row">
                             <tr>
                                 <td>
                                     <select class="form-element-default" name="account_id">
@@ -96,13 +99,14 @@
                                           onclick="defaultPost(event, 'tr','{% url 'menu_permission_api' %}' )">등록</span>
                                 </td>
                             </tr>
-                        </tbody>
-                        <tbody id="menu-permission-tbody">
-                        </tbody>
-                    </table>
+                            </tbody>
+                            <tbody id="menu-permission-tbody">
+                            </tbody>
+                        </table>
+                    </section>
                 </section>
-            </section>
-        </article>
+            </article>
+        </section>
     </section>
     {% include 'common/modal/delete_rows_modal.html' %}
 {% endblock %}
