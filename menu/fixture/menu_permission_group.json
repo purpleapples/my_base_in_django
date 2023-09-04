@@ -1,1 +1,1 @@
-[{"model": "menu.menupermissiongroup", "pk": 2, "fields": {"access_log": 59, "update_access_log": 83, "create_dt": "2023-08-30T16:48:05.227", "update_dt": "2023-09-01T15:56:16.121", "group_name": "관리자", "comment": null}}]
+[{"model": "menu.menupermissiongroup", "pk": 2, "fields": {"access_log": null, "update_access_log": null, "create_dt": "2023-08-30T16:48:05.227", "update_dt": "2023-09-01T15:56:16.121", "group_name": "관리자", "comment": null}}]
