@@ -44,6 +44,7 @@ BUSINESS_APPS = [
     'menu'
 ]
 THIRD_APPS = [
+    'channels',
     'gunicorn',
     'django_crontab',
     'bootstrap4',
@@ -81,6 +82,14 @@ TEMPLATES = [
         },
     },
 ]
+
+
+## CHANNEL SETTING
+CHANNEL_LAYERS = {
+    'default':{
+        "BACKEND": " channels.layers.InMemoryChannelLayer"
+    }
+}
 
 #WSGI_APPLICATION = 'main.wsgi.application'
 ASGI_APPLICATION = 'main.asgi.application'

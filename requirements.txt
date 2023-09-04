@@ -2,6 +2,7 @@ annotated-types==0.5.0
 anyio==3.7.1
 asgiref==3.7.2
 bootstrap4==0.1.0
+channels==4.0.0
 click==8.1.7
 Django==4.2.4
 django-crontab==0.7.1
