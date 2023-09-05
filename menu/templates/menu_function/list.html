@@ -12,7 +12,7 @@
     <article class="context-horizontal-center">
         <section class="grid-column-pair">
             <section class="list-default">
-                <p class="box-shadow-underscore">화면 기본 정보</p>
+                <p class="content-title">화면 기본 정보</p>
                 <table class="table table-bordered" id="default-table">
                     <tr>
                         <th colspan="2">화면 이름</th>
@@ -55,14 +55,17 @@
                     </tr>
                     <tr><th colspan="6">화면 이미지</th></tr>
                     <tr><td colspan="6">
+                    {% if screen_file is not None %}
                     <a download href="{% if screen_file %}/media/{{ screen_file.file }}{% else %}#{% endif %}">
                         <img src="{% if screen_file %}/media/{{ screen_file.file }}{% else %}#{% endif %}">
                     </a>
+                    {% endif %}
                     </td></tr>
                 </table>
             </section>
+
             <section>
-                <p class="box-shadow-underscore">화면 기능 목록</p>
+                <p class="content-title">화면 기능 목록</p>
                 <table class="table table-bordered" id="function-table">
                     <thead>
                     <tr>
@@ -86,7 +89,7 @@
                         <td><input type="text" name="prerequisite" class="form-element-default" required></td>
                         <td><textarea name="description" class="form-element-default" required></textarea></td>
                         <td colspan="2" class="text-center">
-                            <input class="button add" type="submit" value="등록"
+                            <input class="button create" type="submit" value="등록"
                                    onclick="defaultPost(event, 'tr' ,'/menu/menu-function/api')"></td>
                     </tr>
                     </tbody>

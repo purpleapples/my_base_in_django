@@ -1,3 +1,5 @@
+import copy
+
 
 def set_int_to_excel_column(index):
     quotient = index // 26

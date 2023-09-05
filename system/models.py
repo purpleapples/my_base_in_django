@@ -1,7 +1,7 @@
 
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from common.choices.system import ACCOUNT_POSITION_CHOICES, BOARD_TYPE
+from common.choices.system import BOARD_TYPE
 from common.models import LogModel
 
 

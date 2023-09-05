@@ -1,33 +1,21 @@
-
-.tab-container .body {
-    width:700px;
-}
 .table {
     width:100%;
 }
-
-textarea{
-    height:150px;
-}
-#tree{
-    height:91.5%;
-}
-tfoot td{
-    text-align:right;
-}
-#menu-table th{
-    text-align:left !important;
-    padding-left:50px;
-    width:100px;
-}
-#menu-table tr{
-    height:30px !important;
+#default-table tr:first-child{
+    border-top:2px solid #9caab9;
 }
 
 #default-table th, #function-table th{
-    background: #7db4ff;
+    background: #f1f3f6;
+    border-left:none;
+    border-right:none;
+    font-weight: bold;
+    font-size:17px;
 }
-
+#default-table td, #function-table td{
+    border-right:none;
+    border-left:none;
+}
 img {
     width:300px;
     cursor:pointer;

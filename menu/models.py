@@ -1,6 +1,9 @@
 from django.db import models
 from common.models import LogModel, TreeModel
+import os
 
+def get_project_output_path(instance, filename):
+    return os.path.join('system', 'output', instance.output_type.name, filename)
 
 # tree 분할
 class Menu(TreeModel):
@@ -83,6 +86,13 @@ class MenuFavorite(LogModel):
         db_table = 'menu_favorite'
         verbose_name = '메뉴 선호'
 
+
+class ProjectOutput(LogModel):
+    output_type = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE)
+    file = models.FileField(verbose_name='산출물', upload_to=get_project_output_path)
+    class Meta:
+        db_table = 'project_output'
+        verbose_name = '프로젝트 산출물'
 
 # class FrameworkDirectoryInformation(LogModel):
 #     apps = models.CharField(max_length=400, verbose_name = 'app')

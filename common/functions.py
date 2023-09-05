@@ -325,7 +325,6 @@ def cluster_date_range(date_list):
 
     return result
 
-
 def print_time(title, second, t):
     print(title, ' for : ', second - t)
     t = second
@@ -757,8 +756,6 @@ def set_instance_parameter(model, params):
 
     return model_params, model_instance, access_log_id, now
 
-
-
 def create_or_update_record(params, model, duplicate_field_list, files=None, remove_old_file=False):
     params, model_instance, access_log_id, now = set_instance_parameter(model, params)
 
@@ -800,7 +797,6 @@ def create_or_update_record(params, model, duplicate_field_list, files=None, rem
                     file=files.get(key)
                 ))
             AttachmentFile.objects.bulk_create(attachment_file_list, batch_size=1000)
-
 
         if 'save_outdated_record' in params.keys():
             record_dict = dict()
@@ -856,80 +852,6 @@ def set_params_with_default_values(context, default_value_dict, search_params=No
                 context[key] = search_params[key]
             elif value != '' and value is not None:
                 context[key] = value
-
-def download_database_excel(request):
-    # project database description to excel
-    app_list = [
-        'base',
-        'equipment',
-        'client',
-        'material',
-        'system',
-        'kpi',
-        'manufacture',
-        'sales',
-        'shipment',
-        'quality',
-    ]
-
-    column_map = {
-        'CharField':'char(64)',
-        'TextField':'char(64)',
-        'EmailField':'char(32)',
-        'IntegerField':'int',
-        'PositiveIntegerField':'int',
-        'DecimalField':'float',
-        'FloatField':'float',
-        'ForeignKey':'int',
-        'ManyToOneRel':'int',
-        'TreeForeignKey':'int',
-        'CountryField':'str',
-        'OneToOneField':'int',
-        'BooleanField':'bool',
-        'DateTimeField':'datetime',
-        'DateField':'date',
-        'FileField':'str',
-        'ImageField':'str',
-        'AutoField':'int'
-    }
-    # 문서 추출 용 속성
-    # 모델 class name, 모델 verbose_name
-    # 테이블명, db_name, column_verbose_name, column, column_type, pk, fk, null 허용, 비고
-    df_columns = ['table_verbose_name', 'db_name', 'column_verbose_name', 'column_variable_name', 'type', 'pk', 'fk',
-                  'null',
-                  'comment']
-    app_df_list = OrderedDict()
-
-    ##### 테이블 네임 및 필드 추출 및 저장
-    for app_name in app_list:
-        app_df_list[app_name] = OrderedDict()
-        model_list = apps.all_models[app_name]
-        for name, model_cls in model_list.items():
-            db_name = model_cls._meta.db_table,
-            db_name = db_name[0]
-            table_name = model_cls._meta.verbose_name
-
-            df = pd.DataFrame(columns=df_columns)
-            for field in model_cls._meta._get_fields():
-                # help
-                class_name = str(field.__class__)
-                class_name = class_name.replace('<', '')
-                class_name = class_name.replace('>', '')
-                class_name = class_name.replace('\'', '')
-                class_name = class_name.split('.')[-1]
-                if 'Rel' in class_name or 'ManyToManyField' in class_name:
-                    continue
-                df = df.append([{'table_verbose_name':table_name,
-                                 'db_name':db_name,
-                                 'column_verbose_name':str(getattr(field, 'verbose_name')) if hasattr(field,
-                                                                                                      'verbose_name') else '',
-                                 'column_variable_name':getattr(field, 'name') if hasattr(field, 'name') else '',
-                                 'type':column_map[class_name],
-                                 'pk':getattr(field, 'primary_key') if hasattr(field, 'primary_key') else '',
-                                 'fk':class_name in ['OneToOneField', 'ForeignKey'],
-                                 'null':getattr(field, 'null') if hasattr(field, 'null') else '',
-                                 'comment':''}], )
-            app_df_list[app_name][db_name] = df
 
 
 def delete_common(view_instance, save_record_field=None):

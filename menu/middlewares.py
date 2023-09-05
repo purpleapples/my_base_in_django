@@ -29,7 +29,6 @@ class AccountPermissionMiddleware:
 		response = self.get_response(request)
 		from menu.models import MenuPermission
 		# 단위계 추출 하되
-		#  /menu/3/function/list
 		if request_path == '/favicon.ico':
 			return response
 

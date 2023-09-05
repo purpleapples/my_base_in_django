@@ -2,7 +2,7 @@ import decimal
 import uuid
 import datetime
 
-from django.core import serializers
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils.duration import duration_iso_string

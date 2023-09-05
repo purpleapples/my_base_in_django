@@ -32,8 +32,11 @@ th.sticky, td.sticky{
 }
 
 .table th, .table td{
-    padding:1.1em;
-    border:1px solid rgba(0, 0, 0, 0.33);
+    padding:1em;
+    border-bottom:1px solid rgba(0, 0, 0, 0.33);
+}
+.table td{
+    background:#706e7305;
 }
 .table th[data-order=ascending]::after{
     content:'\2191';
@@ -42,7 +45,7 @@ th.sticky, td.sticky{
     content:'\2193';
 }
 .table thead tr:last-child th{
-    border:2px solid #cccccc;
+    border-bottom:2px solid #cccccc;
 }
 /* table scorll y 의 경우 반드시 css 파일을 따로 작성해서 tbody의 컬럼 크기 지정이 필요합니다.*/
 .table-layout-fixed{
@@ -66,33 +69,44 @@ th.sticky, td.sticky{
     vertical-align: middle !important;
 }
 .table tbody tr:hover{
-    filter: brightness(90%);
+    filter: brightness(93%);
 }
 .table {
     border-color: rgba(0, 0, 0, 0.33);
 }
 .table thead tr:first-child th{
-    border-top:3px solid #ef5357;
+    border-top:2px solid #9caab9;
     font-weight: bold;
 }
 .table tr th {
     word-break: keep-all;
     text-align: center;
+    background: #f1f3f6;
+    border-left:none;
+    border-right:none;
+    font-weight: bold;
+    font-size:17px;
 }
-
 .table thead .glyphicon {
     font-size:12px;
 }
+/************************************************** table with input row **********************************************/
+.input-row tr:last-child td{
+    border-bottom:2px solid rgba(0, 0, 0, 0.33);
+}
+
+
+/************************************************** table button ******************************************************/
 /* 테이블 내 버튼 - 지시하기, 삭제하기 */
 .table .button {
     min-width: 35px;
-    padding:8px 12px;
+    padding:8px 16px;
     font-size:14px;
     border-radius: 4px;
+    border:none;
     cursor: pointer;
     box-shadow: 0 0 5px #b9b9b9;
-    font-weight: normal;
-    border-radius: 4px;
+    font-weight: bold;
 }
 .table .button .delete {
     background:#bd1818;
@@ -100,8 +114,13 @@ th.sticky, td.sticky{
 .table .button.add {
     background: #546cc0;
 }
+.table .button.create{
+    background: rgba(60, 165, 225, 0.4);
+    color: rgba(60, 165, 225);
+}
 .table .button.update {
-    background:#25925b;
+    background: rgba(37, 146, 91, 0.4);
+    color: rgba(37, 146, 91);
 }
 .table .button.upload {
     background:#6274d0;

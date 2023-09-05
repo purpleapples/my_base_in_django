@@ -107,7 +107,6 @@ button:hover, .button:hover{
     box-sizing: border-box;
     color:white;
     border-radius: 4px;
-    border:none;
     text-decoration: none;
     text-align:center;
     vertical-align: center;
@@ -172,6 +171,15 @@ button:hover, .button:hover{
     background: #8577d7;
 }
 /*********************************************** main and content *****************************************************/
+.content-title{
+    background:white;
+    border:2px solid whitesmoke;
+    padding-top:5px;
+    padding-bottom:5px;
+    box-shadow:-1px 2px 0 #ced6dc;
+    text-indent:2px;
+    filter: drop-shadow(0px 1px 1px whitesmoke) ;
+}
 .screen-title{
     margin-bottom: 5px;
     border-bottom: 1px solid #eee;
