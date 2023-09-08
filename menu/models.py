@@ -44,6 +44,9 @@ class MenuFunction(LogModel):
     name = models.CharField(max_length=100, verbose_name='기능명')
     type_code = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE, null=True, blank=True) # 시스템 - 메뉴 - 기능
     prerequisite = models.CharField(max_length=300, verbose_name='전제조건', default='', null=True, blank=True)
+    process = models.CharField(max_length=300, verbose_name='실행절차', default='', null=True, blank=True)
+    success_result = models.CharField(max_length=100, verbose_name='실행결과', default='', null=True, blank=True)
+    fail_result = models.CharField(max_length=100, verbose_name='실패결과', default='', null=True, blank=True)
     description = models.CharField(max_length=500, verbose_name='설명', null=True, blank=True)
 
     class Meta:
@@ -88,8 +91,10 @@ class MenuFavorite(LogModel):
 
 
 class ProjectOutput(LogModel):
+
     output_type = models.ForeignKey('base.CodeTable', on_delete=models.CASCADE)
     file = models.FileField(verbose_name='산출물', upload_to=get_project_output_path)
+
     class Meta:
         db_table = 'project_output'
         verbose_name = '프로젝트 산출물'

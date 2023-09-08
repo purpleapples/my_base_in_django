@@ -10,6 +10,7 @@ from .views.excel.api import ExcelApiView
 from .views.excel.template import ExcelListView
 from .views.outdated_record.api import OutdatedRecordApiView
 from .views.outdated_record.template import OutdatedRecordListView
+from .views.test.templates import TestView
 
 urlpatterns = [
     # VIEWS
@@ -34,6 +35,9 @@ urlpatterns = [
 
 	### OUTDATED_RECORD
 	path('outdate-record/<slug:table>/list/', OutdatedRecordListView.as_view(), name='get_outdated_record_list'),
-	path('outdated-record/api', OutdatedRecordApiView.as_view(), name='outdated_record_api')
+	path('outdated-record/api', OutdatedRecordApiView.as_view(), name='outdated_record_api'),
+
+	path('test', TestView.as_view(), name='test_page')
+
 ]
 

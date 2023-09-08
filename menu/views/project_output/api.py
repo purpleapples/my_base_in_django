@@ -41,7 +41,7 @@ class ProjectOutputApiView(ApiView):
                 )
             ), content_type='application/json', status=200
         )
-        pass
+
 
 def download_database_excel(app_model_dict=None, sheet_by_app=False, sheet_by_model=False):
     # project database description to excel
@@ -121,7 +121,7 @@ def download_database_excel(app_model_dict=None, sheet_by_app=False, sheet_by_mo
 
     return file_name, file_url[1:]
 
-def download_unit_test_case_excel(menu_list=None):
+def download_unit_test_case_excel(menu_list=None, input_column_list=None):
     """
     :desc 단위 테스트 케이스 excel 문서 생성 로직
     :param menu_dict: 단위 테스트 생성 용 메뉴 내역
@@ -142,19 +142,24 @@ def download_unit_test_case_excel(menu_list=None):
         df['단위 테스트ID'] = df.apply(lambda row: '-'.join(['MES', 'CD1' ,set_str_digit_length(row['menu_id'], 3)]), axis=1)
 
     columns_dict = dict(
-        type_code_name = '기능 종류',
         menu_title='메뉴명',
-        prerequisite = '전제조건',
-        description = '내용'
+        name='단위 테스트 명',
+        process='테스트 시나리오',
+        success_result = '예상 결과',
     )
     # 기능 별로 숫자. 찍고 들어 가기
-    #
+
     df.rename(columns=columns_dict, inplace=True)
     file_name =  'Unit Test Case.xlsx'
     file_dir = './media/system/output/unit_test_case'
     os.makedirs(file_dir, exist_ok=True)
     file_url = os.path.join(file_dir, file_name)
-    df = df[['case_id', '메뉴명', '기능 종류', '전제조건', '내용']]
+    # 관련 model 목록
+    df = df[['단위 테스트ID', '단위 테스트 명', '테스트 시나리오', '예상 결과']]
+    if input_column_list is not None:
+        for column in input_column_list:
+            if column not in df.columns:
+                df[column] = ''
+        df = df[input_column_list]
     df.to_excel(file_url,header=True)
-
     return file_name, file_url[1:]

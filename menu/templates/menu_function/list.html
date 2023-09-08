@@ -72,6 +72,9 @@
                         <th><label for="type_code_id">기능종류</label></th>
                         <th><label for="name">기능명</label></th>
                         <th><label for="prerequisite">전제조건</label></th>
+                        <th><label for="process">절차</label></th>
+                        <th><label for="success_result">성공결과</label></th>
+                        <th><label for="fail_result">실패결과</label></th>
                         <th><label for="description">설명</label></th>
                         <th colspan="2">기능</th>
                     </tr>
@@ -87,6 +90,9 @@
                         </td>
                         <td><input type="text" name="name" class="form-element-default" required></td>
                         <td><input type="text" name="prerequisite" class="form-element-default" required></td>
+                        <td><input type="text" name="process" class="form-element-default" required></td>
+                        <td><input type="text" name="success_result" class="form-element-default" required></td>
+                        <td><input type="text" name="fail_result" class="form-element-default"></td>
                         <td><textarea name="description" class="form-element-default" required></textarea></td>
                         <td colspan="2" class="text-center">
                             <input class="button create" type="submit" value="등록"
@@ -102,6 +108,9 @@
                                 {{ function.type_code.name }}</td>
                             <td>{{ function.name }}</td>
                             <td>{{ function.prerequisite }}</td>
+                            <td>{{ function.process }}</td>
+                            <td>{{ function.success_result }}</td>
+                            <td>{{ function.fail_result }}</td>
                             <td>{{ function.description }}</td>
                             <td class="text-center"><button class="button update"
                                                             onclick="changeToEditMode(this,'/menu/menu-function/api')">수정</button></td>

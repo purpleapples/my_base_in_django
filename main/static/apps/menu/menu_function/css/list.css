@@ -20,3 +20,6 @@ img {
     width:300px;
     cursor:pointer;
 }
+.grid-column-pair{
+    grid-gap:1%;
+}

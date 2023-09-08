@@ -77,7 +77,7 @@ function changeToEditMode(button_node, url='.'){
     button.onclick = (event) => terminateEditMode(event, 'tr')
 
     clone_node.lastElementChild.appendChild(button);
-    clone_node.querySelector('.button.add').onclick = (event) => defaultPost(event, 'tr', url)
+    clone_node.querySelector('.button.create').onclick = (event) => defaultPost(event, 'tr', url)
     tr.parentNode.insertBefore(clone_node, tr);
     tr.remove();
 }
