@@ -15,6 +15,4 @@ textarea{
 tfoot td{
     text-align:right;
 }
-#info-table tbody tr:first-child{
-    border-top:3px solid red;
-}
+

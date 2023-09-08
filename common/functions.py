@@ -890,3 +890,8 @@ def get_screen_comment(path):
         return menu_qs.last().user_comment
     else:
         return None
+
+
+def set_str_digit_length(str_value, length):
+    str_value = str(str_value)
+    return ''.join(['0' for i in range(len(str_value), length)]) + str_value

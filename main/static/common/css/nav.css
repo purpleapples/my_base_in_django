@@ -1,3 +1,8 @@
+
+#nav-tree table{
+    border-collapse: collapse;
+}
+
 .menu:hover {
     border:1px solid #7e7e7e;
     color:#7e7e7e;

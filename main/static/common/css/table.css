@@ -23,7 +23,7 @@ th.sticky, td.sticky{
     overflow-x:auto;
     max-width:100%;
 }
-
+/****************************************************** default table *************************************************/
 .table{
     border-spacing: 0;
 }
@@ -90,6 +90,13 @@ th.sticky, td.sticky{
 .table thead .glyphicon {
     font-size:12px;
 }
+/************************************************** panel template table **********************************************/
+.panel-table{
+}
+.panel-table tbody tr:first-child th, .panel-table tbody tr:first-child td{
+    border-top:2px solid #9caab9;
+}
+
 /************************************************** table with input row **********************************************/
 .input-row tr:last-child td{
     border-bottom:2px solid rgba(0, 0, 0, 0.33);

@@ -1,6 +1,6 @@
-.list-default, table{
+.list-default, #code-group-table{
     width:900px;
 }
-table td:first-child, table th:first-child {
+#code-group-table td:first-child, #code-group-table th:first-child {
     width:100px;
 }

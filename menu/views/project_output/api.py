@@ -1,14 +1,13 @@
 import json
 import os
-
 import pandas as pd
 from django.apps import apps
+from django.db.models import F
 from django.http import HttpResponse
-
 from base.models import CodeTable
 from common.cbvs import ApiView
-from menu.models import ProjectOutput
-api_model = ProjectOutput
+from common.functions import set_str_digit_length
+from menu.models import ProjectOutput, MenuFunction
 from datetime import datetime
 
 class ProjectOutputApiView(ApiView):
@@ -18,14 +17,21 @@ class ProjectOutputApiView(ApiView):
 
         output_type = CodeTable.objects.get(code=request.POST.get('output_type_code'))
 
-        if output_type.code == 'AO001':
+        if output_type.code == 'AO001': # database specification
             file_name, file_url = download_database_excel()
+        elif output_type.code == 'AO002': # unit test case - 기능별로
+            file_name, file_url = download_unit_test_case_excel()
+            pass
+        elif output_type.code == 'AO003': # Wireframe - 화면 파일 기능 설계서 순으로
+            pass
+        elif output_type.code == 'AO004': # Functional Specfication - 기능 명세서
+            pass
 
         self.model(output_type_id=output_type.id,
                    create_dt = datetime.now(),
                    access_log_id=request.user.accountaccesslog_set.last().id,
                    file=file_url
-                   )
+                   )#.save()
 
         return HttpResponse(
             json.dumps(
@@ -36,8 +42,6 @@ class ProjectOutputApiView(ApiView):
             ), content_type='application/json', status=200
         )
         pass
-
-
 
 def download_database_excel(app_model_dict=None, sheet_by_app=False, sheet_by_model=False):
     # project database description to excel
@@ -117,9 +121,40 @@ def download_database_excel(app_model_dict=None, sheet_by_app=False, sheet_by_mo
 
     return file_name, file_url[1:]
 
+def download_unit_test_case_excel(menu_list=None):
+    """
+    :desc 단위 테스트 케이스 excel 문서 생성 로직
+    :param menu_dict: 단위 테스트 생성 용 메뉴 내역
+    :return:
+    """
+    if menu_list is None:
+        qs = MenuFunction.objects.all()
+    else:
+        qs = MenuFunction.objects.filter(menu__in=menu_list)
 
+    if qs.count():
+        qs = qs.annotate(menu_title = F('menu__title'), type_code_name=F('type_code__name'))
+        # name
+        # type_code
+        # prerequisite
+        # description
+        df = pd.DataFrame.from_records(qs.values())
+        df['단위 테스트ID'] = df.apply(lambda row: '-'.join(['MES', 'CD1' ,set_str_digit_length(row['menu_id'], 3)]), axis=1)
 
+    columns_dict = dict(
+        type_code_name = '기능 종류',
+        menu_title='메뉴명',
+        prerequisite = '전제조건',
+        description = '내용'
+    )
+    # 기능 별로 숫자. 찍고 들어 가기
+    #
+    df.rename(columns=columns_dict, inplace=True)
+    file_name =  'Unit Test Case.xlsx'
+    file_dir = './media/system/output/unit_test_case'
+    os.makedirs(file_dir, exist_ok=True)
+    file_url = os.path.join(file_dir, file_name)
+    df = df[['case_id', '메뉴명', '기능 종류', '전제조건', '내용']]
+    df.to_excel(file_url,header=True)
 
-
-
-
+    return file_name, file_url[1:]
