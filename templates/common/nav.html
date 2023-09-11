@@ -132,11 +132,9 @@
 {#                {% endif %}#}
 {#            </ul>#}
 {# dropdown 삼발이 장착 #}
-        <article class="func">
-            <div class="flex-between">
-                <a class="func_btn" href="{% url 'update_account' pk=request.user.id %}"><span class="glyphicon glyphicon-wrench"></span> <span class="func_title">정보수정</span></a>
-                <a class="func_btn logout_btn" href="#" onclick="logoutSystem();"><span class="glyphicon glyphicon-off"></span> <span class="func_title">로그아웃</span></a>
-            </div>
+        <article class="list-default">            
+            <a class="func_btn" href="{% url 'update_account' pk=request.user.id %}"><span class="glyphicon glyphicon-wrench"></span> <span class="func_title">정보수정</span></a>
+            <a class="func_btn logout_btn" href="#" onclick="logoutSystem();"><span class="glyphicon glyphicon-off"></span> <span class="func_title">로그아웃</span></a>        
         </article>
         </article>
 
