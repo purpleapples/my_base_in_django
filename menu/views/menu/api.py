@@ -16,18 +16,28 @@ class MenuApiView(ApiView):
     def post(self, request):
         params = request.POST.dict()
         params['author'] = self.request.user
-        instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
-                                                            request.FILES, remove_old_file = True)
+        try:
+            instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
+                                                                request.FILES, remove_old_file = True)
+            if instance.parent is None:
+                instance.root_id = instance.id
+                instance.save()
 
-        if instance.parent is None:
-            instance.root_id = instance.id
-            instance.save()
-
-        return HttpResponse(
-            json.dumps({
-                'message':message
-            }), content_type='application/json', status=status
-        )
+            return HttpResponse(
+                json.dumps({
+                    'message':message
+                }), content_type='application/json', status=status
+            )
+        except ValueError as ve:
+            return HttpResponse(
+                json.dumps(dict(message=str(ve))),
+                content_type='application/json', status=400
+            )
+        except Exception as e:
+            return HttpResponse(
+                json.dumps(dict(message=str(e))),
+                content_type='application/json', status=500
+            )
 
 def get_menu_excel(qs):
     import pandas as pd
