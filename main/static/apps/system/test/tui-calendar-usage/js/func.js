@@ -1,3 +1,15 @@
+/**
+ * tui-calendar 2.1.3 usage guide
+ * create date : 2023-09-23
+ * create writer : samson siba
+ * desc : tui calendar 사용법 javascript 전용 가이드
+ *
+ *
+ *
+ * update date history:
+ * ref : https://github.com/nhn/tui.calendar/blob/main/docs/ko/README.md
+ * */
+
 
 window.onload = function(){
     const Calendar = tui.Calendar;
@@ -56,7 +68,7 @@ window.onload = function(){
         monthGridFooterExceed: function(hiddenSchedules) {
             return '';
         },
-        monthDayname: function(model) {
+        monthDayName: function(model) {
             return String(model.label).toLocaleUpperCase();
         },
         dayGridTitle: function(viewName) {
@@ -162,7 +174,36 @@ window.onload = function(){
     const calendar = new Calendar(container, options);
     calendar.on('ClickEvent', ({event})=>{
         el.innerText = 'xxxx'
-    })
+    });
+
+    const DatePicker = tui.DatePicker;
+
+    const instance = DatePicker.createRangePicker({
+        startpicker: {
+            input: '#start-input',
+            container: '#start-container'
+        },
+        endpicker: {
+            input: '#end-input',
+            container: '#end-container'
+        },
+        type: 'date',
+        format: 'yyyy-MM-dd',
+    });
+
+    const instance2 = DatePicker.createRangePicker({
+        startpicker: {
+            input: '#start-input2',
+            container: '#start-container2'
+        },
+        endpicker: {
+            input: '#end-input2',
+            container: '#end-container2'
+        },
+        type: 'date',
+        format: 'yyyy-MM-dd',
+    });
+
 
     calendar.setOptions({
       useFormPopup: true,
@@ -186,6 +227,26 @@ window.onload = function(){
     //   useDetailPopup: true,
     // });
     // Calendar.createSchedules()
+
+    // calendar event
+    calendar.on({
+        'afterRenderSchedule': function(e){
+            let schedule = e.schedule;
+            let element = calendar.getElement(schedule.id, schedule.calendarId);
+
+        },
+        'clickSchedule': function(e){
+            const id = e.schedule.id;
+            const title = e.schedule.title;
+            const start_dt = e.schedule.start._date;
+            const end_dt = e.schedule.end._date;
+            const calendarId = e.schedule.calendarId;
+            const writer_id = e.schedule.recurrenceRule;
+            const is_repeat = e.schedule.body;
+            const repeat_cycle = e.schedule.raw;
+        }
+    })
+
 }
 function formatTime(time) {
       const hours = `${time.getHours()}`.padStart(2, '0');
