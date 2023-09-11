@@ -69,7 +69,11 @@
                         <td>{{ object.type|default_if_none:'' }}</td>
                         <td>{{ object.code|default_if_none:'' }}</td>
                         <td>
-                            <a href="{% url 'code_table_child_list' parent_id=object.id %}">{{ object.name|default_if_none:'' }}</a>
+                            {% if create_child %}
+                            <a href="{% url 'code_table_child_list' parent_code=object.code %}">{{ object.name|default_if_none:'' }}</a>
+                            {% else %}
+                                {{ object.name }}
+                            {% endif %}
                         </td>
                         <td>{{ object.comment|default_if_none:'' }}</td>
                         <td class="text-center"><button class="button update" onclick="changeToEditMode(this,'/base/code-table/api')">수정</button></td>

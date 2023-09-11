@@ -1,5 +1,6 @@
 from base.models import CodeTable
 from common.cbvs import ConditionalListView
+from menu.models import Menu
 
 
 class CodeTableListView(ConditionalListView):
@@ -24,6 +25,13 @@ class CodeTableListView(ConditionalListView):
             context['title'] = parent.name + ' 하위 '
             context['category'] = parent.category
             context['level'] = parent.level +1
+            # 관리자나 등록된 화면이 아니면 link 안되도록
+            if self.request.user.is_superuser:
+                context['create_child'] = True
+            elif Menu.objects.filter(url=self.request.path.split('?')[0]).exists():
+                context['create_child'] = True
+            else:
+                context['create_child'] = False
         else:
             context['level'] = 0
 
