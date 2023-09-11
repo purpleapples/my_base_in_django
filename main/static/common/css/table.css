@@ -156,11 +156,8 @@ th.sticky, td.sticky{
     height:55px;
 }
 .table-dropdown-body thead tr th{
-    padding-left: 10px;
-    padding-right: 100px;
-    padding-top: 15px;
-    padding-bottom:20px;
-    font-size: 18px;
+    padding:1em;
+    font-size: 15px;
     /*color: #003eff;*/
 }
 /*.table-dropdown-body tbody:before{*/
