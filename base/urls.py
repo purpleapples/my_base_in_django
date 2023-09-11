@@ -14,7 +14,7 @@ urlpatterns = [
     ## CODE TABLE
     path('code-table/list/', CodeTableListView.as_view(), name='code_table_list'),
     path('code-table/api', CodeTableApiView.as_view(), name='code_table_api'),
-    path('code-table/parent/<int:parent_code>/', CodeTableListView.as_view(), name='code_table_child_list'),
+    path('code-table/parent/<slug:parent_code>/', CodeTableListView.as_view(), name='code_table_child_list'),
 
     ## CODE GROUP
     path('code-group/list/', CodeGroupListView.as_view(), name='code_group_list'),
