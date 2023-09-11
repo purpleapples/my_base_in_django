@@ -2,7 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from common.choices.system import BOARD_TYPE
-from common.models import LogModel
+from common.models import LogModel, TreeModel
 
 
 def get_attachment_file_path(instance, filename):
@@ -73,6 +73,7 @@ class BulletinBoard(LogModel):
     title = models.CharField(max_length=100, verbose_name='제목', default='')
     content = models.TextField(max_length=2000, verbose_name='내용')
     is_delete = models.BooleanField(default=False, verbose_name='삭제여부')
+    is_new_reply = models.BooleanField(default=False, verbose_name='신규 댓글 생성 여부')
 
     class Meta:
         db_table = 'bulletin_board'
@@ -90,14 +91,15 @@ class AnswerRelation(LogModel):
         verbose_name = '답신 관계'
 
 
-class ReplayRelation(LogModel):
-    parent = models.ForeignKey('system.BulletinBoard', on_delete=models.CASCADE, related_name='child_relation')
-    self =  models.ForeignKey('system.BulletinBoard', on_delete=models.CASCADE, related_name='parent_relation')
-    level = models.IntegerField(default=0, verbose_name='글 단계')
+class Replay(TreeModel):
+    bulletin_board = models.ForeignKey('system.BulletinBoard', on_delete=models.CASCADE)
+    content = models.CharField(max_length=1000, verbose_name='댓글 내용')
+    is_delete = models.BooleanField(default=False, verbose_name='삭제여부')
+    is_read =models.BooleanField(default=False, verbose_name='읽음 여부')
 
     class Meta:
-        db_table = 'replay_relation'
-        verbose_name = '댓글 관계'
+        db_table = 'replay'
+        verbose_name = '댓글'
 
 
 class Message(LogModel):
