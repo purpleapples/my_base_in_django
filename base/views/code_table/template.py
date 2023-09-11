@@ -18,7 +18,7 @@ class CodeTableListView(ConditionalListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data()
-
+        context['create_child'] = True
         if 'parent_code' in self.kwargs.keys():
             parent = self.model.objects.get(code=self.kwargs['parent_code'])
             context['parent'] = parent
