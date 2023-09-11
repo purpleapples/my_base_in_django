@@ -143,13 +143,26 @@ class ApiView(View):
 
         params['author'] = self.request.user
 
-        instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list, request.FILES)
-        return HttpResponse(
-            json.dumps({
-                'message':message
-            }), content_type='application/json', status=status
-        )
+        try:
+            instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
+                                                                request.FILES)
+            return HttpResponse(
+                json.dumps({
+                    'message':message
+                }), content_type='application/json', status=status
+            )
 
+        except ValueError as ve:
+            return HttpResponse(
+                json.dumps(dict(message=str(ve))),
+                content_type='application/json', status=400
+            )
+        except Exception as e:
+            return HttpResponse(
+                json.dumps(dict(message=str(e))),
+                content_type='application/json', status=500
+            )
+            
     @transaction.atomic
     def patch(self, request):
         params = json.loads(request.body.decode('UTF-8'))
