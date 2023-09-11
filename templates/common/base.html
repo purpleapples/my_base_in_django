@@ -7,7 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
-
+    <!------------------------------------------------ third module  -------------------------------------------------->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
     <script type="text/javascript" src="{% static 'third/js/third_lib/jquery-latest.js' %}"></script>
 {#  <script src="{% static 'third/js/third_lib/jquery-ui.min.js' %}"></script>#}
 {#  <link rel="stylesheet" href="{% static 'common/css/jquery-ui.min.css' %}">#}
@@ -25,10 +26,7 @@
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery.tablesorter.min.js' %}"></script>#}
 {#  <script type="text/javascript" src="{% static 'third/js/third_lib/jquery.tablesorter.widgets.min.js' %}"></script>#}
 
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/theme.default.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/tableexport.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/icon.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+
     <script type="text/javascript" src="{% static 'third/js/third_lib/xlsx.core.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/Blob.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/FileSaver.js' %}"></script>
@@ -37,18 +35,17 @@
     <script type="text/javascript" src="{% static 'third/js/third_lib/chartjs-plugin-datalabels.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/jszip.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/jszip-utils.min.js' %}"></script>
-
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
     <script type="text/javascript" src="{% static 'third/js/third_lib/choices.min.js' %}"></script>
-
-    <link rel="stylesheet" type="text/css" href="{% static 'common/css/base.css' %}">
-    <script type="text/javascript" src="{% static 'common/js/base.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/pdfobject.min.js' %}"></script>
-
     <script type="text/javascript" src="{% static 'third/js/third_lib/exceljs.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'third/js/third_lib/table2excel.core.js' %}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/html2canvas.js' %}"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script type="text/javascript" src="{% static 'third/js/third_lib/qrcode.min.js' %}"></script>
 
-    <!-- tui.calendar -->
+    <!------------------------------------------------ tui calendar --------------------------------------------------->
     <!-- check script load order  https://github.com/nhn/tui.calendar/issues/285 -->
     <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
     <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
@@ -59,14 +56,14 @@
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css" />
 
-  
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.css" type="text/css" media="all" rel="stylesheet">
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/js/bootstrap-datetimepicker.min.js"></script>
-
-    <script type="text/javascript" src="{% static 'third/js/third_lib/html2canvas.js' %}"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
-    <script type="text/javascript" src="{% static 'third/js/third_lib/qrcode.min.js' %}"></script>
+    <!------------------------------------------------ common  -------------------------------------------------------->
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/base.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/theme.default.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/tableexport.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/icon.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'common/css/modal.css' %}">
+    <script type="text/javascript" src="{% static 'common/js/base.js' %}"></script>
     <script type="text/javascript" src="{% static 'common/js/modal.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'common/css/template.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'common/css/nav.css' %}">
@@ -95,17 +92,20 @@
                 <div class="tooltip-text box-shadow-below-diagonal">{{ screen_user_comment|linebreaksbr }}</div>
             </div>
             {% endif %}
-            <button class="button download">화면 사용 문서</button>
+            {% if request.path == '/home/' %}
+            <button class="button border-none download" style="margin-right:50px;margin-top:10px;">시스템 가이드 문서</button>
+            {% else %}
+            <button class="button border-none download" style="margin-right:50px;margin-top:10px;">화면 사용 문서</button>
+            {% endif %}
             </section>
         </section>
         {% block contents %}   
         {% endblock %}
     </main>
 
-    <!-- 데이터 처리중 안내 -->
+    <!------------------------------------------------ common modal  -------------------------------------------------->
     {% include 'common/modal/load_bg.html' %}
     {% include 'common/modal/delete_rows_modal.html' %}
 </body>
 
 </html>
-{{ form.media }}
