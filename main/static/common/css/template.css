@@ -77,6 +77,10 @@ button:hover, .button:hover{
   box-shadow: 0 5px #666;
   cursor:pointer;
 }
+.button.border-none{
+    border:none;
+    box-shadow:2px 3px 6px 0px #ccadad;
+}
 .button:active, button:active {
   background-color: #3e8e41; /* use for mutation observer to detect button click event */
   box-shadow: 0 5px #666;
