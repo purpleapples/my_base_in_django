@@ -16,8 +16,7 @@ class ExcelListView(ConditionalListView):
 		kind = self.kwargs['kind'].replace('-','_')
 		context = super().get_context_data(*kwargs)
 		code_qs = CodeTable.objects.filter(code = kind)
-		redirect_url_dict = {
-			'hyundai-order':'sales/order-record/api/upload'
+		redirect_url_dict = {			
 		}
 		if code_qs.exists():
 			code_instance = code_qs.last()
