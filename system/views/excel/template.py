@@ -1,4 +1,5 @@
-from django.urls import reverse
+from django.http import Http404
+from base.models import CodeTable
 from common.cbvs import ConditionalListView
 from system.models import Excel
 
@@ -14,27 +15,16 @@ class ExcelListView(ConditionalListView):
 	def get_context_data(self, *, object_list=None, **kwargs):
 		kind = self.kwargs['kind'].replace('-','_')
 		context = super().get_context_data(*kwargs)
-		title_dict = dict(
-			budget_usage_record = '예실 대비',
-			income = '수익금',
-			business_monthly_record = '시설',
-			personal_cost='인건비',
-			external_personal_cost='외부 강사료',
-			guest_lecturer='외부 강사 비용',
-			settlement_record='결산 내역',
-			sales_benefit='영업 이자'
-		)
-		context['redirect_url'] = reverse(kind + '_upload')
-		format_address = dict(
-			budget_usage_record = 'accounting/budget-usage-record',
-			business_monthly_record = 'accounting/business-monthly-record',
-			income_detail='',
-			personal_cost='accounting/personal-cost',
-			guest_lecturer='',
-			settlement_record='accounting/settlement-record',
-			sales_benefit='accounting/sales-benefit',
-			external_personal_cost = 'accounting/external-personal-cost'
-		)
-		context['title'] =title_dict[kind]
-		context['upload_format'] = format_address[kind]
-		return context
+		code_qs = CodeTable.objects.filter(code = kind)
+		redirect_url_dict = {
+			'hyundai-order':'sales/order-record/api/upload'
+		}
+		if code_qs.exists():
+			code_instance = code_qs.last()
+			code = code_instance.code.replace('-','_')
+			context['title'] = code.name + '파일 업로드'
+			context['request'] = redirect_url_dict[code]
+			context['format_address'] = '/main/static/upload_format/' + code + '_format.xlsx'
+			return context
+		else:
+			raise Http404('등록되지 않은 업로드 화면입니다.')
