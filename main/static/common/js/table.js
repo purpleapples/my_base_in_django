@@ -28,7 +28,6 @@ function changeToEditMode(button_node, url='.'){
                 el.value = insert_value;
             }
         }else{
-
             for(let option of el.options){
                 if(option.textContent == insert_value){
                     el.value = option.value;
@@ -74,10 +73,10 @@ function changeToEditMode(button_node, url='.'){
     button.textContent = '취소';
 
 
-    button.onclick = (event) => terminateEditMode(event, 'tr')
+    button.onclick = (event) => terminateEditMode(event, 'tr');
 
     clone_node.lastElementChild.appendChild(button);
-    clone_node.querySelector('.button.create').onclick = (event) => defaultPost(event, 'tr', url)
+    clone_node.querySelector('.button.create').onclick = (event) => defaultPost(event, 'tr', url);
     tr.parentNode.insertBefore(clone_node, tr);
     tr.remove();
 }
@@ -91,7 +90,7 @@ function setTableHeader(row_id_list, table_selector =undefined){
         let headerTr = document.querySelectorAll(`${table_selector} thead tr`);
         for(let id of row_id_list){
             headerTr[1].querySelector(`td[data-column='${id}']`).remove();
-            headerTr[0].children.item(id).rowSpan=2;
+            headerTr[0].children.item(id).rowSpan = 2;
         }
     },);
 }
@@ -166,23 +165,36 @@ function changeTdToSelect(tr, td_index, name, option_list){
     return tr;
 }
 
-function checkAllRow(button, target_table_selector){
-    let tbody = document.querySelector(target_table_selector+ ' tbody');
-
-    if (button.textContent != '선택 취소'){
-        Array.from(tbody.children).forEach((tr)=>{
-            if (!tr.classList.contains('filtered')){
-                tr.classList.add('is_chk');
-            }
-        });
-        button.textContent = '선택 취소';
+function _eventOnClickCheckAllButton(button){
+    const target = document.querySelector(button.dataset.target);
+    if (target.querySelector('[type=checkbox]') == undefined){
+        if (button.dataset.checked == 'on'){
+            Array.from(target.querySelectorAll('tr.is_chk')).forEach(tr=>{
+                tr.classList.toggle('is_chk');
+            });
+            button.dataset.checked='off'
+            button.textContent = '전체 선택'
+        }else{
+            Array.from(target.querySelectorAll('tr:not(.is_chk)')).forEach(tr=>{
+                tr.classList.toggle('is_chk');
+            });
+            button.dataset.checked='on'
+            button.textContent = '선택 취소'
+        }
     }else{
-        Array.from(tbody.children).forEach((tr)=>{
-            if (!tr.classList.contains('filtered')){
-                tr.classList.remove('is_chk');
-            }
-        });
-        button.textContent = '전체 선택';
+        if (button.dataset.checked == 'on'){
+            Array.from(target.querySelectorAll('[type=checkbox]:checked')).forEach(checkbox=>{
+                checkbox.checked=false;
+            });
+            button.dataset.checked='off'
+            button.textContent = '전체 선택'
+        }else{
+            Array.from(target.querySelectorAll('[type=checkbox]:not(checked)')).forEach(checkbox=>{
+                checkbox.checked=true;
+            });
+            button.dataset.checked='on'
+            button.textContent = '선택 취소'
+        }
     }
 }
 
@@ -258,100 +270,175 @@ function addTableExportEvent(button_node, target_table, hiddenRowList, hiddenCol
 }
 
 function setTableSorter(table){
-    const tr = table.querySelector('thead').lastElementChild;
+    let thList = table.querySelectorAll('thead th');
     let tbody = table.querySelectorAll('tbody');
     tbody = tbody[tbody.length-1];
 
-    Array.from(tr.children).forEach((th, index)=>{
-       th.setAttribute('data-column-index', index);
+    thList = Array.from(thList).filter(th => th.hasAttribute('data-order'));
+
+    // set original index
+    Array.from(tbody.children).forEach((tr, index) => {
+        tr.dataset.index=index;
+    });
+
+    Array.from(thList).forEach((th, index)=>{
+       th.dataset.order = 'none';
        // number, text 로 구성
        // row index
        th.onclick = (event)=>{
-           const index = event.target.getAttribute('data-column-index');
-           if (th.hasAttribute('data-order')){
-               let order = th.getAttribute('data-order');
-               switch(order){
-                   case 'ascending':
-                       th.setAttribute('data-order','descending');
-                       break;
-                   case 'descending':
-                       th.removeAttribute('data-order');
-                       break;
+           const columnIndex = parseInt(event.target.getAttribute('data-column-index'));
+           let order = th.dataset.order;
+           if (order == 'none'){
+               th.dataset.order = 'ascending';
+               const trList = {};
+               for(const tr of tbody.children){
+                   trList[tr.dataset.index] = tr;
+               }
+               tbody.innerHTML ='';
+               for (const i in trList){
+                   tbody.appendChild(trList[i]);
                }
            }else{
-               th.setAttribute(('data-order'), 'ascending');
+               const valuesIndex = {};
+               Array.from(tbody.children).forEach((tr, tdIndex)=>{
+                   let td = tr.children[columnIndex];
+                   tr.dataset.index;
+                   if (Object.keys(valuesIndex).indexOf(td.textContent) == -1){
+                       valuesIndex[td.textContent] = [td];
+                   }else{
+                       valuesIndex[td.textContent].push(td);
+                   }
+               });
+               const keyList = Object.keys(valuesIndex);
+               quickSort(keyList);
+               if (order == 'ascending'){
+                   th.dataset.order='descending';
+               }
+               else if(order == 'descending'){
+                   th.dataset.order = 'none';
+                   keyList.reverse();
+               }
+               tbody.innerHTML ='';
+               for(const key of keyList){
+                   for (const td of valuesIndex[key]){
+                        tbody.appendChild(td.closest('tr'));
+                   }
+               }
            }
-           const valueList = new Array();
-           Array.from(tbody.children).forEach((tr, tdIndex)=>{
-               let td = tr.children[index];
-               valueList.push(td.textContent);
-           });
-           quickSort(valueList);
+
+
        }
     });
 }
 
-function setTableEventListerDefault(table){
+function setTableEventListerDefault(table, options={filter:true,sorter:true, checkAll:true,deleteRow:true}){
 
-    let table_selector = '#' + table.id;
-    // table selector 적용
-    let delete_button =document.getElementById(table.id +'-delete');
-    if (delete_button != null){
-        delete_button.addEventListener('click', function(event){
-            deleteRowsModalShow(this);
-        });
-    }
     let tbody = table.querySelectorAll('tbody');
     tbody = tbody.length ==2 ? tbody[1] : tbody[0];
     Array.from(tbody.children).forEach((tr)=>{
         tr.addEventListener('click', function(event){
             selectRow(tr, false);
         });
+    });
+    setTableScroll(table);
+    // table selector 적용
+    if (options['deleteRow']){
+        let delete_button =document.getElementById(table.id +'-delete');
         if (delete_button != null){
+            delete_button.addEventListener('click', function(event){
+                deleteRowsModalShow(this);
+            });
             tr.addEventListener('click', function(event){
-                delete_button.disabled= tr.parentNode.querySelectorAll('.is_chk').length == 0;
+                    delete_button.disabled= tr.parentNode.querySelectorAll('.is_chk').length == 0;
             });
         }
-    });
-    // table delete button 적용
-    let checkAllButton = document.getElementById( table.id+'-checkAll');
-    if (checkAllButton != null){
-        checkAllButton.addEventListener('click', function(event){
-            checkAllRow(this, table_selector);
-        });
     }
-    setTableSorter(table);
-    setTableFilter(table);
-    setTableScroll(table);
+    // th column index
+    // th colspan >1 -> th index
+    // last th start -> th colspan >1 index ->
+    const thead = table.querySelector('thead');
+
+    Array.from(thead.children).forEach(tr=>{
+        Array.from(tr.children).forEach((th, index)=>{
+            th.dataset.columnIndex= index;
+        });
+    });
+    if (thead.children.length >1){
+        if (thead.children[0].children.length != thead.children[thead.children.length-1].length){
+            const lastTr = thead.children[thead.children.length-1];
+            let colIndex = 0;
+            Array.from(thead.firstElementChild.children).forEach(th=>{
+                if (th.colSpan > 1){
+                    for (let index=colIndex; index < colIndex + th.colSpan; index++){
+                        lastTr.children[index].setAttribute('data-column-index', parseInt(th.dataset.columnIndex) + index)
+                    }
+                    colIndex += parseInt(th.colSpan);
+                }
+            })
+        }
+    }
+
+    if (options['sorter']){
+        setTableSorter(table);
+    }
+    if (options['filter']){
+        setTableFilter(table);
+    }
+
+    // table delete button 적용
+    if (options['checkAll']){
+        let checkAllButton = document.getElementById( table.id+'-checkAll');
+        if (checkAllButton != null){
+            checkAllButton.addEventListener('click', function(event){
+                _eventOnClickCheckAllButton(event.currentTarget);
+            });
+        }
+    }
 }
 
 function _eventOnFilterValueChange(event){
-    const elIndex= new array();
-    event.target.closest('tr').querySelectorAll('input, select').forEach(el=>{
-        if (el.value != ''){
-            elIndex[el.getAttribute('data-index')] = el.value;
-        }
-    });
-    const tbodies = event.target.closest('table').querySelectorAll('tbody');
-    const tbody = tbodies[tbodies.length-1];
-    if (Object.keys(elIndex).length ==0){
-        tbody.querySelectorAll('tr.filtered').forEach(tr=>{
-           tr.classList.remove('filtered');
-        });
-    }else{
-        Array.from(tbody.children).forEach(tr=>{
-            let filter = false;
-            for (const [index, value] in Object.keys(elIndex)){
-                filter &= tr.children[index].textContent.indexOf(value) != -1;
+
+    const el = event.currentTarget
+    const filterTr = el.closest('tr');
+    const filterList = filterTr.querySelectorAll('input, select');
+    let filterVal = '';
+
+    let tbody = event.target.closest('table').querySelectorAll('tbody');
+    tbody = tbody[tbody.length-1];
+
+    const trIndexSet = new Set();
+    for (const tr of tbody.children){
+        for (const filterEl of filterList){
+            if (filterEl.value ==''){
+                continue;
             }
-            if(filter){
-                tr.classList.add('tr');
+            filterVal = el.value;
+            if (el.nodeName == 'Select'){
+                filterVal = el.options[el.selectedIndex].value;
+            }
+
+            if (!tr.children[parseInt(filterEl.dataset.columnIndex)].textContent.includes(filterVal)){
+                trIndexSet.add(tr.dataset.index);
             }else{
-                tr.classList.remove('tr');
+                trIndexSet.delete(tr.dataset.index);
             }
-        });
+        }
     }
+
+    for(const tr of tbody.children){
+        if (trIndexSet.has(tr.dataset.index)){
+            tr.classList.add('filtered');
+        }else{
+            tr.classList.remove('filtered');
+        }
+
+    }
+
+
+
+
 }
+
 function createTableDataListFilter(url, attribute, condition={}){
     fetchEvent(url, undefined, 'GET', condition,(data)=>{
         const input = document.createElement('input');
@@ -370,71 +457,65 @@ function createTableDataListFilter(url, attribute, condition={}){
         datalist.innerHTML = optionArray.join('');
     });
 }
+
 // if one filter value changed using every filter value to filter tr
 function setTableFilter(table, ignore_col_index=undefined, selectCols=undefined){
 
+    // create filter
     const thead = table.querySelector('thead');
-    const filterTarget = thead.lastElementChild;
     const filterTr = document.createElement('tr');
-    Array.from(filterTarget.children).forEach((th, index)=>{
-        if(ignore_col_index != undefined && ignore_col_index.indexOf(index) != -1){
-            th.colspan=2;
-        }else if(selectCols != undefined && selectCols.indexOf(index)!=-1){
-            let th = document.createElement('th');
-            let select = selectCols[index]();
-            select.addEventListener('change', _eventOnFilterValueChange);
-            select.setAttribute('data-index', index);
-            th.appendChild(select);
-        }
-        else{
-            let th = document.createElement('th');
-            th.innerHTML = `<input type="search" data-index="${index}" onclick="_eventOnFilterValueChange(event)">`
+    const searchThead = document.createElement('thead');
+    let tbody = table.querySelectorAll('tbody')
+    tbody = tbody[tbody.length-1];
+    let maxColIndex = 0;
 
-            filterTr.appendChild(th);
-        }
+    Array.from(table.querySelectorAll('thead th')).forEach(th => {
+        let colIndex = parseInt(th.dataset.columnIndex);
+        maxColIndex = maxColIndex < colIndex ? colIndex : maxColIndex;
     });
-}
 
-function setTableListEventListerDefault(delete_func=undefined, export_func=undefined){
-
-    Array.from(document.querySelectorAll('.table')).forEach((table)=>{
-        if (table.id.indexOf('table') != -1){
-            let table_selector = '#' + table.id;
-
-            // table selector 적용
-            let delete_button =document.getElementById(table.id +'-delete');
-            if (delete_button != null){
-                delete_button.addEventListener('click', function(event){
-                    deleteRowsModalShow(this, table_selector);
-                });
-            }
-            let tbody = table.querySelectorAll('tbody');
-            tbody = tbody.length ==2 ? tbody[1] : tbody[0];
-            Array.from(tbody.children).forEach((tr)=>{
-                tr.addEventListener('click', function(event){
-                    selectRow(tr, false);
-                });
-                if (delete_button != null){
-                    tr.addEventListener('click', function(event){
-                        delete_button.disabled= tr.parentNode.querySelectorAll('.is_chk').length == 0;
-                    });
+    for (let i=0; i<=maxColIndex; i++){
+        let th = document.createElement('th');
+        let columnIndex = i.toString();
+        th.dataset.columnIndex = columnIndex;
+        let searchTh = thead.querySelector(`th[data-column-index='${columnIndex}']`);
+        if (searchTh != undefined && searchTh.dataset.search=='true'){
+            if (searchTh.dataset.type == 'date'){
+                let input = document.createElement('input');
+                input.type='date';
+                input.classList.add('form-element-default');
+                input.dataset.columnIndex = columnIndex;
+                input.oninput = (event) => _eventOnFilterValueChange(event);
+                th.appendChild(input);
+            }else if (searchTh.dataset.type == 'select'){
+                let select = document.createElement('select');
+                select.classList.add('form-element-default');
+                select.dataset.columnIndex = columnIndex;
+                let optionTextCandidates = Array.from(tbody.children).map(tr=> tr.children[i].textContent);
+                let optionList = optionTextCandidates.filter((t,i)=> optionTextCandidates.indexOf(t) == i);
+                let  optionHtml = new Array();
+                optionHtml.push('<option value=""></option>');
+                for(const optionText of optionList){
+                    optionHtml.push(`<option value="${optionText}">${optionText}</option>`);
                 }
-            });
-            // table delete button 적용
-            let checkAllButton = document.getElementById( table.id+'-checkAll');
-            if (checkAllButton != null){
-                checkAllButton.addEventListener('click', function(event){
-                    checkAllRow(this, table_selector);
-                });
+                select.onchange = (event) => _eventOnFilterValueChange(event);
+                select.innerHTML = optionHtml.join('');
+                th.appendChild(select);
+            }else{
+                let input = document.createElement('input');
+                input.type='text';
+                input.classList.add('form-element-default');
+                input.dataset.columnIndex = columnIndex;
+                input.oninput = (event) => _eventOnFilterValueChange(event);
+                th.appendChild(input);
             }
-            setTableSorter(table);
-            setTableScroll(table);
+            th.role ='search';
         }
-        // sticky table 생성 이 나중이므로 적용 불가
-        // else if (table.id.indexOf('sticky') != -1){
-        //     setTableSorter("#" +table.id);
-        // }
-    });
+        filterTr.appendChild(th);
+    }
+    searchThead.appendChild(filterTr);
+    table.insertBefore(searchThead,table.querySelector('tbody'))
+
 }
 
 function movePage(a, page_number){
@@ -535,7 +616,7 @@ function createRowWithObjectList(tbody, dataList, fieldList=undefined, hiddenFie
                     (data)=>{
                         alert(data.message);
                         location.reload();
-                    })
+                    });
             }
             const td = document.createElement('td');
             td.classList.add('text-center');
@@ -561,40 +642,47 @@ function setStickyPosition(table, fixedColumnIndexes){
     // last row 의 top 을 지정
     // tbody thead
     // thead
-    Array.from(thead.children).forEach((tr, rowIndex)=>{
-        tr.style.position='sticky';
 
-        if (rowIndex == 0){
-            tr.style.top = 0;
-            tr.style.zIndex = 3;
-            Array.from(tr.children).forEach((th, index)=>{
-               if (fixedColumnIndexes.indexOf(index) !=-1){
-                   th.style.left=th.getBoundingClientRect().x -x;
-                   th.style.top=y - coordinate.y;
-                   th.classList.add('sticky');
-               }  else{
-                   th.style.top=0;
-               }
+    Array.from(table.querySelectorAll('thead')).forEach((thead, index)=>{
+            thead.zIndex = 3;
+            Array.from(thead.children).forEach((tr, rowIndex)=>{
+            tr.style.position='sticky';
+            let topWeight = index ==0 ? 0 :thead.getBoundingClientRect().height +3;
+            if (rowIndex == 0){
+                tr.style.top = topWeight;
+                tr.style.zIndex = 3;
+                Array.from(tr.children).forEach((th, index)=>{
+                   if (fixedColumnIndexes.indexOf(index) !=-1){
+                       th.style.left=th.getBoundingClientRect().x -x;
+                       th.style.top=y - coordinate.y;
+                       th.classList.add('sticky');
+                   }  else{
+                       th.style.top=0;
+                   }
+                });
+            }else{
+
+                tr.style.top = topWeight  + thead.children[rowIndex-1].getBoundingClientRect().height-3;
+                tr.style.zIndex=1;
+                Array.from(tr.children).forEach(th=>{
+                    th.style.zIndex=1;
+                    th.style.left=lastX;
+                });
+            }
             });
-        }else{
-            tr.style.zIndex=1;
-            tr.style.top=lastCoordinate.height;
-            Array.from(tr.children).forEach(th=>{
-                th.style.zIndex=1;
-                th.style.left=lastX;
+            Array.from(tbody.children).forEach(tr=>{
+                tr.style.zIndex=1
+                for (const index of fixedColumnIndexes){
+                    let td = tr.children[index];
+                    td.style.position='sticky';
+                    td.style.background='white';
+                    td.style.left=td.getBoundingClientRect().x -x;
+                    td.style.zIndex=1;
+                }
             });
         }
-    });
-    Array.from(tbody.children).forEach(tr=>{
-        tr.style.zIndex=1
-        for (const index of fixedColumnIndexes){
-            let td = tr.children[index];
-            td.style.position='sticky';
-            td.style.background='white';
-            td.style.left=td.getBoundingClientRect().x -x;
-            td.style.zIndex=1;
-        }
-    });
+    );
+
 }
 
 
