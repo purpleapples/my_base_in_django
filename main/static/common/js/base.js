@@ -54,7 +54,7 @@ $(document).ready(function() {
 
     // 패드 화면 -> 안드로이드 환경
     var varUA = navigator.userAgent.toLowerCase(); //userAgent 값 얻기
-    
+
     if(varUA.match('android') != null) {
         $("body").addClass('pad');
         $("body.pad").css("display","block");
@@ -63,7 +63,7 @@ $(document).ready(function() {
     }
 
     // Bootstrap Datetimepicker
-    
+
     $(".datetimepicker").datetimepicker({
         format: 'YYYY-MM-DD',
         locale: 'ko',
@@ -83,45 +83,6 @@ $(document).ready(function() {
     // 테이블 스크롤 상단 고정 함수화 하고 table 로 이관 필요
 });
 
-const _eventOnTabTemplate = (tab_selector='.tab-container') =>{
-    /**
-     * @param {string} tab_selector : selector string for querySelector function
-     *
-     * */
-    let tab_container = document.querySelector(tab_selector);
-    if (tab_container !== null){
-        let header = tab_container.querySelector('.header');
-
-        Array.from(header.children).forEach((li, index)=>{
-            _eventOnClickTabHeader(li, tab_container, index);
-        });
-    }
-
-}
-
-const _eventOnClickTabHeader = (li, tab_container, index) => {
-
-    li.addEventListener('click', function(event){
-        let contains = li.classList.contains('act');
-        let sibling = li.parentElement.children;
-        if (contains){
-            return;
-        }
-        for(let li of sibling){
-            li.classList.remove('act');
-        }
-        contains ? this.classList.remove('act') : this.classList.add('act');
-        let body_container = tab_container.querySelector('.body');
-        for(let i=0; i< body_container.children.length; i++){
-            let content = body_container.children.item(i);
-            if (i==index){
-                content.classList.contains('hidden') ? content.classList.remove('hidden') : content.classList.add('hidden');
-                continue;
-            }
-            content.classList.add('hidden');
-        }
-    });
-}
 
 const loginSystem = () => {
     sessionStorage.removeItem('timer');
@@ -156,7 +117,6 @@ function moveScrollTop() {
         scrollTop : 0
     }, 500);
 }
-
 
 function openImgPopup(img){
     // 설비 AS 요청 기능 : 이미지 선택 시 원래 크기의 팝업 창 나오는 기능
@@ -193,9 +153,9 @@ function deleteNode(button_node, is_ancestor, target_selector, callback) {
     }
 }
 
-//----------------------------------------------- ajax communication --------------------------------------------------
+//********************************************** ajax communication ***************************************************//
 
-const fetchEvent = (url, token=undefined, method, body, success_func=undefined, fail_func=undefined, option=undefined) =>{
+const fetchEvent = (url, token=undefined, method, body, success_func=undefined, load_modal=true, fail_func=undefined, option=undefined) =>{
     /**
      * 통신용 함수
      * response type에 따라 결과값에 대한 처리 지정
@@ -206,14 +166,16 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
      * @param method{string}
      * @param body{Object|FormData}
      * @param success_func{Function}
-     *
+
      * success parameters
      * @param data{list>} - GET
      * @param message{string} - GET, POST, HEAD, OPTION, PUT, PATCH, DELETE
      * @param redirection_url{string} - optional
      *
      **/
-    $('.load_bg').show();
+    if (load_modal){
+        $('.load_bg').show();
+    }
     let options = {};
     let defaultHeader = {
         'Content-Type': 'application/json',
@@ -253,7 +215,10 @@ const fetchEvent = (url, token=undefined, method, body, success_func=undefined, 
     }
 
     fetch(url, options).then((response)=> {
-        $('.load_bg').hide();
+        if (load_modal){
+            $('.load_bg').hide();
+        }
+
         if (response.status < 300  && response.status > 201){
             if(response.status==203){
             }
@@ -334,7 +299,6 @@ const downloadTempFile = (url, params) => {
                 alert('내려받을 파일이 없습니다.');
                 return;
             }
-            console.log(response)
             return response.json()
         }).then(responseData => {
             const a = document.createElement('a');
@@ -342,8 +306,7 @@ const downloadTempFile = (url, params) => {
             a.href = '/' + responseData.file_url;
             a.click();
             a.remove();
-        })
-
+        });
 }
 
 
@@ -357,8 +320,9 @@ function extractBackUpData(selector=undefined){
     fetchEvent('/system/api/data/create/dump-file', undefined, 'POST', pk_list, (data)=>{alert(data.message);});
 }
 
+//*********************************************** sort algorithm *****************************************************//
 
-function quickSort (array) {
+function quickSort (array, dataType='int') {
   if (array.length < 2) {
     return array;
   }
@@ -375,20 +339,11 @@ function quickSort (array) {
       pivot.push(array[i]);
     }
   }
-
   return quickSort(left).concat(pivot, quickSort(right));
 }
 
-const downloadDefault = (event, params) => {
 
-    // a tag 에 media 를 통한 download 는 전부 막아버려야 한다. - mutation 을 통한 감시 필요
-    fetchEvent('menu/attachment-file/api/download', undefined, 'POST',
-        {path:'path'},
-        (data)=>{
-
-        });
-}
-
+//******************************************* tooltip ****************************************************************//
 const showTooltip = (coordinate = [-100,50]) => {
     /**
      * @abstract tooltip 표기 기능.
@@ -398,14 +353,200 @@ const showTooltip = (coordinate = [-100,50]) => {
      * */
     const tooltip = document.querySelector('.tooltip-text');
 
-    const position = tooltip.getBoundingClientRect();
-    // Hide the tooltip after a delay
     tooltip.style.left = coordinate[0];
-    tooltip.style.top = coordinate[1]
-    // console.log(tooltip.style.offset)
-    tooltip.style.visibility = tooltip.style.visibility == 'hidden' ? 'visible' : 'hidden';
+    tooltip.style.top = coordinate[1];
+    tooltip.style.opacity = tooltip.style.opacity == 0.7 ? 0 : 0.7;
 }
 
-// only for dataset
 const camelToSnakeCase = str => str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
 const snakeToCamelCase = (str) => str.replace(/[^a-zA-Z0-9]+(.)/g, (m, chr) => chr.toUpperCase());
+
+//********************************************* tab ******************************************************************//
+// only for dataset
+
+const _eventOnTabTemplate = (container, eventType) =>{
+    /**
+     * @param {string} tab_selector : selector string for querySelector function
+     *
+     * */
+
+    let header = container.querySelector('.header');
+
+
+    Array.from(header.children).forEach((li, index)=>{
+        if (eventType=='click'){
+            _eventOnClickTabHeader(li, container, index);
+        }else{
+            _eventOnHoverTabHeader(li, container, index);
+        }
+    });
+}
+
+const _eventOnClickTabHeader = (li, container, index) => {
+    li.addEventListener('mouseover', function(event){
+        let contains = li.classList.contains('act');
+        let sibling = li.parentElement.children;
+        if (contains){
+            return;
+        }
+        for(let li of sibling){
+            li.classList.remove('act');
+        }
+        contains ? this.classList.remove('act') : this.classList.add('act');
+        let body_container = container.querySelector('.body');
+        for(let i=0; i< body_container.children.length; i++){
+            let content = body_container.children.item(i);
+            if (i==index){
+                content.classList.contains('hidden') ? content.classList.remove('hidden') : content.classList.add('hidden');
+                continue;
+            }
+            content.classList.add('hidden');
+        }
+    });
+
+}
+// tab hover
+
+const _eventOnHoverTabHeader = (li, container, index, animateClassStr='show-left') => {
+    /**
+     * @desc each header content share one area
+     * @param li {HTMLElement} : header
+     * @param container {HTMLElement} : tab header and body container
+     * @param index {int} : index of li in ul
+     * */
+    li.addEventListener('mouseover', function(event){
+        let body_container = container.querySelector('.body');
+        for (const child of body_container.children){
+            child.classList.add('invisible');
+            child.classList.remove(animateClassStr);
+        }
+        body_container.children.item(index).classList.remove('invisible')
+        body_container.children.item(index).classList.add(animateClassStr);
+    });
+
+    container.addEventListener('mouseleave', function(evnet){
+        let body_container = container.querySelector('.body');
+        for (const child of body_container.children){
+            child.classList.add('invisible');
+            child.classList.remove(animateClassStr);
+        }
+    });
+
+}
+//*********************************************** mouse scroll dragging **********************************************//
+function setScrollMouseDrag(containerElement){
+    /**
+     * @desc attach event on dragging scroll by mouse dragging
+     * @param containerElement{HTMLElement} : dragging area
+     * @author samson siba
+     * */
+    let pos = { top: 0, left: 0, x: 0, y: 0 };
+    containerElement.scrollTop = 0;
+    containerElement.scrollLeft = 0;
+
+    const mouseMoveHandler = function (e) {
+        // How far the mouse has been moved
+        const dx = e.clientX - pos.x;
+        const dy = e.clientY - pos.y;
+
+        // Scroll the element
+        containerElement.scrollTop = pos.top - dy;
+        containerElement.scrollLeft = pos.left - dx;
+
+        // console.log(pos.x, pos.y, e.clientX , e.clientY,dx,dy, containerElement.scrollLeft, containerElement.scrollTop);
+    };
+
+    const mouseUpHandler = function (e) {
+        containerElement.removeEventListener('mousemove', mouseMoveHandler);
+        containerElement.removeEventListener('mouseup', mouseUpHandler);
+
+        containerElement.style.cursor = '';
+        containerElement.style.removeProperty('user-select');
+    };
+
+    const mouseDownHandler = function (e) {
+        if (e.button == 0){ // left button
+            containerElement.style.cursor = 'grabbing';
+            containerElement.style.userSelect = 'none';
+            pos = {
+                // The current scroll
+                left: containerElement.scrollLeft,
+                top: containerElement.scrollTop,
+                // Get the current mouse position
+                x: e.clientX,
+                y: e.clientY,
+            };
+            containerElement.addEventListener('mousemove', mouseMoveHandler);
+            containerElement.addEventListener('mouseup', mouseUpHandler);
+        }
+
+    };
+    containerElement.addEventListener('mousedown', mouseDownHandler);
+}
+
+//****************************************************** mouse context menu ******************************************//
+function createTableContextMenu(){
+    let contextMenu = document.createElement('ul');
+    let contextMenuChildren = new Array();
+    contextMenuChildren.push( '<li onclick="copyText(event)">글자 복사</li><li><a onclick="history.back()">뒤로 가기</a>');
+    // page 있을 경우 페이지 이동 기능 넣는다.
+    const pageComponent = document.querySelector('.pagination');
+    if (pageComponent != null){
+        //  현재 페이지 보고 움직인다.
+        const currentPage = pageComponent.querySelector('.current-target').textContent;
+        let componentLength = pageComponent.children.length;
+        if (componentLength > 3){
+            const firstPage = pageComponent.children[1].textContent;
+            const lastPage =  pageComponent.children[componentLength-2].textContent;
+            if (currentPage != firstPage && currentPage != '1'){
+                (parseInt(currentPage) - 1).toString();
+                contextMenuChildren.push('<li><a onclick="movePage(this,' + (parseInt(currentPage) - 1).toString() + ')">페이지 뒤로 넘기기</a>');
+            }
+            if (currentPage != lastPage){
+                contextMenuChildren.push('<li><a onclick="movePage(this,' + (parseInt(currentPage) + 1).toString() + ')" >페이지 앞으로 넘기기</a>');
+            }
+
+        }
+        contextMenu.innerHTML = contextMenuChildren.join('') +'</ul>';
+    }else{
+        if (contextMenuChildren.length>0){
+            contextMenu.innerHTML = contextMenuChildren.join('') +'</ul>';
+        }
+    }
+    return contextMenu;
+}
+
+function createContextMenu(container, contextMenus, contextMenuSelector='#context-menu'){
+    /**
+     * @param {HtmlElement} container
+     * @param {HtmlElement} menuList
+     * @param {String} contextMenuSelector
+     */
+    container.addEventListener('contextmenu', function(event){
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        const contextMenu = document.querySelector(contextMenuSelector);
+        const contextMenuBody = contextMenu.querySelector('.modal-content');
+        contextMenuBody.innerHTML = '';
+        contextMenuBody.appendChild(contextMenus);
+        contextMenu.style.top = event.clientY+'px';
+        contextMenu.style.left = event.clientX+'px';
+        showModal(contextMenuSelector);
+    });
+    window.addEventListener('click', function(event){
+        let display = document.querySelector(contextMenuSelector).style.display;
+        document.querySelector(contextMenuSelector).style.display= display !='none' ? 'none' : display;
+    })
+}
+
+//************************************** functional buttons **********************************************************//
+function _eventOnVisibleToggler(visibleTogglerList){
+    Array.from(visibleTogglerList).forEach(button=>{
+        button.addEventListener('click', function(event){
+            const button = event.target;
+            document.querySelector(button.dataset.target).classList.toggle('hidden');
+            button.textContent =  button.textContent == '숨김' ? '설정': '숨김';
+            button.dataset.toggle = button.dataset.toggle == 'on' ? 'off' : 'on';
+        });
+    });
+};
