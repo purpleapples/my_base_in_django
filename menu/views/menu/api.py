@@ -70,8 +70,9 @@ def get_menu_excel(qs):
     return menu_df
 
 def get_menu_tree(account, user_agent, template='each-dropdown'):
+    # screen 의 기능에 따라 icon의 클래스를 붙인다.
 
-    order_by = ['level', 'order', 'id']
+    order_by = ['root_id','pre_order_index']
     # is_mobile_support = False
     # if 'Mac' in user_agent or 'Window' in user_agent:
     #     pass
@@ -147,7 +148,14 @@ def get_menu_tree(account, user_agent, template='each-dropdown'):
             header=menu_list[0],
             body=menu_list[1:]
         )
+    elif template == 'vertical':
+        menu_list = json.dumps(list(qs.values('id', 'title', 'level', 'order', 'parent_id', 'pre_order_index','url')), cls=CustomDjangoJSONEncoder)
     return menu_list
+
+
+
+
+
 
 
 
