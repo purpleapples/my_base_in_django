@@ -24,6 +24,7 @@ class ConditionalListView(ListView):
 
     order_field_list = list()
     save_record_field = list()
+    page_numbers_range = 5
 
     def get_queryset(self):
         get_dict = self.request.GET.dict()
@@ -48,6 +49,7 @@ class ConditionalListView(ListView):
         if 'order_by' in get_dict.keys():
             self.order_by = get_dict['order_by'].split(',')
         if self.order_by:
+            print(self.search_attributes)
             return self.model.objects.filter(**self.search_attributes).order_by(*self.order_by)
         else:
             return self.model.objects.filter(**self.search_attributes)
@@ -62,7 +64,7 @@ class ConditionalListView(ListView):
             if key in search_values and value != '':
                 context[search_key[search_values.index(key)]] = value
         if self.paginate_by:
-            paginate(self, context)
+            paginate(self, context, self.page_numbers_range)
             context['paginate_by'] = str(self.paginate_by)
         if len(self.order_field_list):
             context['order_field_list'] = [self.model._meta.get_field(field) for field in self.order_field_list]
@@ -88,6 +90,7 @@ class ConditionalListView(ListView):
 class ApiView(View):
     model =''
     duplicate_field_list = list()
+    post_redirect = True
     delete_redirect_url = ''
 
     def get(self, request):
@@ -146,10 +149,14 @@ class ApiView(View):
         try:
             instance, message, status = create_or_update_record(params, self.model, self.duplicate_field_list,
                                                                 request.FILES)
-            return HttpResponse(
-                json.dumps({
+
+            result  = {
                     'message':message
-                }), content_type='application/json', status=status
+                }
+            if not self.post_redirect:
+                result['redirect'] = False
+            return HttpResponse(
+                json.dumps(result), content_type='application/json', status=status
             )
 
         except ValueError as ve:
@@ -162,7 +169,7 @@ class ApiView(View):
                 json.dumps(dict(message=str(e))),
                 content_type='application/json', status=500
             )
-            
+
     @transaction.atomic
     def patch(self, request):
         params = json.loads(request.body.decode('UTF-8'))
