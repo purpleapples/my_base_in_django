@@ -1,40 +1,15 @@
 {% load static %}
 <nav class="nav rotatable-horizontal">
     <section class="nav-header">
-        <a class="link"><span class="title-brand">default base</span></a>
+        <a class="link"><span class="title-brand">OMS 샘플</span></a>
         <button class="pc-hidden"><span class=" icon-menu"></span></button>
     </section>
     {% if request.user.is_authenticated %}
-{#    <input type="hidden" name="menu_list" value="{{ request.session.menu_list }}">#}
+    <input type="hidden" name="menu_list" value="{{ request.session.menu_list }}">
     <section>
         <article class="nav menu-list">
             <section class="tree-container" id="nav-tree">
-                <table class="table-dropdown-body">
-                    <thead>
-                    <tr>
-                        {% for menu in request.session.menu_list.header %}
-                            <th>{{ menu.title }}</th>
-                        {% endfor %}
-                    </tr>
-                    </thead>
-                    <tbody class="hidden box-shadow-below-diagonal">
-                        {% for menus in request.session.menu_list.body %}
-                        <tr>
-                        {% for menu in menus %}
-                            {% if menu.is_screen %}
-                                <td data-parent-id="{{ menu.parent_id }}"
-                                    data-id="{{ menu.id }}"
-                                    data-root-id={{ menu.root_id }}>
-                                    <a href="{{ menu.url }}">{{ menu.title }}</a></td>
-                            {% else %}
-                                <td class="category" data-id="{{ menu.id }}">{{ menu.title }}</td>
-                            {% endif %}
-                        {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </tbody>
 
-                </table>
             </section>
 {#            <ul class="menu-list-container">#}
 {#            {% for grand_parent in request.session.menu_list %}#}
@@ -131,11 +106,8 @@
 {#                </li>#}
 {#                {% endif %}#}
 {#            </ul>#}
-{# dropdown 삼발이 장착 #}
-        <article class="list-default">            
-            <a class="func_btn" href="{% url 'update_account' pk=request.user.id %}"><span class="glyphicon glyphicon-wrench"></span> <span class="func_title">정보수정</span></a>
-            <a class="func_btn logout_btn" href="#" onclick="logoutSystem();"><span class="glyphicon glyphicon-off"></span> <span class="func_title">로그아웃</span></a>        
-        </article>
+{#  기능 성 메뉴  #}
+
         </article>
 
         {% endif %}
