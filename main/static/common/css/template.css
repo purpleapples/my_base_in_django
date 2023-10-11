@@ -1,15 +1,82 @@
 /*********************************************** template default for design ******************************************/
 
+
 /*********************************************** grid template design *************************************************/
+/****  grid left top main ****/
+.grid-left-top-main-container{
+    display:grid;
+    grid-template-areas:
+            'left header'
+            'left main';
+    grid-template-columns:15% 85%;
+    grid-template-rows:5% 95%;
+    margin-left:0;
+    margin-top:0;
+    margin-bottom:1px;
+    margin-right:1px;
+}
+.grid-left-top-main-container .grid-header{
+    grid-area:header;
+    box-shadow: 4px 7px 6px 0px #dddada;
+
+}
+.grid-left-top-main-container .grid-header .list-default{
+    margin-top:10px;
+}
+
+.grid-left-top-main-container .grid-left{
+    grid-area:left;
+    box-shadow: inset -4px 0px 6px 0px #dddada;
+}
+.grid-left-top-main-container .grid-main{
+    grid-area:main;
+}
+.grid-left-top-main-container .grid-main > *:not(:last-child){
+    margin-bottom:0.5em;
+}
+.grid-left-top-main-container .grid-header .left-icon-menu,
+.grid-left-top-main-container .grid-header .left-icon-menu
+{
+    height:200px;
+}
+.grid-left-top-main-container .grid-header .tab-container{
+    float:right;
+}
+.grid-left-top-main-container .grid-header .tab-container .body table,
+.grid-left-top-main-container .grid-header .tab-container .body table tr,
+.grid-left-top-main-container .grid-header .tab-container .body table th{
+    width:200px;
+}
+.grid-left-top-main-container .grid-header .tab-container .body table th{
+    text-align: center;
+}
+
+.grid-left-top-main-container .grid-main .screen-title{
+    font-size:27px;
+}
+.grid-left-top-main-container .grid-main > *{
+    margin-left:1vw;
+}
+
+
+/****  grid column pair ****/
 .grid-column-pair{
     display:grid;
     grid-template-columns: max-content max-content;
     grid-gap:10%;
 }
-
+.grid.nine-one{
+    grid-template-columns:90% 10%; grid-gap:15px;
+}
+.grid.file-box{
+    padding-bottom:15px;grid-template-columns:0% 60% 30%;
+}
+.grid.file-box label{
+    cursor:pointer;
+}
 /*********************************************** template batch *******************************************************/
 .list-default > *:not(:last-child){
-    margin-bottom:1.2em;
+    margin-bottom:0.3em;
 }
 .list-default > *{
     margin-left:0.5rem;
@@ -29,15 +96,7 @@ form{
 .among span{
     line-height:2.5;
 }
-.grid.nine-one{
-    grid-template-columns:90% 10%; grid-gap:15px;
-}
-.grid.file-box{
-    padding-bottom:15px;grid-template-columns:0% 60% 30%;
-}
-.grid.file-box label{
-    cursor:pointer;
-}
+
 .clear{
     color:black;
 }
@@ -47,9 +106,7 @@ form{
     border-radius: 4px;
     margin-right:10px;
 }
-.checkAll{
-    background:#169BD5;
-}
+
 .border-default{
     border:1px solid rgb(204, 204, 204);
     border-radius: 4px;
@@ -59,7 +116,7 @@ form{
     margin-top: 10px;
 }
 .selected {
-    border:2px solid #252 !important;
+    border-bottom:2px solid #252 !important;
 }
 /******************************************************** button *******************************************************/
 .act {
@@ -100,7 +157,7 @@ button:hover, .button:hover{
     margin-right:0;
 }
 .buttonToolbar .button, .buttonToolbar a{
-    padding:10px 30px;
+    padding:6px 20px;
     font-size:15px;
 }
 .buttonToolbar button:disabled, .buttonToolbar a:disabled {
@@ -118,11 +175,15 @@ button:hover, .button:hover{
     background-color:rgb(255, 255, 255);
     background-image: linear-gradient(to bottom,#fff 0,#e0e0e0 100%);
 }
+.checkAll{
+    background:#169BD5;
+}
 .button.middle-long{
     padding:5px 20px;
 }
+
 .save{
-    background-image: linear-gradient(to top, #6ac76a 0, #d4f1d4 100%);
+    background:linear-gradient(#53c0b9, #63dc82);
 }
 .close{
     background-image: linear-gradient(to top, #280619 0, #9a9a9a 70%);
@@ -141,6 +202,10 @@ button:hover, .button:hover{
 }
 .button.download{
     background: #53c0b9;
+}
+.modal-show{
+    background: #5f5f5f;
+    color:white;
 }
 
 /****************************************************** background color for usage ************************************/
@@ -174,6 +239,18 @@ button:hover, .button:hover{
 .work-standard{
     background: #8577d7;
 }
+.visible-toggler{
+    padding:0.3em;
+}
+.visible-toggler[data-toggle=on]{
+    background: #8080e0;
+    color:white;
+}
+.visible-toggler[data-toggle=off]{
+    background:gray;
+    color:white;
+}
+
 /*********************************************** main and content *****************************************************/
 .content-title{
     background:white;
@@ -184,11 +261,7 @@ button:hover, .button:hover{
     text-indent:2px;
     filter: drop-shadow(0px 1px 1px whitesmoke) ;
 }
-.screen-title{
-    margin-bottom: 5px;
-    border-bottom: 1px solid #eee;
-    background:white;
-}
+
 .screen-background-shadow{
     background: #f4f4f466;
 }
@@ -224,6 +297,7 @@ button:hover, .button:hover{
 .tab.container{}
 .tab.header{
     display:flex;
+    width:100%;
 }
 .switch-tab-list{
     height: 30px;
@@ -259,7 +333,7 @@ button:hover, .button:hover{
     color:#8c7f6c;
     opacity:0.5;
 }
-.tab-container .body{
+main .tab-container .body{
     border:1px solid #8c7f6c;
     border-radius: 2px;
 }
@@ -370,7 +444,7 @@ button:hover, .button:hover{
 
   /* Tooltip text */
 .tooltip .tooltip-text {
-    visibility: hidden;
+
     width: 300px;
     background-color: #f39800;
     color: #fff;
@@ -381,9 +455,10 @@ button:hover, .button:hover{
     z-index: 10;
     bottom: 100%;
     height:max-content;
-    opacity: 0.7;
-    transition-property:visibility;
+    opacity: 0;
+    transition-property:opacity;
     transition-duration:1s;
+    transition-timing-function: ease-in-out;
 }
 
   /* Show the tooltip on hover - do not use because of coordinate control */
