@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-  
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
@@ -47,6 +47,7 @@
 
     <!------------------------------------------------ tui calendar --------------------------------------------------->
     <!-- check script load order  https://github.com/nhn/tui.calendar/issues/285 -->
+    <!--
     <link rel="stylesheet" href="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.css" />
     <script src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.js"></script>
     <script src="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.js"></script>
@@ -55,6 +56,14 @@
     <script src="https://uicdn.toast.com/calendar/latest/toastui-calendar.min.js"></script>
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.time-picker/latest/tui-time-picker.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/tui.date-picker/latest/tui-date-picker.css" />
+    -->
+    <!------------------------------------------------ fontawesome --------------------------------------------------->
+    <!-- <link rel="stylesheet" type="text/css" href="{% static 'third/fontawesome-free-6.4.2-web/css/fontawesome.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'third/fontawesome-free-6.4.2-web/css/all.css' %}">
+    <script type="text/javascript" src="{% static 'third/fontawesome-free-6.4.2-web/js/fontawesome.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'third/fontawesome-free-6.4.2-web/js/all.min.js' %}"></script>
+    -->
+
 
     <!------------------------------------------------ common  -------------------------------------------------------->
     <link rel="stylesheet" type="text/css" href="{% static 'common/css/choices.min.css' %}">
@@ -78,28 +87,75 @@
   {% block header %}
   {% endblock %}
 </head>
-    
-<body class="screen-background-shadow">
-    {% include "common/nav.html" %}
-    <main class="container-fluid">
-        <section class="text-left screen-title flex-between">
-            <h3 style="text-indent:100px;font-weight:bold">{% block title %}(no title){% endblock %}
-            </h3>
-        <section class="buttonToolbar">
-            {% if screen_user_comment %}
-            <div class="tooltip buttonToolbar">
-                <span class="button information" onclick="showTooltip([-100,50])">화면 설명 툴팁</span>
-                <div class="tooltip-text box-shadow-below-diagonal">{{ screen_user_comment|linebreaksbr }}</div>
-            </div>
-            {% endif %}
-            {% if request.path == '/home/' %}
-            <button class="button border-none download" style="margin-right:50px;margin-top:10px;">시스템 가이드 문서</button>
-            {% else %}
-            <button class="button border-none download" style="margin-right:50px;margin-top:10px;">화면 사용 문서</button>
-            {% endif %}
+
+<body class="grid-left-top-main-container">
+    <!------------------------------------------------------ navigation menu ------------------------------------------>
+    <side class="grid-left">
+        {% include "common/nav.html" %}
+    </side>
+    <!------------------------------------------------------ icon menu  ----------------------------------------------->
+    <header class="grid-header">
+        {% if request.user.is_authenticated %}
+        <article class="list-default">
+            <section style="display:grid;grid-template-columns:70%30%">
+                <section>not fixed area</section>
+                <section class="left-icon-menu">
+                    <section class="tab-container">
+                        {% csrf_token %}
+                        <section class="float-right">
+                            <ul class="tab header">
+                                <li><span class="icon-user"></span></li>
+                                <li><span class="icon-star"></span></li>
+                                <li><span class="icon-bell"></span></li>
+                                <li><span class="icon-question"></span></li>
+                            </ul>
+                        </section>
+                        <section class="tab body">
+                            <table class="table animatable dropdown-height" area-expended="false">
+                                <tr><th>사용자 메뉴</th></tr>
+                                <tr><td><a class="" href="{% url 'update_account' pk=request.user.id %}"><span class="func_title">정보수정</span></a></td></tr>
+                                <tr><td><a class="" href="#" onclick="logoutSystem();"><span class="func_title">로그아웃</span></a></td></tr>
+                            </table>
+                            <table class="table animatable dropdown-height" area-expended="false">
+                                <tr><th>자주 가는 메뉴</th></tr>
+                            </table>
+                            <table class="table animatable dropdown-height" area-expended="false">
+                                <tr><th>알림</th></tr>
+                            </table>
+                            <table class="table animatable dropdown-height" area-expended="false">
+                                <tr><th>화면 가이드</th></tr>
+                                {% if request.user.is_authenticated and request.path != '/home/' %}
+                                <tr>
+                                    <th>
+                                        <button class="button border-none download">문서</button>
+                                    </th>
+                                </tr>
+                                {% endif %}
+                                {% if screen_user_comment %}
+                                <tr>
+                                    <th>
+                                        <div class="tooltip buttonToolbar">
+                                            <span class="button information" onclick="showTooltip([-100,50])">설명</span>
+                                            <div class="tooltip-text box-shadow-below-diagonal" >{{ screen_user_comment|linebreaksbr }}</div>
+                                        </div>
+                                    </th>
+                                </tr>
+                                {% endif %}
+                            </table>
+                        </section>
+                    </section>
+                </section>
             </section>
+        </article>
+    {% endif %}
+    </header>
+    <!------------------------------------------------------ main container  ------------------------------------------>
+    <main class="grid-main">
+        <section class="text-left screen-title flex-between">
+            <h3 style="text-indent:100px;font-weight:bold" id="document-title">{% block title %}(no title){% endblock %}
+            </h3>
         </section>
-        {% block contents %}   
+        {% block contents %}
         {% endblock %}
     </main>
 
